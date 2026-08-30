@@ -1,6 +1,6 @@
 # Data Flow Architecture - LeetBank
 
-This document details the data lifecycle, edge resolution, and caching pipelines for **LeetBank**.
+This document details the data lifecycle, edge resolution, caching pipelines, and automated freshness mechanisms for **LeetBank**.
 
 ---
 
@@ -64,6 +64,29 @@ sequenceDiagram
 
 ---
 
-## 3. Cache Eviction & Invalidation Strategy
+## 3. Automated Company Recency Data Freshness Pipeline
+
+```mermaid
+flowchart TD
+    subgraph DailyCron["1. Automated Daily Sync (Build-Time)"]
+        GHA["GitHub Actions Cron (00:00 UTC)"] --> FetchLatest["Fetch latest 30-day/3-month CSVs from verified mirrors"]
+        FetchLatest --> Parse["Compile & validate src/data/companies/*.json"]
+        Parse --> CheckDiff{"Data Changed?"}
+        CheckDiff -->|Yes| AutoDeploy["Commit changes & deploy to Cloudflare Pages"]
+        CheckDiff -->|No| NoOp["No-op"]
+    end
+
+    subgraph EdgeRuntime["2. Edge Stale-While-Revalidate (Runtime Freshness)"]
+        Req["User requests company track"] --> EdgeCheck["Check Cloudflare KV Cache"]
+        EdgeCheck -->|Fresh (< 7d)| FastServe["Serve from Edge (< 10ms)"]
+        EdgeCheck -->|Stale (> 7d)| BackgroundRefresh["Serve cached data + trigger background re-fetch"]
+        BackgroundRefresh --> WriteKV["Update KV Cache for next visitors"]
+    end
+```
+
+---
+
+## 4. Cache Eviction & Invalidation Strategy
 * **TTL Policy**: Cached problem entities remain valid for 7 days (`max-age=604800, stale-while-revalidate=86400`).
 * **Manual Purge**: A purge endpoint `/api/admin/purge/:id` allows purging stale entries when upstream problem definitions are updated.
+* **On-Demand Company Sync**: An admin endpoint `POST /api/admin/sync-companies` allows forcing an immediate sync of company data across all recency windows.

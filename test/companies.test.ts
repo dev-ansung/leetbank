@@ -29,4 +29,27 @@ describe("Company Tag & Recency Window TDD Suite", () => {
       expect(googleAll[i].frequencyPercent).toBeGreaterThanOrEqual(googleAll[i + 1].frequencyPercent);
     }
   });
+
+  it("should support all 4 standardized recency windows", async () => {
+    const windows = ["30-days", "3-months", "6-months", "all-time"] as const;
+    for (const w of windows) {
+      const list = await CompanyService.getQuestionsForCompany("meta", w);
+      expect(Array.isArray(list)).toBe(true);
+    }
+  });
+
+  it("should sync and parse raw company CSV datasets with algorithmic patterns", () => {
+    const sampleCsv = `ID,URL,Title,Difficulty,Acceptance %,Frequency %,Topic Tags,Pattern,Revision Priority,Notes
+1249,https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses,Minimum Remove to Make Valid Parentheses,Medium,71.5%,62.5%,Arrays; Strings,Sorting / Prefix / Scan,High,Must revise
+1,https://leetcode.com/problems/two-sum,Two Sum,Easy,57.5%,100.0%,Arrays,Two Pointers,High,Core`;
+
+    const parsed = CompanyService.parseCompanyCsv("meta", "30-days", sampleCsv);
+    expect(parsed.length).toBe(2);
+    expect(parsed[0].problemId).toBe(1249);
+    expect(parsed[0].frequencyPercent).toBe(62.5);
+    expect(parsed[0].pattern).toBe("Sorting / Prefix / Scan");
+    expect(parsed[0].priority).toBe("High");
+    expect(parsed[1].problemId).toBe(1);
+    expect(parsed[1].frequencyPercent).toBe(100.0);
+  });
 });
