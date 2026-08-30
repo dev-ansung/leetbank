@@ -13,10 +13,14 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.0.0",
     "@astrojs/react": "^4.0.0",
+    "@tailwindcss/vite": "^4.3.3",
     "astro": "^5.0.0",
-    "lucide-react": "^0.475.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.37.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
