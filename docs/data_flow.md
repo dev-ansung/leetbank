@@ -4,7 +4,7 @@ This document details the data lifecycle, edge resolution, and caching pipelines
 
 ---
 
-## 1. Dashboard Search Data Flow (`GET /`)
+## 1. Dashboard Search & Company Filter Data Flow (`GET /`)
 
 ```mermaid
 sequenceDiagram
@@ -13,11 +13,15 @@ sequenceDiagram
     participant ClientMemory as Browser JS Memory
 
     User->>CDN: GET / (Home Dashboard)
-    CDN-->>User: Serves Static HTML + catalog.json (150KB gzip) in < 15ms
-    User->>ClientMemory: Initializes In-Memory Index & Fuzzy Filter Trie
-    loop Keystroke Filtering
+    CDN-->>User: Serves Static HTML + catalog.json (with Company Index) in < 15ms
+    User->>ClientMemory: Initializes In-Memory Catalog & Company Frequency Map
+    
+    alt Free-Text Search
         User->>ClientMemory: Type "269" or "alien"
-        ClientMemory-->>User: Renders Filtered Rows in < 1ms (0 Upstream Requests)
+        ClientMemory-->>User: Renders Filtered Rows in < 1ms
+    else Company & Recency Filter
+        User->>ClientMemory: Select "Meta" + "Last 30 Days"
+        ClientMemory-->>User: Filters and sorts by Meta 30-day frequency % in < 1ms
     end
 ```
 

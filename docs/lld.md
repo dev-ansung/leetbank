@@ -14,6 +14,7 @@ leetbank/
 ├── src/
 │   ├── data/
 │   │   ├── catalog.json           # 4,037 Canonical problems (ID, slug, title, diff, topics)
+│   │   ├── companies/             # Company index files (google.json, meta.json, etc.)
 │   │   └── tracks/                # Curated lists: blind75.json, neetcode150.json, grind75.json
 │   ├── lib/
 │   │   ├── fetcher.ts             # Upstream GraphQL + Doocs Mirror fetcher
@@ -23,11 +24,12 @@ leetbank/
 │   ├── components/
 │   │   ├── Navbar.astro           # Header with search trigger & theme toggle
 │   │   ├── ProblemTable.tsx       # Fast client-side fuzzy filterable table
+│   │   ├── CompanyFilter.tsx      # Company pills & recency window selector
+│   │   ├── RoadmapPills.tsx       # Roadmap filter chips (Blind 75, NeetCode 150)
 │   │   ├── CodeSnippet.tsx        # Multi-language syntax-highlighted code viewer
 │   │   ├── TestCaseCards.tsx      # Clean test case input & expected cards
 │   │   ├── SolutionTabs.tsx       # Multi-language reference solutions viewer
-│   │   ├── HintAccordion.tsx      # Progressive hints with spoiler blur
-│   │   └── RoadmapPills.tsx       # Roadmap filter chips
+│   │   └── HintAccordion.tsx      # Progressive hints with spoiler blur
 │   ├── pages/
 │   │   ├── index.astro            # Home dashboard (/)
 │   │   ├── [id].astro             # Problem SSR page (/:id or /:slug)

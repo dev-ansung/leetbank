@@ -14,7 +14,7 @@ flowchart TD
     subgraph CloudflarePlatform["Cloudflare Pages / Workers Platform"]
         Router{"Edge Router & Middleware"}
         
-        Router -->|"/"| StaticPrerender["Static Dashboard Prerender"]
+        Router -->|"/"| StaticPrerender["Static Dashboard Prerender (Catalog + Company Index)"]
         Router -->|"/:id_or_slug"| EdgeSSR["Edge Server-Side Rendering (Astro)"]
         Router -->|"/api/*"| EdgeAPI["Serverless Edge API Handler"]
         
@@ -25,11 +25,13 @@ flowchart TD
     subgraph UpstreamProviders["Upstream Providers (On Edge Cache Miss)"]
         LC_GQL["LeetCode GraphQL Endpoint"]
         DoocsMirror["GitHub Raw Doocs Mirror"]
+        CompanyData["GitHub Company Tag Datasets (Meta, Google, Amazon, etc.)"]
     end
     
     Edge --> Router
     EdgeSSR -->|"Fetch Metadata & Snippets"| LC_GQL
     EdgeSSR -->|"Fetch Solutions & Paywall Fallback"| DoocsMirror
+    StaticPrerender -->|"Build Time Aggregation"| CompanyData
 ```
 
 ---
@@ -49,5 +51,5 @@ flowchart TD
 * **Routing**: CNAME `leetcode` proxied (`Orange Cloud`) directly to Cloudflare Pages deployment.
 
 ### C. Data Persistence & Caching
-* **Static Layer**: `catalog.json` (4,037 problems) bundled in the client static bundle.
+* **Static Layer**: `catalog.json` (4,037 problems + company frequency mappings) bundled in the client static bundle.
 * **Edge Storage Layer**: Cloudflare KV namespace `LEETBANK_CACHE` storing JSON snapshots of hydrated questions.

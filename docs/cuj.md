@@ -1,6 +1,6 @@
 # Critical User Journeys (CUJs) - LeetBank
 
-This document defines the 4 core Critical User Journeys (CUJs) for **LeetBank** (`leetcode.anprogrammer.org`), a high-performance Cloudflare-hosted LeetCode question bank and interactive study dashboard.
+This document defines the 5 core Critical User Journeys (CUJs) for **LeetBank** (`leetcode.anprogrammer.org`), a high-performance Cloudflare-hosted LeetCode question bank and interactive study dashboard.
 
 ---
 
@@ -33,7 +33,32 @@ flowchart TD
 
 ---
 
-## CUJ 2: Direct Problem Study & Multi-Language Practice (`GET /:id_or_slug`)
+## CUJ 2: Company-Targeted Interview Preparation with Recency Windows
+
+### User Goal
+Target practice questions asked by specific top tech companies (Meta, Google, Amazon, Microsoft, Apple, Bloomberg, Uber, ByteDance, Netflix) filtered by recency window (`Last 30 Days`, `3 Months`, `6 Months`, `All-Time`) with exact frequency rankings and pattern tags.
+
+### User Flow
+```mermaid
+flowchart TD
+    A["User selects Company Pill (e.g. 'Meta')"] --> B["Selects Recency Window (e.g. 'Last 30 Days')"]
+    B --> C["Table instantly filters to 23 high-frequency Meta questions"]
+    C --> D["Displays Frequency % (e.g. 100%, 75%), Pattern, and Priority"]
+    D --> E["User sorts by highest frequency score"]
+    E --> F["Opens top-ranked problem (e.g. #1249 Minimum Remove to Make Valid Parentheses)"]
+```
+
+### Key Requirements & Constraints
+* **Recency Windows**:
+  * `Last 30 Days` (Active interview cycle hotlist).
+  * `Last 3 Months` (Recent quarter trends).
+  * `Last 6 Months` (Standard prep window).
+  * `All-Time` (Core historical classics).
+* **Metadata Enriched**: Displays exact frequency %, algorithmic pattern tags (e.g. `Sliding Window / Prefix Scan`), and revision priority (`High` / `Medium`).
+
+---
+
+## CUJ 3: Direct Problem Study & Multi-Language Practice (`GET /:id_or_slug`)
 
 ### User Goal
 Read a clean, distraction-free problem statement with mathematical formulas, inspect decoded example test cases, switch starter templates across 19 languages, reveal hints, and examine reference solutions.
@@ -64,7 +89,7 @@ flowchart TD
 
 ---
 
-## CUJ 3: Paywall & Premium Problem Bypass
+## CUJ 4: Paywall & Premium Problem Bypass
 
 ### User Goal
 Access locked/premium LeetCode problems (e.g. `#269 Alien Dictionary`, `#253 Meeting Rooms II`) with complete descriptions and verified reference solutions.
@@ -86,11 +111,11 @@ flowchart TD
 
 ---
 
-## CUJ 4: Developer & Automation JSON API (`GET /api/...`)
+## CUJ 5: Developer & Automation JSON API (`GET /api/...`)
 
 ### User Goal
 Programmatically retrieve problem metadata, statements, test cases, and code templates for IDE extensions, CLI tools, or automated scripts.
 
 ### Endpoints
-* `GET /api/problems`: Returns the lightweight catalog index (filterable by `difficulty`, `topic`, `roadmap`, `search`).
+* `GET /api/problems`: Returns the lightweight catalog index (filterable by `difficulty`, `topic`, `roadmap`, `company`, `window`, `search`).
 * `GET /api/problem/:id_or_slug`: Returns hydrated problem JSON payload with statement HTML, test cases, starter code map, and reference solutions.
