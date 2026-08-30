@@ -12,8 +12,7 @@ import {
   ChevronRight,
   X,
   Lock,
-  FileCode,
-  Sparkles
+  Layers
 } from "lucide-react";
 import catalogData from "../data/catalog.json";
 
@@ -283,50 +282,26 @@ public:
 
         {/* Filter Controls */}
         <div className="flex flex-col gap-3.5 bg-[#121215] border border-[#27272a] p-4 rounded-xl">
-          {/* Row 1: Search Bar & Roadmaps */}
-          <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-              <input
-                id="search-input"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search 4,037 questions or topics (Press '/' to focus)..."
-                className="w-full bg-[#18181b] border border-[#27272a] rounded-lg pl-10 pr-12 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition"
-              />
-              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#27272a] text-zinc-400 text-[10px] px-1.5 py-0.5 rounded border border-zinc-700 font-mono">
-                /
-              </kbd>
-            </div>
-
-            {/* Roadmap Pills */}
-            <div className="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
-              <span className="text-xs text-zinc-400 font-medium mr-1">Tracks:</span>
-              {[
-                { id: "All", label: "All Questions" },
-                { id: "blind75", label: "🎯 Blind 75" },
-                { id: "neetcode150", label: "🚀 NeetCode 150" },
-              ].map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => { setSelectedRoadmap(r.id); setSelectedCompany(null); }}
-                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition cursor-pointer ${
-                    selectedRoadmap === r.id && !selectedCompany
-                      ? "bg-amber-500/15 text-amber-300 border-amber-500/40"
-                      : "bg-[#18181b] text-zinc-400 border-[#27272a] hover:text-white"
-                  }`}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
+          {/* Top Search Input */}
+          <div className="relative w-full">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
+            <input
+              id="search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search 4,037 questions or topics (Press '/' to focus)..."
+              className="w-full bg-[#18181b] border border-[#27272a] rounded-lg pl-10 pr-12 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition"
+            />
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#27272a] text-zinc-400 text-[10px] px-1.5 py-0.5 rounded border border-zinc-700 font-mono">
+              /
+            </kbd>
           </div>
 
-          {/* Row 2: Company Filter Pills & Recency Window */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-[#27272a]/60">
+          {/* Peer Filter Level 1: Companies */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs text-zinc-400 font-medium flex items-center gap-1 mr-1">
+              <span className="text-xs text-zinc-400 font-medium flex items-center gap-1 mr-2 min-w-[90px]">
                 <Building2 className="size-3.5 text-amber-400" /> Companies:
               </span>
               {[
@@ -337,7 +312,7 @@ public:
                 <button
                   key={c.id}
                   onClick={() => setSelectedCompany(selectedCompany === c.id ? null : c.id)}
-                  className={`text-xs px-3 py-1 rounded-md border font-medium transition cursor-pointer ${
+                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition cursor-pointer ${
                     selectedCompany === c.id
                       ? "bg-blue-500/20 text-blue-300 border-blue-500/50 shadow-sm"
                       : "bg-[#18181b] text-zinc-400 border-[#27272a] hover:text-white"
@@ -349,7 +324,7 @@ public:
               {selectedCompany && (
                 <button
                   onClick={() => setSelectedCompany(null)}
-                  className="text-xs text-zinc-500 hover:text-zinc-300 underline ml-1"
+                  className="text-xs text-zinc-500 hover:text-zinc-300 underline ml-1 cursor-pointer"
                 >
                   Clear
                 </button>
@@ -380,6 +355,30 @@ public:
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Peer Filter Level 2: Curated Tracks (Placed cleanly below Companies) */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-[#27272a]/60">
+            <span className="text-xs text-zinc-400 font-medium flex items-center gap-1 mr-2 min-w-[90px]">
+              <Layers className="size-3.5 text-amber-400" /> Tracks:
+            </span>
+            {[
+              { id: "All", label: "All Questions" },
+              { id: "blind75", label: "🎯 Blind 75" },
+              { id: "neetcode150", label: "🚀 NeetCode 150" },
+            ].map((r) => (
+              <button
+                key={r.id}
+                onClick={() => { setSelectedRoadmap(r.id); setSelectedCompany(null); }}
+                className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition cursor-pointer ${
+                  selectedRoadmap === r.id && !selectedCompany
+                    ? "bg-amber-500/15 text-amber-300 border-amber-500/40"
+                    : "bg-[#18181b] text-zinc-400 border-[#27272a] hover:text-white"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
           </div>
         </div>
 
