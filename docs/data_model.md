@@ -9,6 +9,29 @@ This document defines the core data structures, TypeScript interfaces, and valid
 ```typescript
 export type Difficulty = "Easy" | "Medium" | "Hard";
 
+export type RecencyWindow = "30-days" | "3-months" | "6-months" | "all-time";
+
+export type CompanyId =
+  | "google"
+  | "meta"
+  | "amazon"
+  | "microsoft"
+  | "bloomberg"
+  | "apple"
+  | "uber"
+  | "bytedance"
+  | "netflix";
+
+export interface CompanyFrequency {
+  company: CompanyId;
+  companyName: string;
+  window: RecencyWindow;
+  frequencyPercent: number; // e.g. 100.0, 75.0
+  pattern?: string;        // e.g. "Hashing / Sliding Window"
+  priority?: "High" | "Medium" | "Low";
+  notes?: string;
+}
+
 export type SupportedLanguage =
   | "python3"
   | "typescript"
@@ -42,8 +65,6 @@ export interface RoadmapTrack {
 
 ## 2. Catalog Index Schema (`catalog.json`)
 
-The catalog index represents the lightweight static database of all 4,037 problems bundled at build time.
-
 ```typescript
 export interface ProblemSummary {
   id: number;
@@ -54,28 +75,13 @@ export interface ProblemSummary {
   isPaidOnly: boolean;
   acRate?: string;        // e.g. "58.1%"
   totalAccepted?: string; // e.g. "23.3M"
-}
-```
-
-### JSON Representation Example
-```json
-{
-  "id": 1,
-  "slug": "two-sum",
-  "title": "Two Sum",
-  "difficulty": "Easy",
-  "topics": ["Array", "Hash Table"],
-  "isPaidOnly": false,
-  "acRate": "58.1%",
-  "totalAccepted": "23.3M"
+  companyFrequencies?: CompanyFrequency[];
 }
 ```
 
 ---
 
 ## 3. Hydrated Problem Detail Schema (`ProblemDetail`)
-
-The complete hydrated schema produced when rendering a problem page or responding to API requests.
 
 ```typescript
 export interface TestCase {
