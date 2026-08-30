@@ -6,15 +6,14 @@ import {
   Code2, 
   BookOpen, 
   Lightbulb, 
-  Sparkles, 
   Check, 
   Copy, 
   ExternalLink,
   ChevronRight,
-  TrendingUp,
   X,
   Lock,
-  Unlock
+  FileCode,
+  Sparkles
 } from "lucide-react";
 import catalogData from "../data/catalog.json";
 
@@ -26,6 +25,47 @@ interface Problem {
   difficulty: "Easy" | "Medium" | "Hard";
   topics: string[];
   isPaidOnly?: boolean;
+}
+
+// Reusable Copyable Block Component
+function CopyBlock({ content, label, language }: { content: string; label?: string; language?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative group bg-[#18181b] border border-[#27272a] rounded-xl overflow-hidden shadow-sm">
+      {(label || language) && (
+        <div className="px-3.5 py-1.5 border-b border-[#27272a]/60 bg-[#202024] flex items-center justify-between text-[11px] text-zinc-400 font-mono">
+          <span className="font-semibold text-zinc-300">{label || language}</span>
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-[#27272a] hover:bg-zinc-700 text-zinc-200 transition cursor-pointer"
+          >
+            {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+            <span>{copied ? "Copied!" : "Copy"}</span>
+          </button>
+        </div>
+      )}
+      {!label && !language && (
+        <button
+          onClick={handleCopy}
+          className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1 text-[11px] px-2 py-1 rounded bg-[#27272a]/80 hover:bg-zinc-700 text-zinc-200 backdrop-blur transition cursor-pointer shadow-sm"
+        >
+          {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+          <span>{copied ? "Copied!" : "Copy"}</span>
+        </button>
+      )}
+      <pre className="p-3.5 font-mono text-xs text-zinc-200 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+        {content}
+      </pre>
+    </div>
+  );
 }
 
 // Sample Company Data for POC demonstration
@@ -88,7 +128,6 @@ export function LeetBankApp() {
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
   const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
   const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
-  const [copied, setCopied] = useState(false);
 
   // Keyboard shortcut listener ('/' to focus search)
   useEffect(() => {
@@ -136,10 +175,64 @@ export function LeetBankApp() {
     return list;
   }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const CODE_TEMPLATES: Record<string, string> = {
+    python3: `class Solution:
+    def two_sum(self, nums: list[int], target: int) -> list[int]:
+        # Python 3.14 PEP 585 / 604 Modernized
+        pass`,
+    typescript: `function twoSum(nums: number[], target: number): number[] {
+    
+};`,
+    golang: `func twoSum(nums []int, target int) []int {
+    
+}`,
+    rust: `impl Solution {
+    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+        
+    }
+}`,
+    cpp: `class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        
+    }
+};`,
+    java: `class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        
+    }
+}`
+  };
+
+  const REFERENCE_SOLUTIONS: Record<string, string> = {
+    python3: `class Solution:
+    def two_sum(self, nums: list[int], target: int) -> list[int]:
+        d = {}
+        for i, x in enumerate(nums):
+            if (y := target - x) in d:
+                return [d[y], i]
+            d[x] = i`,
+    typescript: `function twoSum(nums: number[], target: number): number[] {
+    const map = new Map<number, number>();
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        if (map.has(complement)) {
+            return [map.get(complement)!, i];
+        }
+        map.set(nums[i], i);
+    }
+    return [];
+};`,
+    golang: `func twoSum(nums []int, target int) []int {
+    m := make(map[int]int)
+    for i, x := range nums {
+        if j, ok := m[target-x]; ok {
+            return []int{j, i}
+        }
+        m[x] = i
+    }
+    return nil
+}`
   };
 
   return (
@@ -276,7 +369,7 @@ export function LeetBankApp() {
                   <button
                     key={w.id}
                     onClick={() => setSelectedWindow(w.id)}
-                    className={`text-xs px-2.5 py-0.5 rounded font-medium transition ${
+                    className={`text-xs px-2.5 py-0.5 rounded font-medium transition cursor-pointer ${
                       selectedWindow === w.id
                         ? "bg-zinc-800 text-white shadow-sm"
                         : "text-zinc-400 hover:text-zinc-200"
@@ -301,7 +394,7 @@ export function LeetBankApp() {
                 <button
                   key={d}
                   onClick={() => setSelectedDifficulty(d)}
-                  className={`text-xs px-2.5 py-1 rounded font-medium transition ${
+                  className={`text-xs px-2.5 py-1 rounded font-medium transition cursor-pointer ${
                     selectedDifficulty === d
                       ? "bg-zinc-800 text-white"
                       : "text-zinc-500 hover:text-zinc-300"
@@ -392,7 +485,7 @@ export function LeetBankApp() {
                 </a>
                 <button
                   onClick={() => setActiveProblem(null)}
-                  className="text-zinc-400 hover:text-white p-1 rounded-md hover:bg-zinc-800 transition"
+                  className="text-zinc-400 hover:text-white p-1 rounded-md hover:bg-zinc-800 transition cursor-pointer"
                 >
                   <X className="size-5" />
                 </button>
@@ -424,7 +517,7 @@ export function LeetBankApp() {
             <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6 text-sm">
               {activeTab === "statement" && (
                 <div className="flex flex-col gap-5">
-                  <div className="prose prose-invert max-w-none text-zinc-300 leading-relaxed">
+                  <div className="prose prose-invert max-w-none text-zinc-300 leading-relaxed bg-[#18181b] p-4 rounded-xl border border-[#27272a] relative">
                     <p>
                       Given an array of integers <code>nums</code> and an integer <code>target</code>, return <em>indices of the two numbers such that they add up to <code>target</code></em>.
                     </p>
@@ -433,22 +526,22 @@ export function LeetBankApp() {
                     </p>
                   </div>
 
-                  {/* Formatted Test Cases */}
+                  {/* Formatted Test Cases with Individual Copy Buttons */}
                   <div className="flex flex-col gap-3">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                      🧪 Decoded Example Test Cases
+                      🧪 Decoded Example Test Cases (With 1-Click Copy)
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="bg-[#18181b] border border-[#27272a] p-3.5 rounded-xl flex flex-col gap-1.5 font-mono text-xs">
-                        <span className="text-zinc-500 font-sans font-bold">Example 1</span>
-                        <div className="text-zinc-300"><strong>Input:</strong> nums = [2, 7, 11, 15], target = 9</div>
-                        <div className="text-emerald-400"><strong>Expected:</strong> [0, 1]</div>
-                      </div>
-                      <div className="bg-[#18181b] border border-[#27272a] p-3.5 rounded-xl flex flex-col gap-1.5 font-mono text-xs">
-                        <span className="text-zinc-500 font-sans font-bold">Example 2</span>
-                        <div className="text-zinc-300"><strong>Input:</strong> nums = [3, 2, 4], target = 6</div>
-                        <div className="text-emerald-400"><strong>Expected:</strong> [1, 2]</div>
-                      </div>
+                      <CopyBlock 
+                        label="Example 1"
+                        content={`Input: nums = [2, 7, 11, 15], target = 9
+Expected: [0, 1]`}
+                      />
+                      <CopyBlock 
+                        label="Example 2"
+                        content={`Input: nums = [3, 2, 4], target = 6
+Expected: [1, 2]`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -459,11 +552,11 @@ export function LeetBankApp() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-zinc-400">Language:</span>
-                      {["python3", "typescript", "golang", "rust", "cpp"].map((lang) => (
+                      {["python3", "typescript", "golang", "rust", "cpp", "java"].map((lang) => (
                         <button
                           key={lang}
                           onClick={() => setSelectedCodeLang(lang)}
-                          className={`text-xs px-2.5 py-1 rounded font-mono font-medium transition ${
+                          className={`text-xs px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer ${
                             selectedCodeLang === lang
                               ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                               : "bg-[#18181b] text-zinc-400 border border-[#27272a]"
@@ -473,61 +566,48 @@ export function LeetBankApp() {
                         </button>
                       ))}
                     </div>
-                    <button
-                      onClick={() => copyToClipboard("class Solution:\n    def two_sum(self, nums: list[int], target: int) -> list[int]:\n        pass")}
-                      className="text-xs bg-[#27272a] hover:bg-zinc-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1.5 transition"
-                    >
-                      {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
-                      {copied ? "Copied!" : "Copy Template"}
-                    </button>
                   </div>
 
-                  <pre className="bg-[#18181b] border border-[#27272a] p-4 rounded-xl font-mono text-xs text-emerald-300 overflow-x-auto">
-{selectedCodeLang === "python3" && `class Solution:
-    def two_sum(self, nums: list[int], target: int) -> list[int]:
-        # Python 3.14 PEP 585 / 604 Modernized
-        pass`}
-{selectedCodeLang === "typescript" && `function twoSum(nums: number[], target: number): number[] {
-    
-};`}
-{selectedCodeLang === "golang" && `func twoSum(nums []int, target int) []int {
-    
-}`}
-{selectedCodeLang === "rust" && `impl Solution {
-    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
-        
-    }
-}`}
-{selectedCodeLang === "cpp" && `class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        
-    }
-};`}
-                  </pre>
+                  <CopyBlock
+                    language={selectedCodeLang}
+                    content={CODE_TEMPLATES[selectedCodeLang] || CODE_TEMPLATES.python3}
+                  />
                 </div>
               )}
 
               {activeTab === "solution" && (
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-medium">
-                      Time Complexity: O(N)
-                    </span>
-                    <span className="text-xs px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-mono font-medium">
-                      Space Complexity: O(N)
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-medium">
+                        Time Complexity: O(N)
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-mono font-medium">
+                        Space Complexity: O(N)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      {["python3", "typescript", "golang"].map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => setSelectedCodeLang(l)}
+                          className={`text-xs px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer ${
+                            selectedCodeLang === l
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <pre className="bg-[#18181b] border border-[#27272a] p-4 rounded-xl font-mono text-xs text-amber-200 overflow-x-auto">
-{`class Solution:
-    def two_sum(self, nums: list[int], target: int) -> list[int]:
-        d = {}
-        for i, x in enumerate(nums):
-            if (y := target - x) in d:
-                return [d[y], i]
-            d[x] = i`}
-                  </pre>
+                  <CopyBlock
+                    label={`Verified ${selectedCodeLang} Solution`}
+                    content={REFERENCE_SOLUTIONS[selectedCodeLang] || REFERENCE_SOLUTIONS.python3}
+                  />
                 </div>
               )}
             </div>
