@@ -8,7 +8,10 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "bun test"
+    "test": "bun test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.0.0",
@@ -25,6 +28,7 @@
     "turndown": "^7.2.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.11",
     "@types/bun": "latest",
     "@types/katex": "^0.16.8",
     "@types/react": "^19.0.0",

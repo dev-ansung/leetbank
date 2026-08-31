@@ -28,7 +28,8 @@ describe("Python 3.14 AST Modernizer TDD Suite", () => {
   });
 
   it("should auto-inject ListNode and TreeNode definitions when referenced", () => {
-    const code = "class Solution:\n    def merge(self, l1: ListNode | None, l2: ListNode | None) -> ListNode | None:\n        pass\n";
+    const code =
+      "class Solution:\n    def merge(self, l1: ListNode | None, l2: ListNode | None) -> ListNode | None:\n        pass\n";
     const modernized = PythonModernizer.modernize(code);
     expect(modernized).toContain("class ListNode:");
     expect(modernized).toContain("self.val = val");

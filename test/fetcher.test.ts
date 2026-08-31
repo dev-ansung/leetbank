@@ -10,13 +10,13 @@ describe("ProblemFetcher Upstream & Paywall Bypass TDD Suite", () => {
     expect(problem.descriptionHtml).toContain("array of integers");
 
     // Verify official untouched starter code
-    expect(problem.starterCode["python3"]).toBeDefined();
-    expect(problem.starterCode["python3"]).toContain("def twoSum");
-    expect(problem.starterCode["typescript"]).toBeDefined();
-    expect(problem.starterCode["golang"]).toBeDefined();
-    expect(problem.starterCode["rust"]).toBeDefined();
-    expect(problem.starterCode["cpp"]).toBeDefined();
-    expect(problem.starterCode["java"]).toBeDefined();
+    expect(problem.starterCode.python3).toBeDefined();
+    expect(problem.starterCode.python3).toContain("def twoSum");
+    expect(problem.starterCode.typescript).toBeDefined();
+    expect(problem.starterCode.golang).toBeDefined();
+    expect(problem.starterCode.rust).toBeDefined();
+    expect(problem.starterCode.cpp).toBeDefined();
+    expect(problem.starterCode.java).toBeDefined();
 
     // Verify parsed test cases from real HTML
     expect(problem.testCases.length).toBeGreaterThanOrEqual(2);
@@ -40,7 +40,7 @@ describe("ProblemFetcher Upstream & Paywall Bypass TDD Suite", () => {
     expect(pySolution?.code).toContain("def alienOrder");
 
     // Verify starter code generated from solution signature
-    expect(alien.starterCode["python3"]).toBeDefined();
-    expect(alien.starterCode["python3"]).toContain("def alienOrder");
+    expect(alien.starterCode.python3).toBeDefined();
+    expect(alien.starterCode.python3).toContain("def alienOrder");
   });
 });

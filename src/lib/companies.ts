@@ -37,39 +37,46 @@ const SUPPORTED_COMPANIES: CompanyId[] = [
 
 export class CompanyService {
   private static rawData = companyData as any;
-  private static data = (companyData as any).companies || companyData as Record<string, Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>>;
+  private static data =
+    (companyData as any).companies ||
+    (companyData as Record<
+      string,
+      Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>
+    >);
 
   static getSupportedCompanies(): CompanyId[] {
     return SUPPORTED_COMPANIES;
   }
 
   static getLastFetchedDate(): string {
-    return this.rawData?._meta?.lastFetched || "2026-08-30";
+    return CompanyService.rawData?._meta?.lastFetched || "2026-08-30";
   }
 
   static async getQuestionsForCompany(company: string, window: RecencyWindow = "all-time"): Promise<CompanyQuestion[]> {
     const compKey = company.toLowerCase();
-    const rawList = this.data[compKey]?.[window] || this.data[compKey]?.["all-time"] || [];
-    return rawList.map((item: any) => ({
-      problemId: item.id,
-      frequencyPercent: item.freq,
-      pattern: item.pattern,
-      priority: item.priority as any
-    })).sort((a: any, b: any) => b.frequencyPercent - a.frequencyPercent);
+    const rawList = CompanyService.data[compKey]?.[window] || CompanyService.data[compKey]?.["all-time"] || [];
+    return rawList
+      .map((item: any) => ({
+        problemId: item.id,
+        frequencyPercent: item.freq,
+        pattern: item.pattern,
+        priority: item.priority as any,
+      }))
+      .sort((a: any, b: any) => b.frequencyPercent - a.frequencyPercent);
   }
 
-  static parseCompanyCsv(company: string, window: RecencyWindow, csvContent: string): CompanyQuestion[] {
+  static parseCompanyCsv(_company: string, _window: RecencyWindow, csvContent: string): CompanyQuestion[] {
     const lines = csvContent.trim().split("\n");
     if (lines.length <= 1) return [];
 
     const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
     const idIdx = headers.findIndex((h) => h === "id" || h === "problem" || h === "problem id");
     const freqIdx = headers.findIndex((h) => h.includes("freq"));
-    const titleIdx = headers.findIndex((h) => h === "title");
-    const diffIdx = headers.findIndex((h) => h === "difficulty");
-    const patternIdx = headers.findIndex((h) => h === "pattern");
+    const titleIdx = headers.indexOf("title");
+    const diffIdx = headers.indexOf("difficulty");
+    const patternIdx = headers.indexOf("pattern");
     const priorityIdx = headers.findIndex((h) => h.includes("priority"));
-    const notesIdx = headers.findIndex((h) => h === "notes");
+    const notesIdx = headers.indexOf("notes");
 
     const result: CompanyQuestion[] = [];
 
@@ -78,7 +85,7 @@ export class CompanyService {
       if (row.length === 0 || !row[0]) continue;
 
       const pid = parseInt(row[idIdx !== -1 ? idIdx : 0], 10);
-      if (isNaN(pid)) continue;
+      if (Number.isNaN(pid)) continue;
 
       let freq = 50.0;
       if (freqIdx !== -1 && row[freqIdx]) {

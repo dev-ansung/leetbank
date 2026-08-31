@@ -30,10 +30,10 @@ export class PythonModernizer {
       .replace(/\bFrozenSet\[/g, "frozenset[");
 
     // 3. PEP 604: Modernize Optional[T] to T | None
-    modernized = modernized.replace(/\bOptional\[([^\[\]]+)\]/g, "$1 | None");
+    modernized = modernized.replace(/\bOptional\[([^[\]]+)\]/g, "$1 | None");
 
     // 4. PEP 604: Modernize Union[A, B, C] to A | B | C
-    modernized = modernized.replace(/\bUnion\[([^\[\]]+)\]/g, (_, inner) => {
+    modernized = modernized.replace(/\bUnion\[([^[\]]+)\]/g, (_, inner) => {
       const parts = inner.split(",").map((s: string) => s.trim());
       return parts.join(" | ");
     });

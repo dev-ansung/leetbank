@@ -36,7 +36,7 @@ export class CatalogService {
   private static catalog: ProblemSummary[] = catalogData as ProblemSummary[];
 
   static getAll(): ProblemSummary[] {
-    return this.catalog;
+    return CatalogService.catalog;
   }
 
   static getTracks(): TrackSummary[] {
@@ -44,16 +44,16 @@ export class CatalogService {
   }
 
   static find(idOrSlug: number | string): ProblemSummary | undefined {
-    if (typeof idOrSlug === "number" || !isNaN(Number(idOrSlug))) {
+    if (typeof idOrSlug === "number" || !Number.isNaN(Number(idOrSlug))) {
       const numId = Number(idOrSlug);
-      return this.catalog.find((p) => p.id === numId);
+      return CatalogService.catalog.find((p) => p.id === numId);
     }
     const slug = String(idOrSlug).toLowerCase().trim();
-    return this.catalog.find((p) => p.slug.toLowerCase() === slug);
+    return CatalogService.catalog.find((p) => p.slug.toLowerCase() === slug);
   }
 
   static search(criteria: SearchCriteria): ProblemSummary[] {
-    return this.catalog.filter((p) => {
+    return CatalogService.catalog.filter((p) => {
       if (criteria.difficulty && criteria.difficulty !== "All" && p.difficulty !== criteria.difficulty) {
         return false;
       }
@@ -80,14 +80,14 @@ export class CatalogService {
   static getRoadmap(roadmapId: string): ProblemSummary[] {
     const ids = TRACK_MAP.get(roadmapId);
     if (ids) {
-      return this.catalog.filter((p) => ids.has(p.id));
+      return CatalogService.catalog.filter((p) => ids.has(p.id));
     }
-    return this.catalog;
+    return CatalogService.catalog;
   }
 
   static getRandom(criteria?: SearchCriteria): ProblemSummary {
-    const list = criteria ? this.search(criteria) : this.catalog;
-    if (list.length === 0) return this.catalog[0];
+    const list = criteria ? CatalogService.search(criteria) : CatalogService.catalog;
+    if (list.length === 0) return CatalogService.catalog[0];
     const randomIndex = Math.floor(Math.random() * list.length);
     return list[randomIndex];
   }

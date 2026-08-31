@@ -14,33 +14,34 @@ export const GET: APIRoute = async ({ request }) => {
   let list = catalog;
 
   if (difficulty && difficulty !== "All") {
-    list = list.filter(p => p.difficulty.toLowerCase() === difficulty.toLowerCase());
+    list = list.filter((p) => p.difficulty.toLowerCase() === difficulty.toLowerCase());
   }
 
   if (topic) {
-    list = list.filter(p => p.topics.some(t => t.toLowerCase() === topic.toLowerCase()));
+    list = list.filter((p) => p.topics.some((t) => t.toLowerCase() === topic.toLowerCase()));
   }
 
   if (q) {
-    list = list.filter(p => 
-      p.id.toString() === q ||
-      p.title.toLowerCase().includes(q) ||
-      p.slug.toLowerCase().includes(q)
+    list = list.filter(
+      (p) => p.id.toString() === q || p.title.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q),
     );
   }
 
   const paginated = list.slice(offset, offset + limit);
 
-  return new Response(JSON.stringify({
-    total: list.length,
-    offset,
-    limit,
-    problems: paginated
-  }), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=3600"
-    }
-  });
+  return new Response(
+    JSON.stringify({
+      total: list.length,
+      offset,
+      limit,
+      problems: paginated,
+    }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600",
+      },
+    },
+  );
 };

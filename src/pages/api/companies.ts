@@ -12,13 +12,26 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const db = env?.DB;
 
   if (!company) {
-    return new Response(JSON.stringify({
-      supportedCompanies: ["meta", "google", "amazon", "microsoft", "bloomberg", "apple", "uber", "bytedance", "netflix"],
-      lastFetched: (companyData as any)._meta?.lastFetched || "2026-08-30"
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400" }
-    });
+    return new Response(
+      JSON.stringify({
+        supportedCompanies: [
+          "meta",
+          "google",
+          "amazon",
+          "microsoft",
+          "bloomberg",
+          "apple",
+          "uber",
+          "bytedance",
+          "netflix",
+        ],
+        lastFetched: (companyData as any)._meta?.lastFetched || "2026-08-30",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400" },
+      },
+    );
   }
 
   // If D1 is connected, query D1 SQL join
@@ -33,31 +46,37 @@ export const GET: APIRoute = async ({ request, locals }) => {
         ORDER BY cf.frequency_percent DESC
       `;
       const { results } = await db.prepare(query).bind(company, window).all();
-      return new Response(JSON.stringify({
-        company,
-        window,
-        source: "d1",
-        total: results.length,
-        questions: results
-      }), {
-        status: 200,
-        headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400, s-maxage=604800" }
-      });
-    } catch (e) {}
+      return new Response(
+        JSON.stringify({
+          company,
+          window,
+          source: "d1",
+          total: results.length,
+          questions: results,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400, s-maxage=604800" },
+        },
+      );
+    } catch (_e) {}
   }
 
   // Fallback to bundled dataset
   const cData = ((companyData as any).companies || companyData)[company];
   const list = cData?.[window] || cData?.["all-time"] || [];
 
-  return new Response(JSON.stringify({
-    company,
-    window,
-    source: "fallback",
-    total: list.length,
-    questions: list
-  }), {
-    status: 200,
-    headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400" }
-  });
+  return new Response(
+    JSON.stringify({
+      company,
+      window,
+      source: "fallback",
+      total: list.length,
+      questions: list,
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400" },
+    },
+  );
 };

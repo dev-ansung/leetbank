@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { handleGetProblems, handleGetProblemDetail } from "../src/lib/api-handlers";
+import { handleGetProblemDetail, handleGetProblems } from "../src/lib/api-handlers";
 
 describe("Edge REST API Handlers TDD Suite", () => {
   it("GET /api/problems should return catalog search results with pagination", async () => {

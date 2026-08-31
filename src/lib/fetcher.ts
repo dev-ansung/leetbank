@@ -1,5 +1,5 @@
-import { decodeHtmlEntities } from "./html-cleaner";
 import { CatalogService } from "./catalog";
+import { decodeHtmlEntities } from "./html-cleaner";
 
 export interface TestCase {
   id: number;
@@ -18,18 +18,26 @@ export interface SolutionEntry {
   explanation?: string;
 }
 
+export interface SimilarQuestion {
+  title: string;
+  slug: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+}
+
 export interface ProblemDetail {
   id: number;
   slug: string;
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
   topics: string[];
+  companies?: string[];
   isPaidOnly: boolean;
   descriptionHtml: string;
   starterCode: Record<string, string>;
   solutions: SolutionEntry[];
   testCases: TestCase[];
   hints: string[];
+  similarQuestions: SimilarQuestion[];
   source: "leetcode" | "mirror";
   cachedAt: number;
 }
@@ -45,7 +53,7 @@ export class ProblemFetcher {
     const isPaid = canonical?.isPaidOnly || false;
 
     // 1. Fetch LeetCode Official GraphQL API
-    const gqlData = await this.fetchGraphQL(slug);
+    const gqlData = await ProblemFetcher.fetchGraphQL(slug);
     let descriptionHtml = gqlData?.content ? decodeHtmlEntities(gqlData.content) : "";
     const starterCode: Record<string, string> = {};
 
@@ -57,7 +65,7 @@ export class ProblemFetcher {
 
     // 2. Fetch Solutions and fallback statement for paywalled problems from Mirror
     let solutions: SolutionEntry[] = [];
-    const mirrorData = await this.fetchDoocsMirror(pid, title, slug);
+    const mirrorData = await ProblemFetcher.fetchDoocsMirror(pid, title, slug);
 
     if (mirrorData) {
       if (!descriptionHtml || isPaid) {
@@ -72,22 +80,47 @@ export class ProblemFetcher {
     }
 
     // 3. Extract test cases universally from HTML description <pre> blocks
-    const testCases = this.extractTestCasesFromHtml(descriptionHtml, gqlData?.exampleTestcaseList);
+    const testCases = ProblemFetcher.extractTestCasesFromHtml(descriptionHtml, gqlData?.exampleTestcaseList);
+
+    // Parse topic tags from GraphQL if available
+    const liveTopics =
+      gqlData?.topicTags && gqlData.topicTags.length > 0 ? gqlData.topicTags.map((t: any) => t.name) : topics;
+
+    // Parse similar questions JSON string
+    let similarQuestions: SimilarQuestion[] = [];
+    if (gqlData?.similarQuestions) {
+      try {
+        const rawSim =
+          typeof gqlData.similarQuestions === "string"
+            ? JSON.parse(gqlData.similarQuestions)
+            : gqlData.similarQuestions;
+        if (Array.isArray(rawSim)) {
+          similarQuestions = rawSim.map((sq: any) => ({
+            title: sq.title,
+            slug: sq.titleSlug,
+            difficulty: sq.difficulty || "Medium",
+          }));
+        }
+      } catch {
+        similarQuestions = [];
+      }
+    }
 
     return {
       id: pid,
       slug,
       title,
       difficulty,
-      topics,
+      topics: liveTopics,
       isPaidOnly: isPaid,
       descriptionHtml,
       starterCode,
       solutions,
       testCases,
-      hints: gqlData?.hints || [],
+      hints: gqlData?.hints && Array.isArray(gqlData.hints) ? gqlData.hints.map(decodeHtmlEntities) : [],
+      similarQuestions,
       source: isPaid ? "mirror" : "leetcode",
-      cachedAt: Date.now()
+      cachedAt: Date.now(),
     };
   }
 
@@ -104,6 +137,11 @@ export class ProblemFetcher {
         difficulty
         content
         hints
+        similarQuestions
+        topicTags {
+          name
+          slug
+        }
         codeSnippets {
           lang
           langSlug
@@ -119,9 +157,9 @@ export class ProblemFetcher {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "LeetBank/1.0"
+          "User-Agent": "LeetBank/1.0",
         },
-        body: JSON.stringify({ query, variables: { titleSlug: slug } })
+        body: JSON.stringify({ query, variables: { titleSlug: slug } }),
       });
       if (!res.ok) return null;
       const data = await res.json();
@@ -134,17 +172,14 @@ export class ProblemFetcher {
   private static async fetchDoocsMirror(
     probId: number,
     title: string,
-    slug: string
+    slug: string,
   ): Promise<{ descriptionHtml: string; solutions: SolutionEntry[]; starterCode: Record<string, string> } | null> {
     const startRange = Math.floor(probId / 100) * 100;
     const endRange = startRange + 99;
     const rangeStr = `${String(startRange).padStart(4, "0")}-${String(endRange).padStart(4, "0")}`;
     const baseUrl = `https://raw.githubusercontent.com/doocs/leetcode/main/solution/${rangeStr}`;
 
-    const candidates = [
-      `${String(probId).padStart(4, "0")}.${title}`,
-      `${String(probId).padStart(4, "0")}.${slug}`
-    ];
+    const candidates = [`${String(probId).padStart(4, "0")}.${title}`, `${String(probId).padStart(4, "0")}.${slug}`];
 
     for (const folder of candidates) {
       for (const filename of ["README_EN.md", "README.md"]) {
@@ -153,7 +188,7 @@ export class ProblemFetcher {
           const res = await fetch(url, { headers: { "User-Agent": "LeetBank/1.0" } });
           if (res.ok) {
             const md = await res.text();
-            return this.parseMirrorMarkdown(md);
+            return ProblemFetcher.parseMirrorMarkdown(md);
           }
         } catch {}
       }
@@ -209,29 +244,29 @@ export class ProblemFetcher {
         langSlug,
         code: fullCode,
         timeComplexity: parsedTime,
-        spaceComplexity: parsedSpace
+        spaceComplexity: parsedSpace,
       });
 
       // Extract starter signature from solution code for paywalled problems
       if (langSlug.includes("python") || langName.toLowerCase().includes("python")) {
         const sigMatch = fullCode.match(/(class\s+Solution[\s\S]*?def\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*(?:->\s*[^:]+)?:)/);
         if (sigMatch) {
-          starterCode["python3"] = `${sigMatch[1]}\n        pass`;
+          starterCode.python3 = `${sigMatch[1]}\n        pass`;
         }
       } else if (langSlug.includes("typescript") || langName.toLowerCase().includes("typescript")) {
         const sigMatch = fullCode.match(/(function\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*:\s*[^{]+)/);
         if (sigMatch) {
-          starterCode["typescript"] = `${sigMatch[1]} {\n    \n};`;
+          starterCode.typescript = `${sigMatch[1]} {\n    \n};`;
         }
       } else if (langSlug.includes("cpp") || langSlug.includes("c++")) {
         const sigMatch = fullCode.match(/(class\s+Solution\s*{\s*public:\s*[^{]+)/);
         if (sigMatch) {
-          starterCode["cpp"] = `${sigMatch[1]} {\n        \n    }\n};`;
+          starterCode.cpp = `${sigMatch[1]} {\n        \n    }\n};`;
         }
       } else if (langSlug.includes("java")) {
         const sigMatch = fullCode.match(/(class\s+Solution\s*{\s*public\s+[^{]+)/);
         if (sigMatch) {
-          starterCode["java"] = `${sigMatch[1]} {\n        \n    }\n};`;
+          starterCode.java = `${sigMatch[1]} {\n        \n    }\n};`;
         }
       }
     }
@@ -257,7 +292,7 @@ export class ProblemFetcher {
           name: `Example ${id - 1}`,
           input: inputMatch[1].trim(),
           expected: outputMatch ? outputMatch[1].trim() : undefined,
-          explanation: explMatch ? explMatch[1].trim() : undefined
+          explanation: explMatch ? explMatch[1].trim() : undefined,
         });
       }
     }
@@ -277,7 +312,7 @@ export class ProblemFetcher {
             name: `Example ${id - 1}`,
             input: inputMatch[1].trim(),
             expected: outputMatch ? outputMatch[1].trim() : undefined,
-            explanation: explMatch ? explMatch[1].trim() : undefined
+            explanation: explMatch ? explMatch[1].trim() : undefined,
           });
         }
       }
@@ -299,7 +334,7 @@ export class ProblemFetcher {
             name: `Example ${id - 1}`,
             input: inputMatch[1].trim(),
             expected: outputMatch ? outputMatch[1].trim() : undefined,
-            explanation: explMatch ? explMatch[1].trim() : undefined
+            explanation: explMatch ? explMatch[1].trim() : undefined,
           });
         }
       }
@@ -310,7 +345,7 @@ export class ProblemFetcher {
       return rawExampleList.map((t, idx) => ({
         id: idx + 1,
         name: `Example ${idx + 1}`,
-        input: decodeHtmlEntities(t)
+        input: decodeHtmlEntities(t),
       }));
     }
 

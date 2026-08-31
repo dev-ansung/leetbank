@@ -1,27 +1,30 @@
-import TurndownService from "turndown";
 import katex from "katex";
-import React, { useState, useMemo, useEffect } from "react";
-import { 
-  Search, 
-  ArrowUpDown, 
-  SlidersHorizontal, 
-  Shuffle, 
-  ChevronDown, 
-  ChevronUp, 
-  Check, 
-  Copy, 
+import {
+  ArrowUpDown,
+  Building2,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
   ExternalLink,
-  X,
+  Layers,
+  Lightbulb,
   Lock,
-  Sun,
   Moon,
-  TrendingUp,
+  Plus,
   RotateCcw,
-  Plus
+  Search,
+  Shuffle,
+  SlidersHorizontal,
+  Sun,
+  Tag,
+  X,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import TurndownService from "turndown";
 import catalogData from "../data/catalog.json";
+import companiesData from "../data/companies.json";
 import tracksData from "../data/tracks.json";
-import companyData from "../data/companies.json";
 
 // LaTeX Math Renderer for Big-O Complexities
 function LatexMath({ math, label }: { math?: string; label: string }) {
@@ -40,7 +43,7 @@ function LatexMath({ math, label }: { math?: string; label: string }) {
     try {
       return katex.renderToString(clean, {
         throwOnError: false,
-        displayMode: false
+        displayMode: false,
       });
     } catch {
       return null;
@@ -59,32 +62,67 @@ function LatexMath({ math, label }: { math?: string; label: string }) {
   );
 }
 
+// Lookup company interview frequency for a given problem ID
+function getProblemCompanies(probId: number): Array<{ company: string; window: string; displayName: string }> {
+  const companies = (companiesData as any).companies || {};
+  const results: Array<{ company: string; window: string; displayName: string }> = [];
+
+  const displayNames: Record<string, string> = {
+    meta: "Meta",
+    google: "Google",
+    amazon: "Amazon",
+    microsoft: "Microsoft",
+    bloomberg: "Bloomberg",
+    apple: "Apple",
+    uber: "Uber",
+    bytedance: "ByteDance",
+    netflix: "Netflix",
+  };
+
+  for (const [compKey, windows] of Object.entries(companies) as [string, any][]) {
+    let matchedWin = "";
+    if (windows["30-days"]?.some((item: any) => item.id === probId)) matchedWin = "30d";
+    else if (windows["3-months"]?.some((item: any) => item.id === probId)) matchedWin = "3m";
+    else if (windows["6-months"]?.some((item: any) => item.id === probId)) matchedWin = "6m";
+    else if (windows["all-time"]?.some((item: any) => item.id === probId)) matchedWin = "All-Time";
+
+    if (matchedWin) {
+      results.push({
+        company: compKey,
+        window: matchedWin,
+        displayName: displayNames[compKey] || compKey,
+      });
+    }
+  }
+  return results;
+}
+
 // Standardized HTML to Markdown converter powered by Turndown
 const turndownService = new TurndownService({
   headingStyle: "atx",
   codeBlockStyle: "fenced",
   bulletListMarker: "-",
-  emDelimiter: "*"
+  emDelimiter: "*",
 });
 
 turndownService.addRule("superscript", {
   filter: "sup",
-  replacement: (content) => `^${content}`
+  replacement: (content) => `^${content}`,
 });
 
 turndownService.addRule("subscript", {
   filter: "sub",
-  replacement: (content) => `_${content}`
+  replacement: (content) => `_${content}`,
 });
 
 turndownService.addRule("exampleBlock", {
   filter: (node) => node.nodeName === "DIV" && node.classList.contains("example-block"),
-  replacement: (content) => `\n\`\`\`\n${content.trim()}\n\`\`\`\n`
+  replacement: (content) => `\n\`\`\`\n${content.trim()}\n\`\`\`\n`,
 });
 
 function convertHtmlToMarkdown(problem: Problem, html?: string): string {
   if (!html) return `# ${problem.id}. ${problem.title}\n\n**Difficulty:** ${problem.difficulty}`;
-  
+
   const bodyMd = turndownService.turndown(html);
 
   const header = `# ${problem.id}. ${problem.title}
@@ -104,14 +142,28 @@ function convertHtmlToMarkdown(problem: Problem, html?: string): string {
 
 // Compact number formatter (e.g. 23.3M, 850.2K)
 function formatCompactNumber(num?: number): string {
-  if (num === undefined || num === null || isNaN(num) || num === 0) return "-";
+  if (num === undefined || num === null || Number.isNaN(num) || num === 0) return "-";
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
   if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
   return num.toLocaleString();
 }
 
 // Sorter & Filter Types
-export type SortField = "id-asc" | "id-desc" | "title-asc" | "title-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc" | "access-desc" | "access-asc";
+export type SortField =
+  | "id-asc"
+  | "id-desc"
+  | "title-asc"
+  | "title-desc"
+  | "diff-asc"
+  | "diff-desc"
+  | "ac-desc"
+  | "ac-asc"
+  | "accepted-desc"
+  | "accepted-asc"
+  | "submitted-desc"
+  | "submitted-asc"
+  | "access-desc"
+  | "access-asc";
 
 export interface FilterRule {
   id: string;
@@ -192,8 +244,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("30-days");
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
-  const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
+  const [selectedDifficulty, _setSelectedDifficulty] = useState<string>("All");
+  const [selectedAccess, _setSelectedAccess] = useState<"all" | "free" | "premium">("all");
 
   // Sorter & Filter Popovers
   const [sortBy, setSortBy] = useState<SortField>("id-asc");
@@ -206,7 +258,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [activeProblem, setActiveProblem] = useState<Problem | null>(() => {
     if (!initialProblemId) return null;
     const num = Number(initialProblemId);
-    if (!isNaN(num)) {
+    if (!Number.isNaN(num)) {
       return (catalogData as Problem[]).find((p) => p.id === num) || null;
     }
     return (catalogData as Problem[]).find((p) => p.slug === String(initialProblemId)) || null;
@@ -216,6 +268,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [selectedStarterLang, setSelectedStarterLang] = useState("python3");
   const [selectedSolLang, setSelectedSolLang] = useState("python3");
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
+  const [revealedHints, setRevealedHints] = useState<Record<number, boolean>>({});
   const [visibleCount, setVisibleCount] = useState(50);
   const [isDark, setIsDark] = useState(false);
 
@@ -244,7 +297,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   // Keyboard shortcut '/' to focus search, 'Escape' to close modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+      if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
         e.preventDefault();
         document.getElementById("search-input")?.focus();
       }
@@ -261,6 +318,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
   // Fetch live problem details from Edge API
   useEffect(() => {
+    setRevealedHints({});
     if (!activeProblem) {
       setProblemDetail(null);
       return;
@@ -303,7 +361,17 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   // Reset pagination on filter change
   useEffect(() => {
     setVisibleCount(50);
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, sortBy]);
+  }, [
+    searchQuery,
+    selectedDifficulty,
+    selectedRoadmap,
+    selectedAccess,
+    selectedTopic,
+    selectedCompany,
+    selectedWindow,
+    filterRules,
+    sortBy,
+  ]);
 
   // Top topics ranked by frequency
   const sortedTopics = useMemo(() => {
@@ -332,7 +400,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     const randomIdx = Math.floor(Math.random() * filteredProblems.length);
     const picked = filteredProblems[randomIdx];
     setActiveProblem(picked);
-    window.history.pushState(null, "", "/" + picked.id);
+    window.history.pushState(null, "", `/${picked.id}`);
   };
 
   // Column Header Sort Toggle
@@ -356,11 +424,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
   // Main Filtering & Sorting Pipeline
   const { filteredProblems, companyMetaMap } = useMemo(() => {
-    let compMap: Record<number, { pattern: string; priority: string }> = {};
+    const compMap: Record<number, { pattern: string; priority: string }> = {};
 
-    const effectiveCompany = selectedCompany || filterRules.find(r => r.field === "company")?.value;
+    const effectiveCompany = selectedCompany || filterRules.find((r) => r.field === "company")?.value;
     if (effectiveCompany) {
-      const cData = ((companyData as any).companies || companyData)[effectiveCompany];
+      const cData = ((companiesData as any).companies || companiesData)[effectiveCompany];
       const winList = cData?.[selectedWindow] || cData?.["all-time"] || [];
       winList.forEach((q: any) => {
         compMap[q.id] = { pattern: q.pattern, priority: q.priority };
@@ -368,8 +436,6 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     }
 
     let list = catalogData as Problem[];
-
-
 
     // 2. Tracks Filter
     if (selectedRoadmap && selectedRoadmap !== "All") {
@@ -381,7 +447,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
     // 3. Company Quick Filter
     if (selectedCompany) {
-      const cData = ((companyData as any).companies || companyData)[selectedCompany];
+      const cData = ((companiesData as any).companies || companiesData)[selectedCompany];
       const winList = cData?.[selectedWindow] || cData?.["all-time"] || [];
       const compIds = new Set<number>(winList.map((q: any) => q.id));
       list = list.filter((p) => compIds.has(p.id));
@@ -412,7 +478,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           if (rule.field === "difficulty") {
             matches = p.difficulty.toLowerCase() === rule.value.toLowerCase();
           } else if (rule.field === "topics") {
-            matches = p.topics.some(t => t.toLowerCase() === rule.value.toLowerCase());
+            matches = p.topics.some((t) => t.toLowerCase() === rule.value.toLowerCase());
           } else if (rule.field === "access") {
             matches = rule.value === "free" ? !p.isPaidOnly : !!p.isPaidOnly;
           } else if (rule.field === "company") {
@@ -424,20 +490,19 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           return rule.operator === "is" ? matches : !matches;
         });
 
-        return matchMode === "all"
-          ? ruleResults.every(Boolean)
-          : ruleResults.some(Boolean);
+        return matchMode === "all" ? ruleResults.every(Boolean) : ruleResults.some(Boolean);
       });
     }
 
     // 8. Search Query
     if (searchQuery) {
       const q = searchQuery.toLowerCase().trim();
-      list = list.filter((p) => 
-        p.id.toString() === q ||
-        p.title.toLowerCase().includes(q) ||
-        p.slug.toLowerCase().includes(q) ||
-        p.topics.some((t) => t.toLowerCase().includes(q))
+      list = list.filter(
+        (p) =>
+          p.id.toString() === q ||
+          p.title.toLowerCase().includes(q) ||
+          p.slug.toLowerCase().includes(q) ||
+          p.topics.some((t) => t.toLowerCase().includes(q)),
       );
     }
 
@@ -487,14 +552,29 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     });
 
     return { filteredProblems: sorted, companyMetaMap: compMap };
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, matchMode, sortBy, catalogMap]);
+  }, [
+    searchQuery,
+    selectedDifficulty,
+    selectedRoadmap,
+    selectedAccess,
+    selectedTopic,
+    selectedCompany,
+    selectedWindow,
+    filterRules,
+    matchMode,
+    sortBy,
+    catalogMap,
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
       {/* Top Navbar */}
       <header className="sticky top-0 z-20 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-[#09090b]/80 backdrop-blur-md px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <a href="/" className="flex items-center gap-2 text-zinc-950 dark:text-white font-semibold text-sm tracking-tight hover:opacity-80 transition">
+          <a
+            href="/"
+            className="flex items-center gap-2 text-zinc-950 dark:text-white font-semibold text-sm tracking-tight hover:opacity-80 transition"
+          >
             <span className="text-base">🏦</span>
             <span>LeetBank</span>
           </a>
@@ -511,11 +591,12 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           >
             {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </button>
-          
-          <a 
-            href="https://github.com/dev-ansung/leetbank" 
-            target="_blank" 
+
+          <a
+            href="https://github.com/dev-ansung/leetbank"
+            target="_blank"
             className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            rel="noopener"
           >
             GitHub
           </a>
@@ -524,9 +605,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
       {/* Main LeetCode-Style Container */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-4">
-        
         {/* 1. Top Topic Ribbon with Counts & Expand/Collapse */}
-        <div className={`flex items-center gap-1.5 ${isTopicsExpanded ? "flex-wrap" : "overflow-x-auto scrollbar-none flex-nowrap pb-1 -mx-4 px-4 sm:mx-0 sm:px-0"}`}>
+        <div
+          className={`flex items-center gap-1.5 ${isTopicsExpanded ? "flex-wrap" : "overflow-x-auto scrollbar-none flex-nowrap pb-1 -mx-4 px-4 sm:mx-0 sm:px-0"}`}
+        >
           {(isTopicsExpanded ? sortedTopics : sortedTopics.slice(0, 12)).map(({ topic, count }) => (
             <button
               key={topic}
@@ -546,23 +628,23 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             className="text-xs px-2 py-1 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 font-medium transition cursor-pointer"
           >
             {isTopicsExpanded ? (
-              <>Collapse <ChevronUp className="size-3" /></>
+              <>
+                Collapse <ChevronUp className="size-3" />
+              </>
             ) : (
-              <>Expand <ChevronDown className="size-3" /></>
+              <>
+                Expand <ChevronDown className="size-3" />
+              </>
             )}
           </button>
         </div>
-
-
 
         {/* 3. Companies & Tracks Navigation Bar */}
         <div className="flex flex-col gap-2 p-3 bg-zinc-50/60 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl">
           {/* Companies Row */}
           <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto pb-0.5 -mx-1 px-1">
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">
-                Companies:
-              </span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">Companies:</span>
               {COMPANIES.map((c) => (
                 <button
                   key={c.id}
@@ -613,11 +695,12 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
           {/* Tracks Row */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full pt-1.5 border-t border-zinc-200/50 dark:border-zinc-800/50 pb-0.5">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">
-              Tracks:
-            </span>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">Tracks:</span>
             <button
-              onClick={() => { setSelectedRoadmap("All"); setSelectedCompany(null); }}
+              onClick={() => {
+                setSelectedRoadmap("All");
+                setSelectedCompany(null);
+              }}
               className={`text-xs px-2.5 py-0.5 rounded-md border font-medium transition cursor-pointer ${
                 selectedRoadmap === "All" && !selectedCompany
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
@@ -629,7 +712,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             {tracksData.tracks.map((track) => (
               <button
                 key={track.id}
-                onClick={() => { setSelectedRoadmap(track.id); setSelectedCompany(null); }}
+                onClick={() => {
+                  setSelectedRoadmap(track.id);
+                  setSelectedCompany(null);
+                }}
                 className={`text-xs px-2.5 py-0.5 rounded-md border font-medium transition cursor-pointer ${
                   selectedRoadmap === track.id && !selectedCompany
                     ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
@@ -651,7 +737,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Search questions...'
+              placeholder="Search questions..."
               className="w-full pl-10 pr-12 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 focus:bg-white dark:focus:bg-zinc-900 transition"
             />
             <div className="absolute right-3 flex items-center gap-1.5 pointer-events-none">
@@ -664,7 +750,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           {/* Sorter Popover Button */}
           <div className="relative">
             <button
-              onClick={() => { setShowSortMenu(!showSortMenu); setShowFilterMenu(false); }}
+              onClick={() => {
+                setShowSortMenu(!showSortMenu);
+                setShowFilterMenu(false);
+              }}
               className={`p-2 rounded-lg border transition cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
                 sortBy !== "id-asc"
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
@@ -689,10 +778,13 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                   { id: "access-asc", label: "Access (Free First)" },
                   { id: "ac-desc", label: "Acceptance (High → Low)" },
                   { id: "ac-asc", label: "Acceptance (Low → High)" },
-                                  ].map((opt) => (
+                ].map((opt) => (
                   <button
                     key={opt.id}
-                    onClick={() => { setSortBy(opt.id as SortField); setShowSortMenu(false); }}
+                    onClick={() => {
+                      setSortBy(opt.id as SortField);
+                      setShowSortMenu(false);
+                    }}
                     className={`w-full px-2.5 py-1.5 rounded-md text-xs font-medium text-left flex items-center justify-between transition cursor-pointer ${
                       sortBy === opt.id
                         ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-white font-semibold"
@@ -710,7 +802,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           {/* Filter Popover Button */}
           <div className="relative">
             <button
-              onClick={() => { setShowFilterMenu(!showFilterMenu); setShowSortMenu(false); }}
+              onClick={() => {
+                setShowFilterMenu(!showFilterMenu);
+                setShowSortMenu(false);
+              }}
               className={`p-2 rounded-lg border transition cursor-pointer flex items-center gap-1.5 text-xs font-medium relative ${
                 filterRules.length > 0
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
@@ -760,7 +855,24 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                           value={rule.field}
                           onChange={(e) => {
                             const val = e.target.value as any;
-                            setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, field: val, value: val === "difficulty" ? "Easy" : val === "access" ? "free" : val === "company" ? "meta" : "Array" } : r));
+                            setFilterRules(
+                              filterRules.map((r) =>
+                                r.id === rule.id
+                                  ? {
+                                      ...r,
+                                      field: val,
+                                      value:
+                                        val === "difficulty"
+                                          ? "Easy"
+                                          : val === "access"
+                                            ? "free"
+                                            : val === "company"
+                                              ? "meta"
+                                              : "Array",
+                                    }
+                                  : r,
+                              ),
+                            );
                           }}
                           className="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                         >
@@ -768,14 +880,14 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                           <option value="topics">Topics</option>
                           <option value="access">Access</option>
                           <option value="company">Company</option>
-                                                    <option value="language">Language</option>
+                          <option value="language">Language</option>
                         </select>
 
                         <select
                           value={rule.operator}
                           onChange={(e) => {
                             const val = e.target.value as any;
-                            setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, operator: val } : r));
+                            setFilterRules(filterRules.map((r) => (r.id === rule.id ? { ...r, operator: val } : r)));
                           }}
                           className="px-1.5 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                         >
@@ -786,7 +898,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                         {rule.field === "difficulty" && (
                           <select
                             value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
+                            onChange={(e) =>
+                              setFilterRules(
+                                filterRules.map((r) => (r.id === rule.id ? { ...r, value: e.target.value } : r)),
+                              )
+                            }
                             className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                           >
                             <option value="Easy">Easy</option>
@@ -798,11 +914,17 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                         {rule.field === "topics" && (
                           <select
                             value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
+                            onChange={(e) =>
+                              setFilterRules(
+                                filterRules.map((r) => (r.id === rule.id ? { ...r, value: e.target.value } : r)),
+                              )
+                            }
                             className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium truncate"
                           >
-                            {sortedTopics.map(t => (
-                              <option key={t.topic} value={t.topic}>{t.topic}</option>
+                            {sortedTopics.map((t) => (
+                              <option key={t.topic} value={t.topic}>
+                                {t.topic}
+                              </option>
                             ))}
                           </select>
                         )}
@@ -810,7 +932,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                         {rule.field === "access" && (
                           <select
                             value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
+                            onChange={(e) =>
+                              setFilterRules(
+                                filterRules.map((r) => (r.id === rule.id ? { ...r, value: e.target.value } : r)),
+                              )
+                            }
                             className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                           >
                             <option value="free">Free Only</option>
@@ -821,31 +947,41 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                         {rule.field === "company" && (
                           <select
                             value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
+                            onChange={(e) =>
+                              setFilterRules(
+                                filterRules.map((r) => (r.id === rule.id ? { ...r, value: e.target.value } : r)),
+                              )
+                            }
                             className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                           >
-                            {COMPANIES.map(c => (
-                              <option key={c.id} value={c.id}>{c.name}</option>
+                            {COMPANIES.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.name}
+                              </option>
                             ))}
                           </select>
                         )}
 
-
-
                         {rule.field === "language" && (
                           <select
                             value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
+                            onChange={(e) =>
+                              setFilterRules(
+                                filterRules.map((r) => (r.id === rule.id ? { ...r, value: e.target.value } : r)),
+                              )
+                            }
                             className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
                           >
-                            {["Python3", "TypeScript", "Go", "Rust", "C++", "Java", "Swift", "Kotlin"].map(l => (
-                              <option key={l} value={l}>{l}</option>
+                            {["Python3", "TypeScript", "Go", "Rust", "C++", "Java", "Swift", "Kotlin"].map((l) => (
+                              <option key={l} value={l}>
+                                {l}
+                              </option>
                             ))}
                           </select>
                         )}
 
                         <button
-                          onClick={() => setFilterRules(filterRules.filter(r => r.id !== rule.id))}
+                          onClick={() => setFilterRules(filterRules.filter((r) => r.id !== rule.id))}
                           className="p-1 text-zinc-400 hover:text-red-500 transition cursor-pointer"
                         >
                           <X className="size-3.5" />
@@ -861,7 +997,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                       id: Math.random().toString(36).substring(7),
                       field: "difficulty",
                       operator: "is",
-                      value: "Medium"
+                      value: "Medium",
                     };
                     setFilterRules([...filterRules, newRule]);
                   }}
@@ -965,33 +1101,39 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           {/* Table Body Rows */}
           <div className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
             {filteredProblems.slice(0, visibleCount).map((p, idx) => {
-              const compMeta = companyMetaMap[p.id];
+              const _compMeta = companyMetaMap[p.id];
               return (
                 <div
                   key={p.id}
-                  onClick={() => { setActiveProblem(p); window.history.pushState(null, "", "/" + p.id); }}
+                  onClick={() => {
+                    setActiveProblem(p);
+                    window.history.pushState(null, "", `/${p.id}`);
+                  }}
                   className={`px-4 py-3 flex items-center justify-between gap-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition cursor-pointer group ${
                     idx % 2 === 1 ? "bg-zinc-50/30 dark:bg-zinc-900/40" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500 w-8 shrink-0">
-                      {p.id}.
-                    </span>
+                    <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500 w-8 shrink-0">{p.id}.</span>
                     <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-white transition truncate">
                       {p.title}
                     </span>
-
                   </div>
 
                   <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
                     {/* Accepted (Hidden on mobile & small tablet, visible on md+) */}
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-14 sm:w-16 text-right hidden md:block" title={`Total Accepted: ${(p.totalAcs || 0).toLocaleString()}`}>
+                    <span
+                      className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-14 sm:w-16 text-right hidden md:block"
+                      title={`Total Accepted: ${(p.totalAcs || 0).toLocaleString()}`}
+                    >
                       {formatCompactNumber(p.totalAcs)}
                     </span>
 
                     {/* Submissions (Hidden on mobile/tablet, visible on lg+) */}
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right hidden lg:block" title={`Total Submissions: ${(p.totalSubmitted || 0).toLocaleString()}`}>
+                    <span
+                      className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right hidden lg:block"
+                      title={`Total Submissions: ${(p.totalSubmitted || 0).toLocaleString()}`}
+                    >
                       {formatCompactNumber(p.totalSubmitted)}
                     </span>
 
@@ -1006,8 +1148,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                         p.difficulty === "Easy"
                           ? "text-teal-600 dark:text-teal-400"
                           : p.difficulty === "Medium"
-                          ? "text-amber-600 dark:text-amber-400"
-                          : "text-rose-600 dark:text-rose-400"
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-rose-600 dark:text-rose-400"
                       }`}
                     >
                       {p.difficulty === "Medium" ? "Med." : p.difficulty}
@@ -1051,7 +1193,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
       {/* Interactive Problem Modal */}
       {activeProblem && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-0 sm:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -1064,15 +1206,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 flex-wrap min-w-0">
-                <span className="text-xs font-mono text-zinc-400 shrink-0">
-                  #{activeProblem.id}
-                </span>
+                <span className="text-xs font-mono text-zinc-400 shrink-0">#{activeProblem.id}</span>
                 <h2 className="text-base font-semibold text-zinc-950 dark:text-white truncate">
                   {activeProblem.title}
                 </h2>
-                <span className="text-xs text-zinc-500 font-medium">
-                  • {activeProblem.difficulty}
-                </span>
+                <span className="text-xs text-zinc-500 font-medium">• {activeProblem.difficulty}</span>
                 {activeProblem.isPaidOnly && (
                   <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
                     Premium
@@ -1085,12 +1223,16 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                   href={`https://leetcode.com/problems/${activeProblem.slug}/`}
                   target="_blank"
                   className="text-xs px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition flex items-center gap-1"
+                  rel="noopener"
                 >
                   <span>LeetCode</span>
                   <ExternalLink className="size-3" />
                 </a>
                 <button
-                  onClick={() => { setActiveProblem(null); window.history.pushState(null, "", "/"); }}
+                  onClick={() => {
+                    setActiveProblem(null);
+                    window.history.pushState(null, "", "/");
+                  }}
                   className="p-1 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
                 >
                   <X className="size-4" />
@@ -1145,9 +1287,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                 <div className="flex flex-col gap-4">
                   {/* Statement Top Action Bar */}
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                      Problem Statement
-                    </h3>
+                    <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Problem Statement</h3>
                     <button
                       onClick={() => {
                         const md = convertHtmlToMarkdown(activeProblem, problemDetail?.descriptionHtml);
@@ -1169,43 +1309,151 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                     </button>
                   </div>
 
+                  {/* Problem Topic Tags & Company Badges */}
+                  <div className="flex flex-col gap-2.5 pb-1">
+                    {/* Topics Row */}
+                    {activeProblem.topics && activeProblem.topics.length > 0 && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
+                          <Tag className="size-3" /> Topics:
+                        </span>
+                        {activeProblem.topics.map((t: string) => (
+                          <button
+                            key={t}
+                            onClick={() => {
+                              setSelectedTopic(t);
+                              setActiveProblem(null);
+                              window.history.pushState(null, "", "/");
+                            }}
+                            className="text-[11px] px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition cursor-pointer border border-zinc-200/60 dark:border-zinc-700/60"
+                            title={`Filter catalog by ${t}`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Companies Row */}
+                    {(() => {
+                      const matchedCompanies = getProblemCompanies(activeProblem.id);
+                      if (matchedCompanies.length === 0) return null;
+                      return (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
+                            <Building2 className="size-3" /> Companies:
+                          </span>
+                          {matchedCompanies.map((c) => (
+                            <button
+                              key={c.company}
+                              onClick={() => {
+                                setSelectedCompany(c.company);
+                                setActiveProblem(null);
+                                window.history.pushState(null, "", "/");
+                              }}
+                              className="text-[11px] px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition cursor-pointer border border-zinc-200/60 dark:border-zinc-700/60 flex items-center gap-1"
+                              title={`Filter catalog by ${c.displayName}`}
+                            >
+                              <span>{c.displayName}</span>
+                              <span className="text-[9px] px-1 py-0.2 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400 font-mono">
+                                {c.window}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+
                   {/* HTML Statement */}
-                  <div 
+                  <div
                     className="prose dark:prose-invert max-w-none text-xs leading-relaxed text-zinc-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-800/80 rounded-xl p-5 bg-zinc-50/30 dark:bg-zinc-900/30"
-                    dangerouslySetInnerHTML={{ 
-                      __html: problemDetail?.descriptionHtml || `<p>Problem statement for #${activeProblem.id} (${activeProblem.title}) is loading...</p>` 
-                    }} 
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        problemDetail?.descriptionHtml ||
+                        `<p>Problem statement for #${activeProblem.id} (${activeProblem.title}) is loading...</p>`,
+                    }}
                   />
 
-                  {/* Decoded Test Cases */}
-                  {problemDetail?.testCases && problemDetail.testCases.length > 0 && (
-                    <div className="flex flex-col gap-3">
-                      <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                        Example Test Cases
+                  {/* Hints Section */}
+                  {problemDetail?.hints && problemDetail.hints.length > 0 && (
+                    <div className="flex flex-col gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                      <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                        <Lightbulb className="size-3.5 text-amber-500" />
+                        <span>Hints ({problemDetail.hints.length})</span>
                       </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {problemDetail.testCases.map((tc: any, idx: number) => (
-                          <div key={idx} className="border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 bg-zinc-50/50 dark:bg-zinc-950 flex flex-col gap-2">
-                            <div className="flex items-center justify-between text-[11px] text-zinc-500 font-medium border-b border-zinc-100 dark:border-zinc-800 pb-1.5">
-                              <span>Example {idx + 1}</span>
+                      <div className="flex flex-col gap-2">
+                        {problemDetail.hints.map((hintText: string, hIdx: number) => {
+                          const isRevealed = revealedHints[hIdx] || false;
+                          return (
+                            <div
+                              key={hIdx}
+                              className="border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/50 text-xs"
+                            >
                               <button
-                                onClick={() => {
-                                  const inStr = typeof tc.input === "object" ? JSON.stringify(tc.input) : String(tc.input ?? "");
-                                  const outStr = typeof tc.expected === "object" ? JSON.stringify(tc.expected) : String(tc.expected ?? "");
-                                  const text = `Input: ${inStr}\nOutput: ${outStr}`;
-                                  navigator.clipboard.writeText(text);
-                                }}
-                                className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition cursor-pointer"
+                                onClick={() => setRevealedHints({ ...revealedHints, [hIdx]: !isRevealed })}
+                                className="w-full px-3 py-2 text-left flex items-center justify-between text-zinc-700 dark:text-zinc-300 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition cursor-pointer"
                               >
-                                <Copy className="size-3" /> Copy
+                                <span>Hint {hIdx + 1}</span>
+                                <span className="text-[11px] text-zinc-400 font-mono">
+                                  {isRevealed ? "Hide ▴" : "Show ▾"}
+                                </span>
                               </button>
+                              {isRevealed && (
+                                <div
+                                  className="px-3 pb-3 text-zinc-600 dark:text-zinc-300 text-xs border-t border-zinc-100 dark:border-zinc-800/80 pt-2 leading-relaxed"
+                                  dangerouslySetInnerHTML={{ __html: hintText }}
+                                />
+                              )}
                             </div>
-                            <div className="font-mono text-[11px] flex flex-col gap-1 text-zinc-700 dark:text-zinc-300">
-                              <div><span className="text-zinc-400">Input: </span>{typeof tc.input === "object" ? JSON.stringify(tc.input) : String(tc.input ?? "")}</div>
-                              <div><span className="text-zinc-400">Expected: </span>{typeof tc.expected === "object" ? JSON.stringify(tc.expected) : String(tc.expected ?? "")}</div>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Similar Questions Section */}
+                  {problemDetail?.similarQuestions && problemDetail.similarQuestions.length > 0 && (
+                    <div className="flex flex-col gap-2.5 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                      <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                        <Layers className="size-3.5 text-blue-500" />
+                        <span>Similar Questions ({problemDetail.similarQuestions.length})</span>
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {problemDetail.similarQuestions.map((sq: any, sIdx: number) => {
+                          const matchedProb = catalogData.find(
+                            (p) => p.slug === sq.slug || p.title.toLowerCase() === sq.title.toLowerCase(),
+                          );
+                          return (
+                            <button
+                              key={sIdx}
+                              onClick={() => {
+                                if (matchedProb) {
+                                  setActiveProblem(matchedProb);
+                                  window.history.pushState(null, "", `/${matchedProb.id}`);
+                                } else {
+                                  window.open(`https://leetcode.com/problems/${sq.slug}/`, "_blank");
+                                }
+                              }}
+                              className="px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-400 dark:hover:border-zinc-600 text-left transition flex items-center justify-between gap-2 cursor-pointer group"
+                            >
+                              <span className="text-xs text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-950 dark:group-hover:text-white font-medium truncate">
+                                {matchedProb ? `#${matchedProb.id} ${sq.title}` : sq.title}
+                              </span>
+                              <span
+                                className={`text-[10px] font-mono px-1.5 py-0.2 rounded shrink-0 ${
+                                  sq.difficulty === "Easy"
+                                    ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40"
+                                    : sq.difficulty === "Medium"
+                                      ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40"
+                                      : "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40"
+                                }`}
+                              >
+                                {sq.difficulty}
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -1215,26 +1463,27 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               {!loadingDetail && activeTab === "starter" && (
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {problemDetail?.starterCode && Object.keys(problemDetail.starterCode).map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => setSelectedStarterLang(lang)}
-                        className={`text-[11px] px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer border ${
-                          selectedStarterLang === lang
-                            ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                            : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
-                        }`}
-                      >
-                        {lang}
-                      </button>
-                    ))}
+                    {problemDetail?.starterCode &&
+                      Object.keys(problemDetail.starterCode).map((lang) => (
+                        <button
+                          key={lang}
+                          onClick={() => setSelectedStarterLang(lang)}
+                          className={`text-[11px] px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer border ${
+                            selectedStarterLang === lang
+                              ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                              : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
+                          }`}
+                        >
+                          {lang}
+                        </button>
+                      ))}
                   </div>
 
                   <CopyBlock
                     label={`Official ${selectedStarterLang} Starter Code`}
                     content={
-                      problemDetail?.starterCode?.[selectedStarterLang] || 
-                      problemDetail?.starterCode?.["python3"] || 
+                      problemDetail?.starterCode?.[selectedStarterLang] ||
+                      problemDetail?.starterCode?.python3 ||
                       "// Starter code snippet"
                     }
                   />
@@ -1244,46 +1493,47 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               {!loadingDetail && activeTab === "solution" && (
                 <div className="flex flex-col gap-3">
                   {problemDetail?.solutions && problemDetail.solutions.length > 0 ? (
-                    <>
-                      {(() => {
-                        const activeSol = problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang) || problemDetail.solutions[0];
-                        return (
-                          <>
-                            <div className="flex items-center justify-between gap-3 flex-wrap">
-                              <div className="flex items-center gap-2">
-                                <LatexMath label="Time" math={activeSol?.timeComplexity || "O(N)"} />
-                                <LatexMath label="Space" math={activeSol?.spaceComplexity || "O(1)"} />
-                              </div>
-
-                              <div className="flex items-center gap-1 flex-wrap">
-                                {problemDetail.solutions.map((sol: any, idx: number) => {
-                                  const solKey = sol.langSlug || `${sol.language.toLowerCase()}-${idx}`;
-                                  const isSelected = (selectedSolLang === solKey) || (!selectedSolLang && idx === 0);
-                                  return (
-                                    <button
-                                      key={`${solKey}-${idx}`}
-                                      onClick={() => setSelectedSolLang(solKey)}
-                                      className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer border ${
-                                        isSelected
-                                          ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                                          : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
-                                      }`}
-                                    >
-                                      {sol.language}
-                                    </button>
-                                  );
-                                })}
-                              </div>
+                    (() => {
+                      const activeSol =
+                        problemDetail.solutions.find(
+                          (s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang,
+                        ) || problemDetail.solutions[0];
+                      return (
+                        <>
+                          <div className="flex items-center justify-between gap-3 flex-wrap">
+                            <div className="flex items-center gap-2">
+                              <LatexMath label="Time" math={activeSol?.timeComplexity || "O(N)"} />
+                              <LatexMath label="Space" math={activeSol?.spaceComplexity || "O(1)"} />
                             </div>
 
-                            <CopyBlock
-                              label={`Reference Solution (${activeSol?.language || selectedSolLang})`}
-                              content={activeSol?.code || "// Reference solution"}
-                            />
-                          </>
-                        );
-                      })()}
-                    </>
+                            <div className="flex items-center gap-1 flex-wrap">
+                              {problemDetail.solutions.map((sol: any, idx: number) => {
+                                const solKey = sol.langSlug || `${sol.language.toLowerCase()}-${idx}`;
+                                const isSelected = selectedSolLang === solKey || (!selectedSolLang && idx === 0);
+                                return (
+                                  <button
+                                    key={`${solKey}-${idx}`}
+                                    onClick={() => setSelectedSolLang(solKey)}
+                                    className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer border ${
+                                      isSelected
+                                        ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                                        : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
+                                    }`}
+                                  >
+                                    {sol.language}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          <CopyBlock
+                            label={`Reference Solution (${activeSol?.language || selectedSolLang})`}
+                            content={activeSol?.code || "// Reference solution"}
+                          />
+                        </>
+                      );
+                    })()
                   ) : (
                     <div className="py-12 text-center text-zinc-400 text-xs">
                       No reference solution available for this problem yet.
