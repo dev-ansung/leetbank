@@ -1,3 +1,4 @@
+import katex from "katex";
 import React, { useState, useMemo, useEffect } from "react";
 import { 
   Search, 
@@ -20,6 +21,42 @@ import {
 import catalogData from "../data/catalog.json";
 import tracksData from "../data/tracks.json";
 import companyData from "../data/companies.json";
+
+// LaTeX Math Renderer for Big-O Complexities
+function LatexMath({ math, label }: { math?: string; label: string }) {
+  const renderedHtml = useMemo(() => {
+    if (!math) return null;
+    let clean = math.trim();
+    if (clean.startsWith("$") && clean.endsWith("$")) {
+      clean = clean.slice(1, -1).trim();
+    }
+    // Normalize common Big-O formats
+    if (!clean.startsWith("O(") && !clean.startsWith("\\mathcal{O}(")) {
+      if (clean.startsWith("O")) {
+        // e.g. O(n)
+      }
+    }
+    try {
+      return katex.renderToString(clean, {
+        throwOnError: false,
+        displayMode: false
+      });
+    } catch {
+      return null;
+    }
+  }, [math]);
+
+  return (
+    <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80">
+      <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400">{label}:</span>
+      {renderedHtml ? (
+        <span dangerouslySetInnerHTML={{ __html: renderedHtml }} className="inline-flex items-center" />
+      ) : (
+        <span className="font-mono text-xs">{math || "O(1)"}</span>
+      )}
+    </div>
+  );
+}
 
 // Compact number formatter (e.g. 23.3M, 850.2K)
 function formatCompactNumber(num?: number): string {
@@ -1122,12 +1159,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                           <>
                             <div className="flex items-center justify-between gap-3 flex-wrap">
                               <div className="flex items-center gap-2">
-                                <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700">
-                                  Time: {activeSol?.timeComplexity || "O(N)"}
-                                </span>
-                                <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700">
-                                  Space: {activeSol?.spaceComplexity || "O(1)"}
-                                </span>
+                                <LatexMath label="Time" math={activeSol?.timeComplexity || "O(N)"} />
+                                <LatexMath label="Space" math={activeSol?.spaceComplexity || "O(1)"} />
                               </div>
 
                               <div className="flex items-center gap-1 flex-wrap">
