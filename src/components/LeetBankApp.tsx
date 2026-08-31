@@ -103,7 +103,7 @@ const COMPANY_LIST = [
   { id: "netflix", label: "Netflix" },
 ];
 
-export function LeetBankApp() {
+export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | string }) {
   const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
@@ -114,7 +114,14 @@ export function LeetBankApp() {
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
   
   // Problem modal & live detail state
-  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  const [activeProblem, setActiveProblem] = useState<Problem | null>(() => {
+    if (!initialProblemId) return null;
+    const num = Number(initialProblemId);
+    if (!isNaN(num)) {
+      return (catalogData as Problem[]).find((p) => p.id === num) || null;
+    }
+    return (catalogData as Problem[]).find((p) => p.slug === String(initialProblemId)) || null;
+  });
   const [problemDetail, setProblemDetail] = useState<any>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [activeTab, setActiveTab] = useState<"statement" | "code" | "solution">("statement");
@@ -201,6 +208,7 @@ export function LeetBankApp() {
       }
       if (e.key === "Escape") {
         setActiveProblem(null);
+        window.history.pushState(null, "", "/");
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -574,7 +582,7 @@ export function LeetBankApp() {
               return (
                 <div
                   key={p.id}
-                  onClick={() => setActiveProblem(p)}
+                  onClick={() => { setActiveProblem(p); window.history.pushState(null, "", "/" + p.id); }}
                   className="px-4 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 cursor-pointer transition group"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
@@ -666,7 +674,7 @@ export function LeetBankApp() {
                   LeetCode <ExternalLink className="size-3" />
                 </a>
                 <button
-                  onClick={() => setActiveProblem(null)}
+                  onClick={() => { setActiveProblem(null); window.history.pushState(null, "", "/"); }}
                   className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
                 >
                   <X className="size-4" />

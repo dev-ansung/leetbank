@@ -1,34 +1,31 @@
 ---
-import { ProblemFetcher } from "../lib/fetcher";
+import { LeetBankApp } from "../components/LeetBankApp";
+import catalog from "../data/catalog.json";
 import "../styles/global.css";
 
 export const prerender = false; // Cloudflare Edge SSR
 
 const { id } = Astro.params;
-if (!id) {
-  return Astro.redirect("/");
-}
+const problem = !isNaN(Number(id))
+  ? catalog.find(p => p.id === Number(id))
+  : catalog.find(p => p.slug === id);
 
-let problem;
-try {
-  problem = await ProblemFetcher.fetchProblem(id);
-} catch (e) {
-  return Astro.redirect("/?error=" + encodeURIComponent(String(e)));
-}
+const pageTitle = problem 
+  ? `#${problem.id} ${problem.title} - LeetBank 🏦`
+  : "LeetBank 🏦 - Zero-Paywall Question Bank";
 
-const diffColor = 
-  problem.difficulty === "Easy" ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" :
-  problem.difficulty === "Medium" ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800" :
-  "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800";
+const pageDesc = problem
+  ? `Problem #${problem.id} ${problem.title} (${problem.difficulty}) - Free LeetCode question statement, 19 starter code languages, and 16 reference solutions on Cloudflare Edge.`
+  : "Ultra-fast LeetCode question bank with 4,037 unlocked problems on Cloudflare Edge.";
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>#{problem.id} {problem.title} - LeetBank 🏦</title>
-    <meta name="description" content={`Problem #${problem.id} ${problem.title} (${problem.difficulty}) - Free LeetCode question statement, 19 starter code languages, and 16 reference solutions on Cloudflare Edge.`} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
     <script is:inline>
       const saved = localStorage.getItem("theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -39,69 +36,7 @@ const diffColor =
       }
     </script>
   </head>
-  <body class="bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 min-h-screen transition-colors duration-150">
-    <div class="max-w-4xl mx-auto p-6 flex flex-col gap-6">
-      {/* Top Header */}
-      <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
-        <div class="flex items-center gap-3">
-          <a href="/" class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition">
-            ← Back to Dashboard
-          </a>
-          <span class="text-zinc-300 dark:text-zinc-700">•</span>
-          <span class="text-sm font-mono font-bold text-zinc-500">#{problem.id}</span>
-          <h1 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">{problem.title}</h1>
-          <span class={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${diffColor}`}>
-            {problem.difficulty}
-          </span>
-          {problem.isPaidOnly && (
-            <span class="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
-              Premium
-            </span>
-          )}
-        </div>
-
-        <div class="flex items-center gap-2">
-          <a
-            href={`https://leetcode.com/problems/${problem.slug}`}
-            target="_blank"
-            class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition px-2.5 py-1 rounded border border-zinc-200 dark:border-zinc-800"
-          >
-            LeetCode Official ↗
-          </a>
-        </div>
-      </div>
-
-      {/* Problem Statement Card */}
-      <div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-xl flex flex-col gap-4">
-        <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-500">Problem Statement</h2>
-        <div class="prose dark:prose-invert max-w-none text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed" set:html={problem.descriptionHtml} />
-        
-        <div class="flex items-center gap-1.5 flex-wrap pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60">
-          <span class="text-xs text-zinc-400 mr-1">Topics:</span>
-          {problem.topics.map(t => (
-            <span class="text-xs px-2 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-              {t}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Solutions & Starter Code Overview */}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-xl flex flex-col gap-2">
-          <h3 class="text-xs font-semibold text-zinc-500 uppercase">💻 Starter Languages ({Object.keys(problem.starterCode).length})</h3>
-          <p class="text-xs text-zinc-600 dark:text-zinc-400">
-            Available in: {Object.keys(problem.starterCode).slice(0, 8).join(", ")}...
-          </p>
-        </div>
-
-        <div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-xl flex flex-col gap-2">
-          <h3 class="text-xs font-semibold text-zinc-500 uppercase">💡 Reference Solutions ({problem.solutions.length})</h3>
-          <p class="text-xs text-zinc-600 dark:text-zinc-400">
-            Verified solutions in: {problem.solutions.map(s => s.language).slice(0, 6).join(", ")}
-          </p>
-        </div>
-      </div>
-    </div>
+  <body class="bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 min-h-screen">
+    <LeetBankApp client:load initialProblemId={id} />
   </body>
 </html>
