@@ -1,9 +1,10 @@
 # 🏦 LeetBank
 
-> Ultra-fast, zero-paywall LeetCode question bank with 4,037 unlocked problems, company interview tracks, multi-author reference solutions, and 19 starter code languages deployed on Cloudflare Pages and D1 Edge.
+> Ultra-fast, zero-paywall LeetCode question bank with 4,037 unlocked problems, company interview tracks, multi-author reference solutions, 19 starter code languages, and built-in Remote Edge MCP server deployed on Cloudflare Pages and D1 Edge.
 
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
+[![MCP Server](https://img.shields.io/badge/MCP%20Server-Remote%20Edge%20SSE-8b5cf6?logo=anthropic)](https://leetbank.pages.dev/api/mcp)
 [![Sync Pipeline](https://img.shields.io/badge/sync%20pipeline-weekly%20cron-blue?logo=githubactions)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Tests](https://img.shields.io/badge/tests-21%20passed-emerald)](#)
 [![Linter](https://img.shields.io/badge/linter-Biome-60a5fa?logo=biome)](https://biomejs.dev)
@@ -25,6 +26,37 @@
 
 ---
 
+## 🤖 Remote Edge MCP Server (Model Context Protocol)
+
+LeetBank natively implements a **Remote Edge MCP Server** over HTTP/SSE. Connect your AI coding assistant (Cursor, Claude Desktop, Antigravity, Windsurf, VS Code) to query problems, company interview trends, and multi-author solutions directly in your editor.
+
+### 🔌 1-Click Configuration
+
+Add the following to your `claude_desktop_config.json`, `cursor` MCP settings, or agent configuration:
+
+```json
+{
+  "mcpServers": {
+    "leetbank": {
+      "url": "https://leetbank.pages.dev/api/mcp"
+    }
+  }
+}
+```
+
+### 🛠️ Exposed MCP Tools
+
+| Tool | Description | Example Arguments |
+| :--- | :--- | :--- |
+| `get_problem` | Fetch complete problem statement (Markdown), 19 starter code snippets, hints, and similar questions. | `{"idOrSlug": "two-sum"}` or `{"idOrSlug": 269}` |
+| `search_problems` | Search, filter, and paginate the 4,041-question catalog by difficulty, topic, or keywords. | `{"topic": "Dynamic Programming", "difficulty": "Medium", "limit": 5}` |
+| `get_company_questions` | Query top interview questions for 9 tech companies across 4 recency windows. | `{"company": "meta", "window": "30-days", "limit": 10}` |
+| `get_solution` | Fetch multi-author reference implementations (**walkccc** or **Doocs**) in a specified language. | `{"id": 1, "author": "walkccc", "language": "python3"}` |
+| `get_random_problem` | Pick a random question matching criteria (e.g. Blind 75, Hard Trees). | `{"difficulty": "Medium", "track": "blind-75"}` |
+| `get_track_problems` | Retrieve problem lists from curated practice roadmaps (Blind 75, Grind 75, NeetCode 150, Carl 200). | `{"track": "neetcode-150"}` |
+
+---
+
 ## About
 
 LeetBank provides an instant, distraction-free environment for algorithmic practice and technical interview preparation. It unifies all 4,037 LeetCode problems (both free and locked premium questions) with multi-author reference implementations, company frequency filters, and official multi-language starter code.
@@ -33,6 +65,7 @@ LeetBank provides an instant, distraction-free environment for algorithmic pract
 - **Zero Paywalls**: Access complete statements, diagrams, and starter code for paywalled problems without a subscription.
 - **Multi-Author Solutions**: Compare concise algorithmic implementations from **walkccc** with comprehensive 16-language archives from **Doocs**.
 - **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
+- **AI-Native MCP Support**: Direct integration with Cursor, Claude Desktop, and AI agents via Remote Edge MCP.
 - **Always Up to Date**: Automated weekly GitHub Actions cron synchronizes newly released contest problems, topic tags, and company frequency datasets.
 - **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
 
@@ -68,7 +101,7 @@ flowchart TD
     
     BunTest -->|"4. Deploy Latest Build"| CF_Pages["Cloudflare Pages Deployment"]
     
-    User["User opens problem"] -.->|"On-Demand Fetch"| LiveSol["Live walkccc & Doocs Raw Repositories"]
+    User["User / Agent queries MCP / Web"] -.->|"On-Demand Fetch"| LiveSol["Live walkccc & Doocs Raw Repositories"]
 ```
 
 1. **Weekly Problemset Sync**:
@@ -123,9 +156,10 @@ bun run lint:fix
 
 ```mermaid
 flowchart TD
-    User["Client (Browser / API Client)"] -->|"HTTPS"| EdgeRouter["Cloudflare Pages / Workers Edge Router"]
+    User["Client (Browser / AI Assistant via MCP)"] -->|"HTTPS / JSON-RPC 2.0"| EdgeRouter["Cloudflare Pages / Workers Edge Router"]
 
     subgraph CF_Edge["Cloudflare Edge Layer"]
+        EdgeRouter -->|"MCP Server Engine"| MCPEngine["Edge MCP JSON-RPC Handler (/api/mcp)"]
         EdgeRouter -->|"Catalog Search"| CatalogEngine["Catalog & Filter Engine"]
         EdgeRouter -->|"Company Sets"| CompanyEngine["Company & Recency Join Engine"]
         EdgeRouter -->|"Problem Detail"| CacheController["Cache-Aside Problem Controller"]
@@ -133,6 +167,8 @@ flowchart TD
         CacheController -->|"1. Fast DB Read (< 5ms)"| D1_DB[("Cloudflare D1 Database")]
         CatalogEngine <-->|"Indexed SQL Queries"| D1_DB
         CompanyEngine <-->|"Company / Window Lookups"| D1_DB
+        MCPEngine <-->|"Tool Dispatcher"| CatalogEngine
+        MCPEngine <-->|"Tool Dispatcher"| CacheController
     end
 
     subgraph Upstream_Ingestion["Upstream Ingestion (On Cache-Miss)"]
@@ -188,7 +224,12 @@ curl -s "https://leetbank.pages.dev/api/companies?company=meta&window=30-days" |
 
 ---
 
-### 4. `GET /api/d1-health`
+### 4. `POST /api/mcp`
+Model Context Protocol JSON-RPC endpoint for AI assistants (Cursor, Claude Desktop, Antigravity, Windsurf).
+
+---
+
+### 5. `GET /api/d1-health`
 Returns live Cloudflare D1 database connection telemetry and record counts.
 
 ---
