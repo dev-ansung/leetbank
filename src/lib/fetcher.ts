@@ -241,13 +241,12 @@ export class ProblemFetcher {
 
   private static extractTestCasesFromHtml(html: string, rawExampleList?: string[]): TestCase[] {
     const cases: TestCase[] = [];
-
-    // Extract from <pre> blocks in HTML (e.g. Input: ... Output: ...)
-    const preBlocks = html.matchAll(/<pre>([\s\S]*?)<\/pre>/gi);
     let id = 1;
 
-    for (const block of preBlocks) {
-      const text = decodeHtmlEntities(block[1].replace(/<[^>]+>/g, "")).trim();
+    // 1. Check for modern LeetCode <div class="example-block">...</div>
+    const exampleBlocks = Array.from(html.matchAll(/<div class="example-block">([\s\S]*?)<\/div>/gi));
+    for (const block of exampleBlocks) {
+      const text = decodeHtmlEntities(block[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")).trim();
       const inputMatch = text.match(/Input:\s*([\s\S]*?)(?=Output:|$)/i);
       const outputMatch = text.match(/Output:\s*([\s\S]*?)(?=Explanation:|$)/i);
       const explMatch = text.match(/Explanation:\s*([\s\S]*?)$/i);
@@ -263,7 +262,50 @@ export class ProblemFetcher {
       }
     }
 
-    // Fallback to raw example test cases if no pre tags found
+    // 2. Check for traditional <pre>...</pre> blocks
+    if (cases.length === 0) {
+      const preBlocks = Array.from(html.matchAll(/<pre>([\s\S]*?)<\/pre>/gi));
+      for (const block of preBlocks) {
+        const text = decodeHtmlEntities(block[1].replace(/<[^>]+>/g, "")).trim();
+        const inputMatch = text.match(/Input:\s*([\s\S]*?)(?=Output:|$)/i);
+        const outputMatch = text.match(/Output:\s*([\s\S]*?)(?=Explanation:|$)/i);
+        const explMatch = text.match(/Explanation:\s*([\s\S]*?)$/i);
+
+        if (inputMatch) {
+          cases.push({
+            id: id++,
+            name: `Example ${id - 1}`,
+            input: inputMatch[1].trim(),
+            expected: outputMatch ? outputMatch[1].trim() : undefined,
+            explanation: explMatch ? explMatch[1].trim() : undefined
+          });
+        }
+      }
+    }
+
+    // 3. Check for general Example / Input / Output sections in text
+    if (cases.length === 0) {
+      const cleanText = decodeHtmlEntities(html.replace(/<[^>]+>/g, "\n"));
+      const exampleChunks = cleanText.split(/Example\s*\d*:/i);
+      for (let i = 1; i < exampleChunks.length; i++) {
+        const chunk = exampleChunks[i];
+        const inputMatch = chunk.match(/Input:\s*([\s\S]*?)(?=Output:|$)/i);
+        const outputMatch = chunk.match(/Output:\s*([\s\S]*?)(?=Explanation:|Constraints:|$)/i);
+        const explMatch = chunk.match(/Explanation:\s*([\s\S]*?)(?=Constraints:|$)/i);
+
+        if (inputMatch) {
+          cases.push({
+            id: id++,
+            name: `Example ${id - 1}`,
+            input: inputMatch[1].trim(),
+            expected: outputMatch ? outputMatch[1].trim() : undefined,
+            explanation: explMatch ? explMatch[1].trim() : undefined
+          });
+        }
+      }
+    }
+
+    // Fallback to raw example test cases if no structured examples parsed
     if (cases.length === 0 && rawExampleList && rawExampleList.length > 0) {
       return rawExampleList.map((t, idx) => ({
         id: idx + 1,
