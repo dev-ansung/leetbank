@@ -21,8 +21,16 @@ import catalogData from "../data/catalog.json";
 import tracksData from "../data/tracks.json";
 import companyData from "../data/companies.json";
 
+// Compact number formatter (e.g. 23.3M, 850.2K)
+function formatCompactNumber(num?: number): string {
+  if (num === undefined || num === null || isNaN(num) || num === 0) return "-";
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+  return num.toLocaleString();
+}
+
 // Sorter & Filter Types
-export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc";
+export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc";
 
 export interface FilterRule {
   id: string;
@@ -39,6 +47,8 @@ interface Problem {
   topics: string[];
   isPaidOnly?: boolean;
   acRate?: number;
+  totalAcs?: number;
+  totalSubmitted?: number;
 }
 
 const COMPANIES = [
@@ -243,6 +253,21 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     window.history.pushState(null, "", "/" + picked.id);
   };
 
+  // Column Header Sort Toggle
+  const handleHeaderSort = (field: "id" | "difficulty" | "ac" | "accepted" | "submitted") => {
+    if (field === "id") {
+      setSortBy(sortBy === "id-asc" ? "id-desc" : "id-asc");
+    } else if (field === "difficulty") {
+      setSortBy(sortBy === "diff-asc" ? "diff-desc" : "diff-asc");
+    } else if (field === "ac") {
+      setSortBy(sortBy === "ac-desc" ? "ac-asc" : "ac-desc");
+    } else if (field === "accepted") {
+      setSortBy(sortBy === "accepted-desc" ? "accepted-asc" : "accepted-desc");
+    } else if (field === "submitted") {
+      setSortBy(sortBy === "submitted-desc" ? "submitted-asc" : "submitted-desc");
+    }
+  };
+
   // Main Filtering & Sorting Pipeline
   const { filteredProblems, companyMetaMap } = useMemo(() => {
     let compMap: Record<number, { pattern: string; priority: string }> = {};
@@ -336,6 +361,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       const acA = (a as any).acRate ?? 50;
       const acB = (b as any).acRate ?? 50;
 
+      const acsA = a.totalAcs || 0;
+      const acsB = b.totalAcs || 0;
+      const subA = a.totalSubmitted || 0;
+      const subB = b.totalSubmitted || 0;
+
       switch (sortBy) {
         case "id-asc":
           return a.id - b.id;
@@ -349,6 +379,14 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           return acB - acA || a.id - b.id;
         case "ac-asc":
           return acA - acB || a.id - b.id;
+        case "accepted-desc":
+          return acsB - acsA || a.id - b.id;
+        case "accepted-asc":
+          return acsA - acsB || a.id - b.id;
+        case "submitted-desc":
+          return subB - subA || a.id - b.id;
+        case "submitted-asc":
+          return subA - subB || a.id - b.id;
         default:
           return a.id - b.id;
       }
@@ -751,13 +789,59 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
         {/* 5. Clean LeetCode Problemset Table */}
         <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm mt-1">
-          {/* Table Header */}
-          <div className="px-4 py-2.5 bg-zinc-50/90 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 flex items-center justify-between">
-            <span>Title ({filteredProblems.length})</span>
-            <div className="flex items-center gap-6">
-              <span className="w-14 text-right">Acceptance</span>
-              <span className="w-14 text-center">Difficulty</span>
-              <span className="w-16 text-right">Access</span>
+          {/* Table Header with Clickable Column Sorting */}
+          <div className="px-4 py-2.5 bg-zinc-50/90 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 flex items-center justify-between select-none">
+            <button
+              onClick={() => handleHeaderSort("id")}
+              className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+            >
+              <span>Title ({filteredProblems.length})</span>
+              {sortBy === "id-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+              {sortBy === "id-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+            </button>
+
+            <div className="flex items-center gap-4 sm:gap-6">
+              <button
+                onClick={() => handleHeaderSort("accepted")}
+                className="w-16 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                title="Sort by Total Accepted"
+              >
+                <span>Accepted</span>
+                {sortBy === "accepted-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "accepted-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+
+              <button
+                onClick={() => handleHeaderSort("submitted")}
+                className="w-16 text-right hidden sm:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                title="Sort by Total Submissions"
+              >
+                <span>Submissions</span>
+                {sortBy === "submitted-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "submitted-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+
+              <button
+                onClick={() => handleHeaderSort("ac")}
+                className="w-14 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                title="Sort by Acceptance Rate"
+              >
+                <span>Acceptance</span>
+                {sortBy === "ac-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "ac-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+
+              <button
+                onClick={() => handleHeaderSort("difficulty")}
+                className="w-12 text-center flex items-center justify-center gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                title="Sort by Difficulty"
+              >
+                <span>Difficulty</span>
+                {sortBy === "diff-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "diff-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+
+              <span className="w-14 text-right">Access</span>
             </div>
           </div>
 
@@ -783,13 +867,21 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
                   </div>
 
-                  <div className="flex items-center gap-6 shrink-0">
+                  <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right" title={`Total Accepted: ${(p.totalAcs || 0).toLocaleString()}`}>
+                      {formatCompactNumber(p.totalAcs)}
+                    </span>
+
+                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right hidden sm:block" title={`Total Submissions: ${(p.totalSubmitted || 0).toLocaleString()}`}>
+                      {formatCompactNumber(p.totalSubmitted)}
+                    </span>
+
                     <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-14 text-right">
                       {p.acRate !== undefined ? `${p.acRate.toFixed(1)}%` : "50.0%"}
                     </span>
 
                     <span
-                      className={`text-xs font-medium w-14 text-center ${
+                      className={`text-xs font-medium w-12 text-center ${
                         p.difficulty === "Easy"
                           ? "text-teal-600 dark:text-teal-400"
                           : p.difficulty === "Medium"
@@ -800,7 +892,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                       {p.difficulty === "Medium" ? "Med." : p.difficulty}
                     </span>
 
-                    <div className="w-16 text-right flex items-center justify-end">
+                    <div className="w-14 text-right flex items-center justify-end">
                       {p.isPaidOnly ? (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 flex items-center gap-1">
                           <Lock className="size-2.5" /> Premium
