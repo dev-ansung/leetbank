@@ -198,8 +198,9 @@ export function LeetBankApp() {
   const { filteredProblems, companyMetaMap } = useMemo(() => {
     const compMap = new Map<number, { freq: number; pattern: string; priority: string }>();
 
-    if (selectedCompany && (companyData as any)[selectedCompany]) {
-      const cData = (companyData as any)[selectedCompany];
+    const companiesRoot = (companyData as any).companies || companyData;
+    if (selectedCompany && companiesRoot[selectedCompany]) {
+      const cData = companiesRoot[selectedCompany];
       const winList = cData[selectedWindow] || cData["all-time"] || [];
       winList.forEach((item: any) => {
         compMap.set(item.id, { freq: item.freq, pattern: item.pattern, priority: item.priority });
@@ -493,9 +494,16 @@ public:
         {/* Problem List Table */}
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
           <div className="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              {filteredProblems.length} questions {selectedCompany ? `(${selectedCompany.toUpperCase()} - ${selectedWindow})` : ""}
-            </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                {filteredProblems.length} questions {selectedCompany ? `(${selectedCompany.toUpperCase()} • ${selectedWindow.replace("-", " ")})` : ""}
+              </span>
+              {selectedCompany && (
+                <span className="text-[11px] text-zinc-400 dark:text-zinc-500 flex items-center gap-1 font-mono">
+                  • Last fetched: {(companyData as any)._meta?.lastFetched || "2026-08-30"}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-1">
               {["All", "Easy", "Medium", "Hard"].map((d) => (
                 <button

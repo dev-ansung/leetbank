@@ -36,21 +36,26 @@ const SUPPORTED_COMPANIES: CompanyId[] = [
 ];
 
 export class CompanyService {
-  private static data = companyData as Record<string, Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>>;
+  private static rawData = companyData as any;
+  private static data = (companyData as any).companies || companyData as Record<string, Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>>;
 
   static getSupportedCompanies(): CompanyId[] {
     return SUPPORTED_COMPANIES;
   }
 
+  static getLastFetchedDate(): string {
+    return this.rawData?._meta?.lastFetched || "2026-08-30";
+  }
+
   static async getQuestionsForCompany(company: string, window: RecencyWindow = "all-time"): Promise<CompanyQuestion[]> {
     const compKey = company.toLowerCase();
     const rawList = this.data[compKey]?.[window] || this.data[compKey]?.["all-time"] || [];
-    return rawList.map((item) => ({
+    return rawList.map((item: any) => ({
       problemId: item.id,
       frequencyPercent: item.freq,
       pattern: item.pattern,
       priority: item.priority as any
-    })).sort((a, b) => b.frequencyPercent - a.frequencyPercent);
+    })).sort((a: any, b: any) => b.frequencyPercent - a.frequencyPercent);
   }
 
   static parseCompanyCsv(company: string, window: RecencyWindow, csvContent: string): CompanyQuestion[] {
