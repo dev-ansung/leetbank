@@ -111,9 +111,43 @@ export function LeetBankApp() {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  const [problemDetail, setProblemDetail] = useState<any>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
   const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
   const [visibleCount, setVisibleCount] = useState<number>(50);
+
+  // Fetch full live problem detail when modal opens
+  useEffect(() => {
+    if (!activeProblem) {
+      setProblemDetail(null);
+      return;
+    }
+
+    let isMounted = true;
+    setLoadingDetail(true);
+
+    fetch(`/api/problem/${activeProblem.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) {
+          setProblemDetail(data);
+          setLoadingDetail(false);
+          // Set first available starter code language
+          if (data.starterCode && !data.starterCode[selectedCodeLang]) {
+            const firstLang = Object.keys(data.starterCode)[0];
+            if (firstLang) setSelectedCodeLang(firstLang);
+          }
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoadingDetail(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeProblem]);
 
   // Initialize theme state on mount
   useEffect(() => {

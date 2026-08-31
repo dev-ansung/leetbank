@@ -51,11 +51,7 @@ export class ProblemFetcher {
 
     if (gqlData?.codeSnippets) {
       for (const snippet of gqlData.codeSnippets) {
-        if (snippet.langSlug === "python3" || snippet.langSlug === "python") {
-          starterCode[snippet.langSlug] = PythonModernizer.modernize(snippet.code);
-        } else {
-          starterCode[snippet.langSlug] = snippet.code;
-        }
+        starterCode[snippet.langSlug] = snippet.code; // 100% original untouched official starter code
       }
     }
 
