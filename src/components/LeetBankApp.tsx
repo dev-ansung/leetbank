@@ -526,8 +526,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-4">
         
         {/* 1. Top Topic Ribbon with Counts & Expand/Collapse */}
-        <div className={`flex items-center gap-1.5 ${isTopicsExpanded ? "flex-wrap" : "overflow-x-auto scrollbar-none flex-nowrap pb-1"}`}>
-          {(isTopicsExpanded ? sortedTopics : sortedTopics.slice(0, 10)).map(({ topic, count }) => (
+        <div className={`flex items-center gap-1.5 ${isTopicsExpanded ? "flex-wrap" : "overflow-x-auto scrollbar-none flex-nowrap pb-1 -mx-4 px-4 sm:mx-0 sm:px-0"}`}>
+          {(isTopicsExpanded ? sortedTopics : sortedTopics.slice(0, 12)).map(({ topic, count }) => (
             <button
               key={topic}
               onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
@@ -559,7 +559,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
         <div className="flex flex-col gap-2 p-3 bg-zinc-50/60 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl">
           {/* Companies Row */}
           <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto pb-0.5">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto pb-0.5 -mx-1 px-1">
               <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">
                 Companies:
               </span>
@@ -984,21 +984,25 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
                   </div>
 
-                  <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right" title={`Total Accepted: ${(p.totalAcs || 0).toLocaleString()}`}>
+                  <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
+                    {/* Accepted (Hidden on mobile & small tablet, visible on md+) */}
+                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-14 sm:w-16 text-right hidden md:block" title={`Total Accepted: ${(p.totalAcs || 0).toLocaleString()}`}>
                       {formatCompactNumber(p.totalAcs)}
                     </span>
 
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right hidden sm:block" title={`Total Submissions: ${(p.totalSubmitted || 0).toLocaleString()}`}>
+                    {/* Submissions (Hidden on mobile/tablet, visible on lg+) */}
+                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-16 text-right hidden lg:block" title={`Total Submissions: ${(p.totalSubmitted || 0).toLocaleString()}`}>
                       {formatCompactNumber(p.totalSubmitted)}
                     </span>
 
-                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-14 text-right">
+                    {/* Acceptance Rate (Hidden on mobile, visible on sm+) */}
+                    <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 w-12 sm:w-14 text-right hidden sm:block">
                       {p.acRate !== undefined ? `${p.acRate.toFixed(1)}%` : "50.0%"}
                     </span>
 
+                    {/* Difficulty (Always visible) */}
                     <span
-                      className={`text-xs font-medium w-12 text-center ${
+                      className={`text-xs font-medium w-12 text-right sm:text-center ${
                         p.difficulty === "Easy"
                           ? "text-teal-600 dark:text-teal-400"
                           : p.difficulty === "Medium"
@@ -1009,7 +1013,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                       {p.difficulty === "Medium" ? "Med." : p.difficulty}
                     </span>
 
-                    <div className="w-14 text-right flex items-center justify-end">
+                    {/* Access (Hidden on mobile, visible on md+) */}
+                    <div className="w-14 text-right hidden md:flex items-center justify-end">
                       {p.isPaidOnly ? (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 flex items-center gap-1">
                           <Lock className="size-2.5" /> Premium
