@@ -42,56 +42,48 @@ flowchart TD
 
 ---
 
-## 🗄️ Cloudflare D1 Database Architecture
+## 🗄️ Data Model
 
-Cloudflare D1 (Globally Replicated SQLite) serves as the persistent single source of truth:
+Cloudflare D1 (Globally Replicated SQLite) persists the canonical catalog, company frequency mappings, and cached problem statements:
 
-```sql
--- 1. Canonical Problem Catalog & Edge Content Cache
-CREATE TABLE IF NOT EXISTS problems (
-  id INTEGER PRIMARY KEY,
-  slug TEXT NOT NULL UNIQUE,
-  title TEXT NOT NULL,
-  difficulty TEXT NOT NULL CHECK(difficulty IN ('Easy', 'Medium', 'Hard')),
-  topics TEXT NOT NULL,
-  is_paid_only INTEGER DEFAULT 0,
-  ac_rate TEXT,
-  total_accepted TEXT,
-  description_html TEXT,
-  starter_code_json TEXT,
-  solutions_json TEXT,
-  test_cases_json TEXT,
-  hints_json TEXT,
-  cached_at TIMESTAMP,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+```mermaid
+erDiagram
+    PROBLEMS ||--o{ COMPANY_FREQUENCIES : "tracks frequency"
+    PROBLEMS ||--o{ ROADMAP_PROBLEMS : "indexed in roadmaps"
 
-CREATE INDEX IF NOT EXISTS idx_problems_difficulty ON problems(difficulty);
-CREATE INDEX IF NOT EXISTS idx_problems_is_paid ON problems(is_paid_only);
-CREATE INDEX IF NOT EXISTS idx_problems_slug ON problems(slug);
+    PROBLEMS {
+        int id PK "Canonical Problem ID"
+        string slug UK "URL slug"
+        string title "Problem title"
+        string difficulty "Easy | Medium | Hard"
+        string topics "Comma-separated topic tags"
+        int is_paid_only "0: Free, 1: Premium"
+        string ac_rate "Acceptance percentage"
+        string total_accepted "Total submission count"
+        string description_html "Cached full problem statement HTML"
+        string starter_code_json "Cached official starter languages (19)"
+        string solutions_json "Cached multi-language reference solutions"
+        string test_cases_json "Cached structured test cases"
+        string hints_json "Cached problem hints"
+        timestamp cached_at "Last upstream edge cache timestamp"
+        timestamp created_at "Record creation timestamp"
+    }
 
--- 2. Company Interview Frequency Datasets
-CREATE TABLE IF NOT EXISTS company_frequencies (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  problem_id INTEGER NOT NULL,
-  company TEXT NOT NULL,
-  window TEXT NOT NULL,
-  frequency_percent REAL NOT NULL,
-  pattern TEXT,
-  priority TEXT,
-  FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
-);
+    COMPANY_FREQUENCIES {
+        int id PK "Surrogate Key"
+        int problem_id FK "References PROBLEMS(id)"
+        string company "meta | google | amazon | microsoft | ..."
+        string window "30-days | 3-months | 6-months | all-time"
+        float frequency_percent "Interview frequency percentage"
+        string pattern "Algorithmic pattern tag"
+        string priority "High | Medium | Low"
+    }
 
-CREATE INDEX IF NOT EXISTS idx_comp_freq ON company_frequencies(company, window, frequency_percent DESC);
-
--- 3. Curated Roadmaps (Blind 75, NeetCode 150)
-CREATE TABLE IF NOT EXISTS roadmap_problems (
-  roadmap_id TEXT NOT NULL,
-  problem_id INTEGER NOT NULL,
-  order_index INTEGER NOT NULL,
-  PRIMARY KEY (roadmap_id, problem_id),
-  FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
-);
+    ROADMAP_PROBLEMS {
+        string roadmap_id PK "blind75 | neetcode150"
+        int problem_id PK, FK "References PROBLEMS(id)"
+        int order_index "Sequential track ordering"
+    }
 ```
 
 ---
