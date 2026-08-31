@@ -6,13 +6,27 @@
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
 [![MCP Server](https://img.shields.io/badge/MCP%20Server-Remote%20Edge%20SSE-8b5cf6?logo=anthropic)](https://leetbank.pages.dev/api/mcp)
 [![Sync Pipeline](https://img.shields.io/badge/sync%20pipeline-weekly%20cron-blue?logo=githubactions)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
-[![Tests](https://img.shields.io/badge/tests-21%20passed-emerald)](#)
+[![Tests](https://img.shields.io/badge/tests-28%20passed-emerald)](#)
 [![Linter](https://img.shields.io/badge/linter-Biome-60a5fa?logo=biome)](https://biomejs.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue)](#)
 
 ---
 
-## 📸 Preview
+## About
+
+LeetBank provides an instant, distraction-free environment for algorithmic practice and technical interview preparation. It unifies all 4,037 LeetCode problems (both free and locked premium questions) with multi-author reference implementations, company frequency filters, official multi-language starter code, and native AI assistant integration via Model Context Protocol (MCP).
+
+### Why LeetBank?
+- **Zero Paywalls**: Access complete statements, diagrams, and starter code for paywalled problems without a subscription.
+- **Multi-Author Solutions**: Compare concise algorithmic implementations from **walkccc** with comprehensive 16-language archives from **Doocs**.
+- **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
+- **AI-Native MCP Integration**: Query problems, company interview trends, and verified solutions directly from Cursor, Claude Desktop, or AI agents.
+- **Always Up to Date**: Automated weekly GitHub Actions cron synchronizes newly released contest problems, topic tags, and company frequency datasets.
+- **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
+
+---
+
+## Preview
 
 ### 🖥️ Problemset Dashboard & Company Interview Tracks
 ![LeetBank Problemset Dashboard](./assets/dashboard.png)
@@ -23,51 +37,6 @@
 | Problem Statement, Hints & Topics | Multi-Author Solutions (walkccc & Doocs) |
 | :---: | :---: |
 | <img src="./assets/problem_detail.png" alt="Problem Statement & Hints" width="100%" /> | <img src="./assets/problem_solutions.png" alt="Multi-Author Solutions" width="100%" /> |
-
----
-
-## 🤖 Remote Edge MCP Server (Model Context Protocol)
-
-LeetBank natively implements a **Remote Edge MCP Server** over HTTP/SSE. Connect your AI coding assistant (Cursor, Claude Desktop, Antigravity, Windsurf, VS Code) to query problems, company interview trends, and multi-author solutions directly in your editor.
-
-### 🔌 1-Click Configuration
-
-Add the following to your `claude_desktop_config.json`, `cursor` MCP settings, or agent configuration:
-
-```json
-{
-  "mcpServers": {
-    "leetbank": {
-      "url": "https://leetbank.pages.dev/api/mcp"
-    }
-  }
-}
-```
-
-### 🛠️ Exposed MCP Tools
-
-| Tool | Description | Example Arguments |
-| :--- | :--- | :--- |
-| `get_problem` | Fetch complete problem statement (Markdown), 19 starter code snippets, hints, and similar questions. | `{"idOrSlug": "two-sum"}` or `{"idOrSlug": 269}` |
-| `search_problems` | Search, filter, and paginate the 4,041-question catalog by difficulty, topic, or keywords. | `{"topic": "Dynamic Programming", "difficulty": "Medium", "limit": 5}` |
-| `get_company_questions` | Query top interview questions for 9 tech companies across 4 recency windows. | `{"company": "meta", "window": "30-days", "limit": 10}` |
-| `get_solution` | Fetch multi-author reference implementations (**walkccc** or **Doocs**) in a specified language. | `{"id": 1, "author": "walkccc", "language": "python3"}` |
-| `get_random_problem` | Pick a random question matching criteria (e.g. Blind 75, Hard Trees). | `{"difficulty": "Medium", "track": "blind-75"}` |
-| `get_track_problems` | Retrieve problem lists from curated practice roadmaps (Blind 75, Grind 75, NeetCode 150, Carl 200). | `{"track": "neetcode-150"}` |
-
----
-
-## About
-
-LeetBank provides an instant, distraction-free environment for algorithmic practice and technical interview preparation. It unifies all 4,037 LeetCode problems (both free and locked premium questions) with multi-author reference implementations, company frequency filters, and official multi-language starter code.
-
-### Why LeetBank?
-- **Zero Paywalls**: Access complete statements, diagrams, and starter code for paywalled problems without a subscription.
-- **Multi-Author Solutions**: Compare concise algorithmic implementations from **walkccc** with comprehensive 16-language archives from **Doocs**.
-- **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
-- **AI-Native MCP Support**: Direct integration with Cursor, Claude Desktop, and AI agents via Remote Edge MCP.
-- **Always Up to Date**: Automated weekly GitHub Actions cron synchronizes newly released contest problems, topic tags, and company frequency datasets.
-- **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
 
 ---
 
@@ -84,6 +53,82 @@ LeetBank provides an instant, distraction-free environment for algorithmic pract
 
 ---
 
+## Usage & Integrations
+
+### 1. Web Application
+Navigate to [https://leetbank.pages.dev](https://leetbank.pages.dev) for instant, client-side problem browsing, filtering, and practice.
+
+---
+
+### 2. Remote Edge MCP Server (For AI Coding Assistants)
+LeetBank natively implements a **Remote Edge MCP Server** over HTTP/SSE. Connect your AI coding assistant (Cursor, Claude Desktop, Antigravity, Windsurf, VS Code) to query problems, company interview trends, and multi-author solutions directly in your editor.
+
+#### 🔌 Configuration
+Add the following to your `claude_desktop_config.json`, `cursor` MCP settings, or agent configuration:
+
+```json
+{
+  "mcpServers": {
+    "leetbank": {
+      "url": "https://leetbank.pages.dev/api/mcp"
+    }
+  }
+}
+```
+
+#### 🛠️ Exposed MCP Tools
+| Tool | Description | Example Arguments |
+| :--- | :--- | :--- |
+| `get_problem` | Fetch complete problem statement (Markdown), 19 starter code snippets, hints, and similar questions. | `{"idOrSlug": "two-sum"}` or `{"idOrSlug": 269}` |
+| `search_problems` | Search, filter, and paginate the 4,041-question catalog by difficulty, topic, or keywords. | `{"topic": "Dynamic Programming", "difficulty": "Medium", "limit": 5}` |
+| `get_company_questions` | Query top interview questions for 9 tech companies across 4 recency windows. | `{"company": "meta", "window": "30-days", "limit": 10}` |
+| `get_solution` | Fetch multi-author reference implementations (**walkccc** or **Doocs**) in a specified language. | `{"id": 1, "author": "walkccc", "language": "python3"}` |
+| `get_random_problem` | Pick a random question matching criteria (e.g. Blind 75, Hard Trees). | `{"difficulty": "Medium", "track": "blind-75"}` |
+| `get_track_problems` | Retrieve problem lists from curated practice roadmaps (Blind 75, Grind 75, NeetCode 150, Carl 200). | `{"track": "neetcode-150"}` |
+
+---
+
+### 3. REST API Reference
+
+#### `GET /api/problems`
+Search, filter, and paginate through the problem catalog.
+
+```bash
+curl -s "https://leetbank.pages.dev/api/problems?difficulty=Medium&topic=Array&limit=10" | jq .
+```
+
+| Parameter | Type | Description | Default |
+| :--- | :---: | :--- | :---: |
+| `difficulty` | `string` | Filter by `Easy`, `Medium`, or `Hard` | `All` |
+| `topic` | `string` | Filter by topic tag (e.g. `Array`, `Dynamic Programming`) | `undefined` |
+| `q` | `string` | Search query for ID, title, slug, or topic | `undefined` |
+| `limit` | `number` | Number of items per page | `50` |
+| `offset` | `number` | Pagination offset | `0` |
+
+#### `GET /api/problem/:id`
+Fetch complete problem detail (HTML statement, 19 starter code snippets, multi-author reference solutions, hints, similar questions).
+
+```bash
+curl -s "https://leetbank.pages.dev/api/problem/1" | jq .
+```
+
+#### `GET /api/companies`
+Fetch company interview question datasets with frequency metadata.
+
+```bash
+curl -s "https://leetbank.pages.dev/api/companies?company=meta&window=30-days" | jq .
+```
+
+| Parameter | Type | Description | Default |
+| :--- | :---: | :--- | :---: |
+| `company` | `string` | `meta`, `google`, `amazon`, `microsoft`, `bloomberg`, `apple`, `uber`, `bytedance`, `netflix` | `undefined` |
+| `window` | `string` | `30-days`, `3-months`, `6-months`, `all-time` | `all-time` |
+
+#### `GET /api/d1-health`
+Returns live Cloudflare D1 database connection telemetry and record counts.
+
+---
+
 ## 🔄 Automated Data Freshness Pipeline
 
 To ensure the problem catalog and company question sets never go stale, LeetBank runs an automated synchronization pipeline:
@@ -96,7 +141,7 @@ flowchart TD
     LC_GQL -->|"New IDs + Topic Tags"| CatalogJSON["src/data/catalog.json"]
     Comp_Tracker -->|"30d / 3m / 6m / All-Time"| CompJSON["src/data/companies.json"]
     
-    CatalogJSON -->|"3. Automated Test Suite"| BunTest["bun test (21 Tests)"]
+    CatalogJSON -->|"3. Automated Test Suite"| BunTest["bun test (28 Tests)"]
     CompJSON -->|"3. Automated Test Suite"| BunTest
     
     BunTest -->|"4. Deploy Latest Build"| CF_Pages["Cloudflare Pages Deployment"]
@@ -104,15 +149,10 @@ flowchart TD
     User["User / Agent queries MCP / Web"] -.->|"On-Demand Fetch"| LiveSol["Live walkccc & Doocs Raw Repositories"]
 ```
 
-1. **Weekly Problemset Sync**:
-   * Runs automatically every Monday at 04:00 UTC (following LeetCode's weekly contests).
-   * Queries LeetCode GraphQL `problemsetQuestionList` to ingest newly published problem IDs, updated acceptance stats, and official topic tags.
-2. **Company Interview Frequency Refresh**:
-   * Pulls the latest frequency CSVs for Meta, Google, Amazon, Microsoft, and others across the 4 recency windows (`30 Days`, `3 Months`, `6 Months`, `All-Time`).
-3. **Live Multi-Author Solutions**:
-   * Solutions from `walkccc/LeetCode` and `doocs/leetcode` are pulled directly from their repositories, ensuring any upstream community additions and corrections are available immediately.
-4. **Automated CI/CD Verification**:
-   * Runs the full `bun test` suite and deploys the updated edge build to Cloudflare Pages automatically.
+1. **Weekly Problemset Sync**: Runs automatically every Monday at 04:00 UTC to ingest newly published problem IDs, updated acceptance stats, and official topic tags.
+2. **Company Interview Frequency Refresh**: Pulls latest frequency CSVs across the 4 recency windows (`30 Days`, `3 Months`, `6 Months`, `All-Time`).
+3. **Live Multi-Author Solutions**: Solutions from `walkccc/LeetCode` and `doocs/leetcode` are pulled directly from their repositories on-demand.
+4. **Automated CI/CD Verification**: Executes `bun test` and auto-deploys to Cloudflare Pages.
 
 ---
 
@@ -140,7 +180,7 @@ Open [http://localhost:4321](http://localhost:4321) in your browser.
 ### Running Tests & Linter
 
 ```bash
-# Run test suite
+# Run automated test suite (28 tests)
 bun test
 
 # Run Biome linter check
@@ -179,58 +219,6 @@ flowchart TD
         Ingest -->|"3. Cache to D1"| D1_DB
     end
 ```
-
----
-
-## API Reference
-
-### 1. `GET /api/problems`
-Search, filter, and paginate through the problem catalog.
-
-```bash
-curl -s "https://leetbank.pages.dev/api/problems?difficulty=Medium&topic=Array&limit=10" | jq .
-```
-
-| Parameter | Type | Description | Default |
-| :--- | :---: | :--- | :---: |
-| `difficulty` | `string` | Filter by `Easy`, `Medium`, or `Hard` | `All` |
-| `topic` | `string` | Filter by topic tag (e.g. `Array`, `Dynamic Programming`) | `undefined` |
-| `q` | `string` | Search query for ID, title, slug, or topic | `undefined` |
-| `limit` | `number` | Number of items per page | `50` |
-| `offset` | `number` | Pagination offset | `0` |
-
----
-
-### 2. `GET /api/problem/:id`
-Fetch complete problem detail (HTML statement, 19 starter code snippets, multi-author reference solutions, hints, similar questions).
-
-```bash
-curl -s "https://leetbank.pages.dev/api/problem/1" | jq .
-```
-
----
-
-### 3. `GET /api/companies`
-Fetch company interview question datasets with frequency metadata.
-
-```bash
-curl -s "https://leetbank.pages.dev/api/companies?company=meta&window=30-days" | jq .
-```
-
-| Parameter | Type | Description | Default |
-| :--- | :---: | :--- | :---: |
-| `company` | `string` | `meta`, `google`, `amazon`, `microsoft`, `bloomberg`, `apple`, `uber`, `bytedance`, `netflix` | `undefined` |
-| `window` | `string` | `30-days`, `3-months`, `6-months`, `all-time` | `all-time` |
-
----
-
-### 4. `POST /api/mcp`
-Model Context Protocol JSON-RPC endpoint for AI assistants (Cursor, Claude Desktop, Antigravity, Windsurf).
-
----
-
-### 5. `GET /api/d1-health`
-Returns live Cloudflare D1 database connection telemetry and record counts.
 
 ---
 
