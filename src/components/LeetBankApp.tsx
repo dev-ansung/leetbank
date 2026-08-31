@@ -121,6 +121,9 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
   const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  // Category & Ribbon States
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Topics");
+  const [isTopicsExpanded, setIsTopicsExpanded] = useState<boolean>(false);
   // LeetCode-Style Sorter & Filter Popover States
   const [sortBy, setSortBy] = useState<SortField>("id-asc");
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -247,6 +250,15 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       .sort((a, b) => b[1] - a[1])
       .map(([topic, count]) => ({ topic, count }));
   }, []);
+
+  // Pick Random Problem matching current filters
+  const handlePickRandom = () => {
+    if (filteredProblems.length === 0) return;
+    const randomIdx = Math.floor(Math.random() * filteredProblems.length);
+    const picked = filteredProblems[randomIdx];
+    setActiveProblem(picked);
+    window.history.pushState(null, "", "/" + picked.id);
+  };
 
   // Quick lookup map for catalog problems
   const catalogMap = useMemo(() => {
@@ -524,36 +536,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             ))}
           </div>
 
-          {/* Topics Filter Row (Ranked by Frequency) */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[75px]">
-              Topics:
-            </span>
-            <button
-              onClick={() => setSelectedTopic(null)}
-              className={`text-xs px-2.5 py-1 rounded-md border font-medium transition cursor-pointer ${
-                !selectedTopic
-                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-              }`}
-            >
-              All Topics
-            </button>
-            {sortedTopics.slice(0, 16).map(({ topic, count }) => (
-              <button
-                key={topic}
-                onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
-                className={`text-xs px-2 py-1 rounded-md border font-medium transition cursor-pointer flex items-center gap-1 ${
-                  selectedTopic === topic
-                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                }`}
-              >
-                <span>{topic}</span>
-                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">({count})</span>
-              </button>
-            ))}
-          </div>
+
         </div>
 
         {/* Problem List Table */}
