@@ -357,7 +357,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           </button>
           
           <a 
-            href="https://github.com/anprogrammer/leetbank" 
+            href="https://github.com/dev-ansung/leetbank" 
             target="_blank" 
             className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           >
