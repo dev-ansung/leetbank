@@ -107,6 +107,7 @@ export function LeetBankApp() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
+  const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
@@ -135,7 +136,7 @@ export function LeetBankApp() {
   // Reset pagination when search or filters change
   useEffect(() => {
     setVisibleCount(50);
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow]);
 
   // Keyboard shortcut listener ('/' to focus search)
   useEffect(() => {
@@ -187,6 +188,12 @@ export function LeetBankApp() {
         }
       });
 
+      if (selectedAccess === "free") {
+        ordered = ordered.filter((p) => !p.isPaidOnly);
+      } else if (selectedAccess === "premium") {
+        ordered = ordered.filter((p) => !!p.isPaidOnly);
+      }
+
       if (selectedDifficulty !== "All") {
         ordered = ordered.filter((p) => p.difficulty === selectedDifficulty);
       }
@@ -212,6 +219,12 @@ export function LeetBankApp() {
       list = list.filter((p) => NEETCODE_150_IDS.has(p.id));
     }
 
+    if (selectedAccess === "free") {
+      list = list.filter((p) => !p.isPaidOnly);
+    } else if (selectedAccess === "premium") {
+      list = list.filter((p) => !!p.isPaidOnly);
+    }
+
     if (selectedDifficulty !== "All") {
       list = list.filter((p) => p.difficulty === selectedDifficulty);
     }
@@ -227,7 +240,7 @@ export function LeetBankApp() {
     }
 
     return { filteredProblems: list, companyMetaMap: compMap };
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow, catalogMap]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow, catalogMap]);
 
   const CODE_TEMPLATES: Record<string, string> = {
     python3: `class Solution:
@@ -414,6 +427,30 @@ public:
                 }`}
               >
                 {r.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Access Filter Row (Free vs Premium) */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[75px]">
+              Access:
+            </span>
+            {[
+              { id: "all", label: "All Access" },
+              { id: "free", label: "Free Only" },
+              { id: "premium", label: "🔒 Premium Only (800+)" },
+            ].map((a) => (
+              <button
+                key={a.id}
+                onClick={() => setSelectedAccess(a.id as any)}
+                className={`text-xs px-2.5 py-1 rounded-md border font-medium transition cursor-pointer ${
+                  selectedAccess === a.id
+                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                }`}
+              >
+                {a.label}
               </button>
             ))}
           </div>
