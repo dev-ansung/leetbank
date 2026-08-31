@@ -559,8 +559,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-4">
         
         {/* 1. Top Topic Ribbon with Counts & Expand/Collapse */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {(isTopicsExpanded ? sortedTopics : sortedTopics.slice(0, 7)).map(({ topic, count }) => (
+        <div className={`flex items-center gap-1.5 ${isTopicsExpanded ? "flex-wrap" : "overflow-x-auto scrollbar-none flex-nowrap pb-1"}`}>
+          {(isTopicsExpanded ? sortedTopics : sortedTopics.slice(0, 10)).map(({ topic, count }) => (
             <button
               key={topic}
               onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
@@ -591,8 +591,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
         {/* 3. Companies & Tracks Navigation Bar */}
         <div className="flex flex-col gap-2 p-3 bg-zinc-50/60 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl">
           {/* Companies Row */}
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto pb-0.5">
               <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">
                 Companies:
               </span>
@@ -645,7 +645,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           </div>
 
           {/* Tracks Row */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-1.5 border-t border-zinc-200/50 dark:border-zinc-800/50">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap w-full pt-1.5 border-t border-zinc-200/50 dark:border-zinc-800/50 pb-0.5">
             <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[70px]">
               Tracks:
             </span>
@@ -684,7 +684,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Search questions (Press "/" to focus)...'
+              placeholder='Search questions...'
               className="w-full pl-10 pr-12 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/50 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 focus:bg-white dark:focus:bg-zinc-900 transition"
             />
             <div className="absolute right-3 flex items-center gap-1.5 pointer-events-none">
@@ -758,7 +758,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             </button>
 
             {showFilterMenu && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl z-30 flex flex-col gap-3">
+              <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 mt-2 sm:w-96 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl z-30 flex flex-col gap-3 max-h-[85vh] overflow-y-auto">
                 <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">Match</span>
@@ -942,10 +942,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               </button>
             </div>
 
-            <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
               <button
                 onClick={() => handleHeaderSort("accepted")}
-                className="w-16 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                className="w-14 sm:w-16 text-right hidden md:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
                 title="Sort by Total Accepted"
               >
                 <span>Accepted</span>
@@ -955,7 +955,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
               <button
                 onClick={() => handleHeaderSort("submitted")}
-                className="w-16 text-right hidden sm:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                className="w-16 text-right hidden lg:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
                 title="Sort by Total Submissions"
               >
                 <span>Submissions</span>
@@ -965,7 +965,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
               <button
                 onClick={() => handleHeaderSort("ac")}
-                className="w-14 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                className="w-12 sm:w-14 text-right hidden sm:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
                 title="Sort by Acceptance Rate"
               >
                 <span>Acceptance</span>
@@ -975,7 +975,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
               <button
                 onClick={() => handleHeaderSort("difficulty")}
-                className="w-12 text-center flex items-center justify-center gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                className="w-12 text-right sm:text-center flex items-center justify-end sm:justify-center gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
                 title="Sort by Difficulty"
               >
                 <span>Difficulty</span>
@@ -985,7 +985,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
               <button
                 onClick={() => handleHeaderSort("access")}
-                className="w-14 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                className="w-14 text-right hidden md:flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
                 title="Sort by Access (Premium / Free)"
               >
                 <span>Access</span>
@@ -1080,7 +1080,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       {/* Interactive Problem Modal */}
       {activeProblem && (
         <div 
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-0 sm:p-6"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setActiveProblem(null);
@@ -1088,7 +1088,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             }
           }}
         >
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-zinc-900 border-0 sm:border border-zinc-200 dark:border-zinc-800 rounded-none sm:rounded-2xl max-w-4xl w-full h-full sm:h-auto sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 flex-wrap min-w-0">
