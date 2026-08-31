@@ -15,7 +15,8 @@ import {
   Layers,
   Sun,
   Moon,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from "lucide-react";
 import catalogData from "../data/catalog.json";
 import companyData from "../data/companies.json";
@@ -110,44 +111,15 @@ export function LeetBankApp() {
   const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
+  
+  // Problem modal & live detail state
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
   const [problemDetail, setProblemDetail] = useState<any>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
+  const [activeTab, setActiveTab] = useState<"statement" | "code" | "solution">("statement");
   const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
+  const [selectedSolLang, setSelectedSolLang] = useState<string>("python3");
   const [visibleCount, setVisibleCount] = useState<number>(50);
-
-  // Fetch full live problem detail when modal opens
-  useEffect(() => {
-    if (!activeProblem) {
-      setProblemDetail(null);
-      return;
-    }
-
-    let isMounted = true;
-    setLoadingDetail(true);
-
-    fetch(`/api/problem/${activeProblem.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          setProblemDetail(data);
-          setLoadingDetail(false);
-          // Set first available starter code language
-          if (data.starterCode && !data.starterCode[selectedCodeLang]) {
-            const firstLang = Object.keys(data.starterCode)[0];
-            if (firstLang) setSelectedCodeLang(firstLang);
-          }
-        }
-      })
-      .catch(() => {
-        if (isMounted) setLoadingDetail(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [activeProblem]);
 
   // Initialize theme state on mount
   useEffect(() => {
@@ -171,6 +143,53 @@ export function LeetBankApp() {
   useEffect(() => {
     setVisibleCount(50);
   }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow]);
+
+  // Fetch live problem details from API whenever activeProblem changes
+  useEffect(() => {
+    if (!activeProblem) {
+      setProblemDetail(null);
+      return;
+    }
+
+    let isMounted = true;
+    setLoadingDetail(true);
+
+    fetch(`/api/problem/${activeProblem.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) {
+          setProblemDetail(data);
+          setLoadingDetail(false);
+
+          // Select first available starter language
+          if (data.starterCode) {
+            const availableLangs = Object.keys(data.starterCode);
+            if (availableLangs.includes("python3")) {
+              setSelectedCodeLang("python3");
+            } else if (availableLangs.length > 0) {
+              setSelectedCodeLang(availableLangs[0]);
+            }
+          }
+
+          // Select first available solution language
+          if (data.solutions && data.solutions.length > 0) {
+            const pySol = data.solutions.find((s: any) => s.langSlug === "python" || s.langSlug === "python3");
+            if (pySol) {
+              setSelectedSolLang(pySol.langSlug || pySol.language.toLowerCase());
+            } else {
+              setSelectedSolLang(data.solutions[0].langSlug || data.solutions[0].language.toLowerCase());
+            }
+          }
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoadingDetail(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeProblem]);
 
   // Keyboard shortcut listener ('/' to focus search)
   useEffect(() => {
@@ -197,8 +216,8 @@ export function LeetBankApp() {
   // Filtered problem list with company metadata
   const { filteredProblems, companyMetaMap } = useMemo(() => {
     const compMap = new Map<number, { freq: number; pattern: string; priority: string }>();
-
     const companiesRoot = (companyData as any).companies || companyData;
+
     if (selectedCompany && companiesRoot[selectedCompany]) {
       const cData = companiesRoot[selectedCompany];
       const winList = cData[selectedWindow] || cData["all-time"] || [];
@@ -277,48 +296,6 @@ export function LeetBankApp() {
     return { filteredProblems: list, companyMetaMap: compMap };
   }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow, catalogMap]);
 
-  const CODE_TEMPLATES: Record<string, string> = {
-    python3: `class Solution:
-    def solve(self):
-        # Modern Python 3.14 PEP 585 / 604
-        pass`,
-    typescript: `function solve(): void {
-    
-};`,
-    golang: `func solve() {
-    
-}`,
-    rust: `impl Solution {
-    pub fn solve() {
-        
-    }
-}`,
-    cpp: `class Solution {
-public:
-    void solve() {
-        
-    }
-};`,
-    java: `class Solution {
-    public void solve() {
-        
-    }
-}`
-  };
-
-  const REFERENCE_SOLUTIONS: Record<string, string> = {
-    python3: `class Solution:
-    def solve(self):
-        # Optimal Reference Solution
-        pass`,
-    typescript: `function solve() {
-    // Optimal Reference Solution
-};`,
-    golang: `func solve() {
-    // Optimal Reference Solution
-}`
-  };
-
   return (
     <div className="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans flex flex-col transition-colors duration-150">
       {/* Top Navbar */}
@@ -365,7 +342,7 @@ public:
             LeetCode Question Bank
           </h1>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Fast edge-hosted question index, company interview frequencies, and reference solutions.
+            Fast edge-hosted question index, company interview frequencies, and official starter templates.
           </p>
         </div>
 
@@ -493,7 +470,7 @@ public:
 
         {/* Problem List Table */}
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
+          <div className="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900 flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 {filteredProblems.length} questions {selectedCompany ? `(${selectedCompany.toUpperCase()} • ${selectedWindow.replace("-", " ")})` : ""}
@@ -504,6 +481,7 @@ public:
                 </span>
               )}
             </div>
+
             <div className="flex items-center gap-1">
               {["All", "Easy", "Medium", "Hard"].map((d) => (
                 <button
@@ -617,6 +595,11 @@ public:
                 <span className="text-xs text-zinc-500 font-medium">
                   • {activeProblem.difficulty}
                 </span>
+                {activeProblem.isPaidOnly && (
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                    Premium Unlocked
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -640,8 +623,8 @@ public:
             <div className="flex border-b border-zinc-200 dark:border-zinc-800 px-5 bg-zinc-50/50 dark:bg-zinc-900/50">
               {[
                 { id: "statement", label: "Statement" },
-                { id: "code", label: "Starter Code (19)" },
-                { id: "solution", label: "Solutions & Big-O" },
+                { id: "code", label: `Starter Code (${problemDetail?.starterCode ? Object.keys(problemDetail.starterCode).length : "..."})` },
+                { id: "solution", label: `Solutions & Big-O (${problemDetail?.solutions ? problemDetail.solutions.length : "..."})` },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -659,96 +642,122 @@ public:
 
             {/* Modal Body */}
             <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-4 text-xs">
-              {activeTab === "statement" && (
+              {loadingDetail && (
+                <div className="py-12 flex flex-col items-center justify-center gap-2 text-zinc-400">
+                  <Loader2 className="size-5 animate-spin text-zinc-500" />
+                  <span>Fetching live official problem data & starter templates...</span>
+                </div>
+              )}
+
+              {!loadingDetail && activeTab === "statement" && (
                 <div className="flex flex-col gap-4">
-                  <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed bg-zinc-50 dark:bg-zinc-800/40 p-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <p className="mb-2">
-                      Given an array of integers <code>nums</code> and an integer <code>target</code>, return <em>indices of the two numbers such that they add up to <code>target</code></em>.
-                    </p>
-                    <p>
-                      You may assume that each input would have <strong>exactly one solution</strong>, and you may not use the same element twice.
-                    </p>
-                  </div>
+                  <div 
+                    className="text-zinc-800 dark:text-zinc-200 leading-relaxed bg-zinc-50 dark:bg-zinc-800/40 p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 prose dark:prose-invert max-w-none text-xs"
+                    dangerouslySetInnerHTML={{ __html: problemDetail?.descriptionHtml || "<p>Statement loaded from Edge.</p>" }}
+                  />
 
                   {/* Formatted Test Cases with Individual Copy Buttons */}
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-                      Example Test Cases
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                      <CopyBlock 
-                        label="Example 1"
-                        content={`Input: nums = [2, 7, 11, 15], target = 9
-Expected: [0, 1]`}
-                      />
-                      <CopyBlock 
-                        label="Example 2"
-                        content={`Input: nums = [3, 2, 4], target = 6
-Expected: [1, 2]`}
-                      />
+                  {problemDetail?.testCases && problemDetail.testCases.length > 0 && (
+                    <div className="flex flex-col gap-2 pt-2">
+                      <h3 className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                        Example Test Cases
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        {problemDetail.testCases.map((tc: any) => (
+                          <CopyBlock 
+                            key={tc.id}
+                            label={tc.name || `Example ${tc.id}`}
+                            content={`Input: ${typeof tc.input === "object" ? JSON.stringify(tc.input, null, 2) : tc.input}${tc.expected !== null && tc.expected !== undefined ? `\nExpected: ${typeof tc.expected === "object" ? JSON.stringify(tc.expected) : tc.expected}` : ""}`}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 
-              {activeTab === "code" && (
+              {!loadingDetail && activeTab === "code" && (
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {["python3", "typescript", "golang", "rust", "cpp", "java"].map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => setSelectedCodeLang(lang)}
-                        className={`text-xs px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer ${
-                          selectedCodeLang === lang
-                            ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                            : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
-                        }`}
-                      >
-                        {lang}
-                      </button>
-                    ))}
-                  </div>
+                  {/* Starter Language Tabs */}
+                  {problemDetail?.starterCode && Object.keys(problemDetail.starterCode).length > 0 ? (
+                    <>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {Object.keys(problemDetail.starterCode).map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => setSelectedCodeLang(lang)}
+                            className={`text-xs px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer ${
+                              selectedCodeLang === lang
+                                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
+                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                            }`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
 
-                  <CopyBlock
-                    language={selectedCodeLang}
-                    content={CODE_TEMPLATES[selectedCodeLang] || CODE_TEMPLATES.python3}
-                  />
+                      <CopyBlock
+                        language={selectedCodeLang}
+                        content={problemDetail.starterCode[selectedCodeLang] || `// No snippet for ${selectedCodeLang}`}
+                      />
+                    </>
+                  ) : (
+                    <div className="p-4 text-center text-zinc-500">
+                      No starter code snippet available for this problem.
+                    </div>
+                  )}
                 </div>
               )}
 
-              {activeTab === "solution" && (
+              {!loadingDetail && activeTab === "solution" && (
                 <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
-                        Time: O(N)
-                      </span>
-                      <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
-                        Space: O(N)
-                      </span>
-                    </div>
+                  {problemDetail?.solutions && problemDetail.solutions.length > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
+                            Time: {problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.timeComplexity || "O(N)"}
+                          </span>
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
+                            Space: {problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.spaceComplexity || "O(1)"}
+                          </span>
+                        </div>
 
-                    <div className="flex items-center gap-1">
-                      {["python3", "typescript", "golang"].map((l) => (
-                        <button
-                          key={l}
-                          onClick={() => setSelectedCodeLang(l)}
-                          className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer ${
-                            selectedCodeLang === l
-                              ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                              : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
-                          }`}
-                        >
-                          {l}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {problemDetail.solutions.map((sol: any) => {
+                            const solKey = sol.langSlug || sol.language.toLowerCase();
+                            return (
+                              <button
+                                key={solKey}
+                                onClick={() => setSelectedSolLang(solKey)}
+                                className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer ${
+                                  selectedSolLang === solKey
+                                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
+                                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
+                                }`}
+                              >
+                                {sol.language}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
 
-                  <CopyBlock
-                    label={`Reference ${selectedCodeLang} Solution`}
-                    content={REFERENCE_SOLUTIONS[selectedCodeLang] || REFERENCE_SOLUTIONS.python3}
-                  />
+                      <CopyBlock
+                        label={`Reference ${selectedSolLang} Solution`}
+                        content={
+                          problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.code ||
+                          problemDetail.solutions[0]?.code ||
+                          "// Reference solution"
+                        }
+                      />
+                    </>
+                  ) : (
+                    <div className="p-4 text-center text-zinc-500">
+                      No reference solution available.
+                    </div>
+                  )}
                 </div>
               )}
             </div>
