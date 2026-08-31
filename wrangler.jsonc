@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "leetbank",
+  "compatibility_date": "2026-08-30",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "pages_build_output_dir": "dist",
+  "account_id": "6a61ba2ae8edd10e314785eb1f7734a9",
+  "kv_namespaces": [
+    {
+      "binding": "LEETBANK_CACHE",
+      "id": "leetbank-cache"
+    }
+  ]
+}

@@ -124,6 +124,24 @@ const BLIND_75_IDS = new Set([1, 15, 20, 21, 23, 33, 49, 53, 55, 56, 57, 70, 73,
 export function LeetBankApp() {
   const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Initialize theme state on mount
+  useEffect(() => {
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    setIsDark(isCurrentlyDark);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
@@ -132,14 +150,7 @@ export function LeetBankApp() {
   const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
   const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
 
-  // Sync theme class to html element
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDark]);
+
 
   // Keyboard shortcut listener ('/' to focus search)
   useEffect(() => {
@@ -268,7 +279,7 @@ public:
         <div className="flex items-center gap-2">
           {/* Light / Dark Toggle */}
           <button
-            onClick={() => setIsDark(!isDark)}
+            onClick={toggleTheme}
             className="size-8 rounded-md border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
             title="Toggle theme"
           >

@@ -4,14 +4,24 @@ import "../styles/global.css";
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LeetBank 🏦 - Zero-Paywall Question Bank on Cloudflare Edge</title>
     <meta name="description" content="Ultra-fast LeetCode question bank with 4,037 unlocked problems, company interview tracks, and 16-language solutions on Cloudflare Edge." />
+    <script is:inline>
+      // Initialize theme before render to prevent flash
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (saved === "dark" || (!saved && prefersDark)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
   </head>
-  <body class="bg-[#09090b]">
+  <body class="bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 min-h-screen">
     <LeetBankApp client:load />
   </body>
 </html>
