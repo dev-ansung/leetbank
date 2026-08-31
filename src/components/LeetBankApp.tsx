@@ -22,6 +22,16 @@ import catalogData from "../data/catalog.json";
 import tracksData from "../data/tracks.json";
 import companyData from "../data/companies.json";
 
+// Sorter & Filter Types
+export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "freq-desc";
+
+export interface FilterRule {
+  id: string;
+  field: "difficulty" | "topics" | "language" | "company" | "access" | "frequency";
+  operator: "is" | "is_not";
+  value: string;
+}
+
 // Types
 interface Problem {
   id: number;
@@ -111,6 +121,13 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
   const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  // LeetCode-Style Sorter & Filter Popover States
+  const [sortBy, setSortBy] = useState<SortField>("id-asc");
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [matchMode, setMatchMode] = useState<"all" | "any">("all");
+  const [filterRules, setFilterRules] = useState<FilterRule[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
   
@@ -600,6 +617,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                     <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-white transition truncate">
                       {p.title}
                     </span>
+                    {(p as any).acRate !== undefined && (
+                      <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 shrink-0">
+                        {((p as any).acRate).toFixed(1)}%
+                      </span>
+                    )}
                     {p.isPaidOnly && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 shrink-0">
                         Premium
