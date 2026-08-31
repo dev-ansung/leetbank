@@ -30,7 +30,7 @@ function formatCompactNumber(num?: number): string {
 }
 
 // Sorter & Filter Types
-export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc";
+export type SortField = "id-asc" | "id-desc" | "title-asc" | "title-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc";
 
 export interface FilterRule {
   id: string;
@@ -254,9 +254,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   };
 
   // Column Header Sort Toggle
-  const handleHeaderSort = (field: "id" | "difficulty" | "ac" | "accepted" | "submitted") => {
+  const handleHeaderSort = (field: "id" | "title" | "difficulty" | "ac" | "accepted" | "submitted") => {
     if (field === "id") {
       setSortBy(sortBy === "id-asc" ? "id-desc" : "id-asc");
+    } else if (field === "title") {
+      setSortBy(sortBy === "title-asc" ? "title-desc" : "title-asc");
     } else if (field === "difficulty") {
       setSortBy(sortBy === "diff-asc" ? "diff-desc" : "diff-asc");
     } else if (field === "ac") {
@@ -371,6 +373,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           return a.id - b.id;
         case "id-desc":
           return b.id - a.id;
+        case "title-asc":
+          return a.title.localeCompare(b.title) || a.id - b.id;
+        case "title-desc":
+          return b.title.localeCompare(a.title) || a.id - b.id;
         case "diff-asc":
           return (diffOrder[a.difficulty] || 2) - (diffOrder[b.difficulty] || 2) || a.id - b.id;
         case "diff-desc":
@@ -789,16 +795,29 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
         {/* 5. Clean LeetCode Problemset Table */}
         <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-sm mt-1">
-          {/* Table Header with Clickable Column Sorting */}
+          {/* Table Header with Split ID & Title Columns */}
           <div className="px-4 py-2.5 bg-zinc-50/90 dark:bg-zinc-800/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 flex items-center justify-between select-none">
-            <button
-              onClick={() => handleHeaderSort("id")}
-              className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
-            >
-              <span>Title ({filteredProblems.length})</span>
-              {sortBy === "id-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
-              {sortBy === "id-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
-            </button>
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                onClick={() => handleHeaderSort("id")}
+                className="w-10 text-left flex items-center gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer shrink-0"
+                title="Sort by Question ID"
+              >
+                <span>#</span>
+                {sortBy === "id-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "id-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+
+              <button
+                onClick={() => handleHeaderSort("title")}
+                className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer truncate"
+                title="Sort alphabetically by Title"
+              >
+                <span>Title ({filteredProblems.length})</span>
+                {sortBy === "title-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "title-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
+            </div>
 
             <div className="flex items-center gap-4 sm:gap-6">
               <button
