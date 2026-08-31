@@ -58,6 +58,83 @@ function LatexMath({ math, label }: { math?: string; label: string }) {
   );
 }
 
+// Clean HTML to Markdown converter for problem statements
+function convertHtmlToMarkdown(problem: Problem, html?: string, testCases?: any[]): string {
+  if (!html) return `# ${problem.id}. ${problem.title}\n\n**Difficulty:** ${problem.difficulty}`;
+  
+  let md = html;
+  
+  // Replace headings
+  md = md.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, "\n# $1\n");
+  md = md.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "\n## $1\n");
+  md = md.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "\n### $1\n");
+  md = md.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, "\n#### $1\n");
+
+  // Replace example blocks
+  md = md.replace(/<strong class="example">([\s\S]*?)<\/strong>/gi, "\n### $1\n");
+  md = md.replace(/<div class="example-block">([\s\S]*?)<\/div>/gi, (_, block) => {
+    const text = block.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    return `\n\`\`\`\n${text}\n\`\`\`\n`;
+  });
+
+  // Replace code blocks and pre
+  md = md.replace(/<pre>([\s\S]*?)<\/pre>/gi, (_, codeContent) => {
+    const cleanCode = codeContent.replace(/<[^>]+>/g, "").trim();
+    return `\n\`\`\`\n${cleanCode}\n\`\`\`\n`;
+  });
+  
+  // Replace inline code
+  md = md.replace(/<code>([\s\S]*?)<\/code>/gi, "`$1`");
+
+  // Replace bold & italic
+  md = md.replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, "**$1**");
+  md = md.replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, "**$1**");
+  md = md.replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, "*$1*");
+  md = md.replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, "*$1*");
+
+  // Replace lists
+  md = md.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "- $1\n");
+  md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, "\n$1\n");
+  md = md.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, "\n$1\n");
+
+  // Replace paragraphs and line breaks
+  md = md.replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, "\n\n$1\n\n");
+  md = md.replace(/<br\s*\/?>/gi, "\n");
+
+  // Replace superscripts / subscripts
+  md = md.replace(/<sup>([\s\S]*?)<\/sup>/gi, "^$1");
+  md = md.replace(/<sub>([\s\S]*?)<\/sub>/gi, "_$1");
+
+  // Strip remaining HTML tags
+  md = md.replace(/<[^>]+>/g, "");
+
+  // Decode standard HTML entities
+  md = md.replace(/&nbsp;/g, " ")
+         .replace(/&lt;/g, "<")
+         .replace(/&gt;/g, ">")
+         .replace(/&amp;/g, "&")
+         .replace(/&quot;/g, '"')
+         .replace(/&#39;/g, "'");
+
+  // Clean excessive blank lines
+  md = md.replace(/\n{3,}/g, "\n\n").trim();
+
+  // Prepend standardized metadata header
+  const header = `# ${problem.id}. ${problem.title}
+
+- **Difficulty:** ${problem.difficulty}
+- **Topics:** ${problem.topics.join(", ") || "General"}
+- **LeetCode Link:** https://leetcode.com/problems/${problem.slug}/
+
+---
+
+## Problem Statement
+
+`;
+
+  return header + md;
+}
+
 // Compact number formatter (e.g. 23.3M, 850.2K)
 function formatCompactNumber(num?: number): string {
   if (num === undefined || num === null || isNaN(num) || num === 0) return "-";
@@ -171,6 +248,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [activeTab, setActiveTab] = useState<"description" | "starter" | "solution">("description");
   const [selectedStarterLang, setSelectedStarterLang] = useState("python3");
   const [selectedSolLang, setSelectedSolLang] = useState("python3");
+  const [copiedMarkdown, setCopiedMarkdown] = useState(false);
   const [visibleCount, setVisibleCount] = useState(50);
   const [isDark, setIsDark] = useState(false);
 
@@ -1092,7 +1170,33 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               )}
 
               {!loadingDetail && activeTab === "description" && (
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  {/* Statement Top Action Bar */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                      Problem Statement
+                    </h3>
+                    <button
+                      onClick={() => {
+                        const md = convertHtmlToMarkdown(activeProblem, problemDetail?.descriptionHtml, problemDetail?.testCases);
+                        navigator.clipboard.writeText(md);
+                        setCopiedMarkdown(true);
+                        setTimeout(() => setCopiedMarkdown(false), 2000);
+                      }}
+                      className="text-xs px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    >
+                      {copiedMarkdown ? (
+                        <>
+                          <Check className="size-3 text-emerald-500" /> Copied Markdown!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="size-3" /> Copy Markdown
+                        </>
+                      )}
+                    </button>
+                  </div>
+
                   {/* HTML Statement */}
                   <div 
                     className="prose dark:prose-invert max-w-none text-xs leading-relaxed text-zinc-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-800/80 rounded-xl p-5 bg-zinc-50/30 dark:bg-zinc-900/30"
