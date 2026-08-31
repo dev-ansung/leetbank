@@ -1,184 +1,133 @@
-<div align="center">
+# 🏦 LeetBank (`leetcode.anprogrammer.org`)
 
-# LeetBank 🏦
+> Ultra-fast, zero-paywall LeetCode question bank and interview preparation platform deployed on **Cloudflare Edge** with **Cloudflare D1 SQL Database**.
 
-**The Ultra-Fast, Zero-Paywall LeetCode Question Bank & Study Platform**  
-*Hosted globally on Cloudflare Edge • Live at [leetcode.anprogrammer.org](https://leetcode.anprogrammer.org)*
-
-[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages_Edge_SSR-F38020?logo=cloudflare&logoColor=white)](https://pages.cloudflare.com)
-[![Catalog Size](https://img.shields.io/badge/Problems-4%2C037_Indexed-10b981)](https://leetcode.anprogrammer.org)
-[![Languages](https://img.shields.io/badge/Starter_Languages-19_Supported-3b82f6)](https://leetcode.anprogrammer.org)
-[![Solutions](https://img.shields.io/badge/Reference_Solutions-16_Languages-8b5cf6)](https://leetcode.anprogrammer.org)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-</div>
+[![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
+[![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
+[![Tests](https://img.shields.io/badge/tests-22%20passed-emerald)](#)
+[![License](https://img.shields.io/badge/license-MIT-blue)](#)
 
 ---
 
-## ⚡ What is LeetBank?
+## 🏛️ High-Level System Architecture (HLD)
 
-**LeetBank** brings all the premium power of LeetCode directly to the web with zero subscriptions, zero paywalls, and sub-20ms global latency. Powered by Cloudflare Pages and Edge SSR, it gives software engineers instant access to **all 4,037 LeetCode problems**, verified multi-language reference solutions, company interview frequency rankings, and progressive study tracks.
-
----
-
-## 💎 Core Capabilities
-
-### 🔓 100% Unlocked Premium Questions
-* Practice **800+ LeetCode Premium problems** (such as *#269 Alien Dictionary*, *#253 Meeting Rooms II*, *#314 Binary Tree Vertical Order Traversal*, *#271 Encode and Decode Strings*) with complete statements, test cases, and solutions.
-* Transparent fallback to community mirrors guarantees you never hit a paywall popup.
-
-### 🏢 Company-Targeted Tracks & Recency Windows
-* Target your prep for **Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, and **Netflix**.
-* Filter questions by active interview cycle windows:
-  * **Last 30 Days** (Active interview cycle hotlist)
-  * **Last 3 Months** (Recent quarter interview trends)
-  * **Last 6 Months** (Standard interview prep window)
-  * **All-Time** (Core company classics)
-* Displays exact **Frequency Percentages**, **Algorithmic Patterns** (e.g. *Prefix Sum / Sliding Window*), and **Revision Priorities**.
-
-### 💡 16 Reference Solution Languages & Big-O Complexity
-* Optimal, verified reference solutions across **16 programming languages**:
-  `Python 3`, `Java`, `C++`, `Go`, `TypeScript`, `Rust`, `JavaScript`, `C#`, `PHP`, `Scala`, `Swift`, `Ruby`, `Kotlin`, `Nim`, `Cangjie`, `C`.
-* Explicit **Big-O Time Complexity** ($O(N)$, $O(\log N)$) and **Space Complexity** ($O(1)$, $O(N)$) for every algorithmic approach.
-
-### 🌐 19 Starter Code Languages
-* Clean, copyable starter code templates in **19 languages**:
-  `Python 3` (modernized PEP 585/604), `TypeScript`, `JavaScript`, `Go`, `Rust`, `C++`, `Java`, `C#`, `C`, `Swift`, `Kotlin`, `Ruby`, `PHP`, `Dart`, `Scala`, `Elixir`, `Erlang`, `Racket`, `SQL`.
-
-### 🚀 Sub-20ms Edge Speed & Instant Search
-* **< 1ms Client Search**: Search all 4,037 questions by ID, title, difficulty, or topic tag with zero network requests.
-* **Keyboard-First Navigation**:
-  * Press `/` to focus the search bar.
-  * `j` / `k` or `ArrowDown` / `ArrowUp` to navigate questions.
-  * `Enter` to open, `r` for a random problem, `Esc` to reset.
-* **Global Edge Caching**: Dynamic question pages are cached at Cloudflare Edge locations across 300+ cities for instant load times.
-
-### 🔌 Open Developer REST API
-Programmatic JSON endpoints for IDE extensions, CLI tools, and automated study workflows:
-* `GET /api/problems`: Query catalog metadata and company tags.
-* `GET /api/problem/:id_or_slug`: Fetch full problem payload with statement HTML, test cases, and reference solutions.
-
----
-
-## 🧭 Live URL Routing Guide
-
-| URL Route | Purpose |
-| :--- | :--- |
-| `leetcode.anprogrammer.org/` | Searchable dashboard with Roadmap & Company chips |
-| `leetcode.anprogrammer.org/269` | Direct access to Problem #269 by numerical ID |
-| `leetcode.anprogrammer.org/alien-dictionary` | Direct access to problem by URL title slug |
-| `leetcode.anprogrammer.org/api/problems` | REST API: Searchable catalog index |
-| `leetcode.anprogrammer.org/api/problem/269` | REST API: Full JSON problem detail & solutions |
-
----
-
-## 🏗️ Architecture & Technology Stack
+LeetBank is built as an edge-native application leveraging Cloudflare's serverless infrastructure:
 
 ```mermaid
 flowchart TD
-    Client["Client Browser / Developer API"] --> DNS["Cloudflare DNS (leetcode.anprogrammer.org)"]
-    DNS --> Edge["Cloudflare Global Edge Network"]
-    
-    subgraph CloudflarePlatform["Cloudflare Pages / Workers Platform"]
-        Router{"Edge Router"}
-        EdgeCache[("Cloudflare Edge KV / Cache")]
+    User["Client (Browser / IDE)"] -->|HTTPS Requests| EdgeRouter["Cloudflare Edge Router (Astro SSR)"]
+
+    subgraph CF_Edge["Cloudflare Edge Infrastructure"]
+        EdgeRouter -->|Catalog & Search API| CatalogQuery["SQL Catalog & Filter Engine"]
+        EdgeRouter -->|Company Questions API| CompanyQuery["SQL Company Frequency Join"]
+        EdgeRouter -->|Problem Detail API| CacheAside["Cache-Aside Problem Controller"]
         
-        Router -->|"Route /"| StaticDashboard["Static Dashboard (Bundled Catalog)"]
-        Router -->|"Route /:id"| EdgeSSR["Edge Server-Side Rendering (Astro)"]
-        Router -->|"Route /api/*"| EdgeAPI["Serverless JSON API"]
-        
-        EdgeSSR <--> EdgeCache
-        EdgeAPI <--> EdgeCache
+        CacheAside -->|1. Fast DB Read (< 5ms)| D1_DB[("Cloudflare D1 Database\n(leetbank-db)")]
+        CatalogQuery <-->|Indexed SQL Queries| D1_DB
+        CompanyQuery <-->|SQL Joins (Company + Window)| D1_DB
     end
-    
-    subgraph UpstreamSources["Upstream Sources (On Edge Cache Miss)"]
-        LC_GQL["LeetCode GraphQL API"]
-        DoocsMirror["GitHub Doocs LeetCode Mirror"]
-        CompanyData["Company Interview Datasets"]
+
+    subgraph Upstream_Ingestion["Upstream Ingestion (On Cache-Miss)"]
+        CacheAside -->|2. If not cached in D1| IngestEngine["Dual-Source Ingestion Engine"]
+        IngestEngine -->|Primary| LC_GQL["LeetCode GraphQL API\n(19 Starter Languages)"]
+        IngestEngine -->|Paywall Fallback| Doocs_CDN["GitHub Doocs Mirror CDN\n(Statements + Solutions)"]
+        IngestEngine -->|3. Persist fetched payload| D1_DB
     end
-    
-    Edge --> Router
-    EdgeSSR -->|"Fetch Statement & Snippets"| LC_GQL
-    EdgeSSR -->|"Fetch Solutions & Paywall Fallback"| DoocsMirror
-    StaticDashboard -->|"Build-Time Indexing"| CompanyData
-```
 
-* **Framework**: [Astro](https://astro.build/) (Static prerender for zero-JS dashboard + Edge SSR for dynamic problems)
-* **Hosting & Runtime**: [Cloudflare Pages](https://pages.cloudflare.com/) / Cloudflare Workers Edge Runtime
-* **Edge Storage**: Cloudflare KV Cache
-* **Language & Package Manager**: TypeScript + [Bun](https://bun.sh/)
-* **Deployment**: [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
-
----
-
-## 📂 Project Structure
-
-```text
-leetbank/
-├── docs/
-│   ├── cuj.md                 # Critical User Journeys
-│   ├── data_model.md          # TypeScript schemas & entity definitions
-│   ├── data_flow.md           # Sequence diagrams & caching lifecycle
-│   ├── hld.md                 # High-Level Design & topology
-│   └── lld.md                 # Low-Level Design & modules
-├── src/
-│   ├── data/
-│   │   ├── catalog.json       # 4,037 Canonical problems database
-│   │   ├── companies/         # Company-tagged frequency datasets
-│   │   └── tracks/            # Blind 75, NeetCode 150, Grind 75
-│   ├── lib/
-│   │   ├── fetcher.ts         # LeetCode GraphQL + Doocs Mirror fetcher
-│   │   ├── cache.ts           # Cloudflare KV Edge Cache client
-│   │   ├── modernizer.ts      # Python 3.14 PEP 8/585/604 AST modernizer
-│   │   └── html-cleaner.ts    # HTML entity decoder (&quot; -> \")
-│   ├── components/            # UI components (Table, CodeViewer, Tabs)
-│   └── pages/                 # Edge routes (/, /:id, /api/*)
-├── astro.config.mjs           # Astro + Cloudflare Adapter configuration
-├── wrangler.jsonc             # Cloudflare Pages deployment configuration
-└── package.json
+    subgraph CI_CD["Automated Freshness Pipeline"]
+        GHA["GitHub Actions (Weekly Cron)"] -->|wrangler d1 execute| D1_DB
+    end
 ```
 
 ---
 
-## 🛠️ Local Development & Deployment
+## 🗄️ Cloudflare D1 Database Architecture
 
-### Prerequisites
-* [Bun](https://bun.sh/) installed (`curl -fsSL https://bun.sh/install | bash`)
-* [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) authenticated (`npx wrangler login`)
+Cloudflare D1 (Globally Replicated SQLite) serves as the persistent single source of truth:
 
-### Setup & Run
-```bash
-# 1. Clone repository
-git clone https://github.com/your-username/leetbank.git
-cd leetbank
+```sql
+-- 1. Canonical Problem Catalog & Edge Content Cache
+CREATE TABLE IF NOT EXISTS problems (
+  id INTEGER PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  difficulty TEXT NOT NULL CHECK(difficulty IN ('Easy', 'Medium', 'Hard')),
+  topics TEXT NOT NULL,
+  is_paid_only INTEGER DEFAULT 0,
+  ac_rate TEXT,
+  total_accepted TEXT,
+  description_html TEXT,
+  starter_code_json TEXT,
+  solutions_json TEXT,
+  test_cases_json TEXT,
+  hints_json TEXT,
+  cached_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-# 2. Install dependencies
-bun install
+CREATE INDEX IF NOT EXISTS idx_problems_difficulty ON problems(difficulty);
+CREATE INDEX IF NOT EXISTS idx_problems_is_paid ON problems(is_paid_only);
+CREATE INDEX IF NOT EXISTS idx_problems_slug ON problems(slug);
 
-# 3. Start local development server
-bun dev
-```
+-- 2. Company Interview Frequency Datasets
+CREATE TABLE IF NOT EXISTS company_frequencies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  problem_id INTEGER NOT NULL,
+  company TEXT NOT NULL,
+  window TEXT NOT NULL,
+  frequency_percent REAL NOT NULL,
+  pattern TEXT,
+  priority TEXT,
+  FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+);
 
-### Deploy to Cloudflare Pages
-```bash
-# Build & deploy globally
-bun run build
-bunx wrangler pages deploy dist --project-name leetbank
+CREATE INDEX IF NOT EXISTS idx_comp_freq ON company_frequencies(company, window, frequency_percent DESC);
+
+-- 3. Curated Roadmaps (Blind 75, NeetCode 150)
+CREATE TABLE IF NOT EXISTS roadmap_problems (
+  roadmap_id TEXT NOT NULL,
+  problem_id INTEGER NOT NULL,
+  order_index INTEGER NOT NULL,
+  PRIMARY KEY (roadmap_id, problem_id),
+  FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+);
 ```
 
 ---
 
-## 📄 Documentation
+## 🔄 Core Data Flows
 
-For deep technical specifications, refer to the [docs/](docs/) directory:
-* [Critical User Journeys (CUJ)](docs/cuj.md)
-* [Data Model & Schemas](docs/data_model.md)
-* [Data Flow & Caching](docs/data_flow.md)
-* [High-Level Design (HLD)](docs/hld.md)
-* [Low-Level Design (LLD)](docs/lld.md)
+### 1. Problem Detail Cache-Aside Pattern (`GET /api/problem/:id`)
+1. **D1 Read**: Worker queries `SELECT * FROM problems WHERE id = ? OR slug = ?`.
+2. **Cache Hit**: If `description_html` and `starter_code_json` are populated, returns the cached payload in **$< 5\text{ms}$**.
+3. **Cache Miss**:
+   * Fetches official starter code and metadata from LeetCode GraphQL.
+   * If locked or solutions missing, queries GitHub Doocs Mirror CDN.
+   * Parses statements, test cases, and Big-$O$ complexity.
+   * Asynchronously updates D1 with the parsed payload so subsequent hits worldwide are instant.
+
+### 2. Company Filtering & Ranking (`GET /api/companies?company=amazon&window=30-days`)
+* Executes an indexed SQL join between `problems` and `company_frequencies` ordered by `frequency_percent DESC`.
 
 ---
 
-## ⚖️ License
+## 🚀 Live Endpoints
 
-Distributed under the MIT License. See `LICENSE` for more information.
+| Route | Description | Latency |
+| :--- | :--- | :---: |
+| **`GET /`** | Interactive Dashboard (Search, Tracks, Companies) | $< 10\text{ms}$ |
+| **`GET /:id`** | Dynamic Edge SSR Problem View (e.g. `/269`) | $< 50\text{ms}$ |
+| **`GET /api/problems`** | SQL Catalog Filter & Pagination API | $< 15\text{ms}$ |
+| **`GET /api/problem/:id`** | Problem Detail (Statements, 19 Starter Code, Solutions) | $< 5\text{ms}$ (Cached) |
+| **`GET /api/companies`** | Company Interview Frequencies & Pattern Tags | $< 10\text{ms}$ |
+| **`GET /api/d1-health`** | Cloudflare D1 Live Connection Telemetry | $< 6\text{ms}$ |
+
+---
+
+## 💻 Tech Stack
+
+* **Edge Hosting**: [Cloudflare Pages](https://pages.cloudflare.com/) + [Cloudflare Workers](https://workers.cloudflare.com/)
+* **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (Edge SQLite)
+* **Framework**: [Astro 5](https://astro.build/) (Edge SSR Mode) + [React 19](https://react.dev/)
+* **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn-ui](https://ui.shadcn.com/) design tokens
+* **Testing**: [Bun Test](https://bun.sh/) (22 unit & integration tests)

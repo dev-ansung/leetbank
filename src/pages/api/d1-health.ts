@@ -11,23 +11,24 @@ export const GET: APIRoute = async ({ locals }) => {
       return new Response(JSON.stringify({
         status: "ok",
         mode: "local_preview",
-        message: "D1 database 'leetbank-db' ready. In production edge runtime, queries execute directly on D1."
+        message: "D1 database ready. In production edge runtime, queries execute directly on D1."
       }), {
         status: 200,
         headers: { "Content-Type": "application/json" }
       });
     }
 
-    const { results: problems } = await db.prepare("SELECT * FROM problems").all();
-    const { results: frequencies } = await db.prepare("SELECT * FROM company_frequencies").all();
+    const { results: countProbs } = await db.prepare("SELECT COUNT(*) as count FROM problems").all();
+    const { results: countFreqs } = await db.prepare("SELECT COUNT(*) as count FROM company_frequencies").all();
+    const { results: sampleProbs } = await db.prepare("SELECT id, slug, title, difficulty, is_paid_only FROM problems LIMIT 5").all();
 
     return new Response(JSON.stringify({
       status: "connected",
       database: "leetbank-db",
       region: "WNAM",
-      problemsCount: problems.length,
-      problems,
-      companyFrequencies: frequencies
+      totalProblemsInD1: countProbs[0]?.count,
+      totalCompanyRecordsInD1: countFreqs[0]?.count,
+      sampleProblems: sampleProbs
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" }
