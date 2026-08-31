@@ -1,4 +1,3 @@
-import katex from "katex";
 import {
   ArrowUpDown,
   Building2,
@@ -25,42 +24,6 @@ import TurndownService from "turndown";
 import catalogData from "../data/catalog.json";
 import companiesData from "../data/companies.json";
 import tracksData from "../data/tracks.json";
-
-// LaTeX Math Renderer for Big-O Complexities
-function LatexMath({ math, label }: { math?: string; label: string }) {
-  const renderedHtml = useMemo(() => {
-    if (!math) return null;
-    let clean = math.trim();
-    if (clean.startsWith("$") && clean.endsWith("$")) {
-      clean = clean.slice(1, -1).trim();
-    }
-    // Normalize common Big-O formats
-    if (!clean.startsWith("O(") && !clean.startsWith("\\mathcal{O}(")) {
-      if (clean.startsWith("O")) {
-        // e.g. O(n)
-      }
-    }
-    try {
-      return katex.renderToString(clean, {
-        throwOnError: false,
-        displayMode: false,
-      });
-    } catch {
-      return null;
-    }
-  }, [math]);
-
-  return (
-    <div className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/80">
-      <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400">{label}:</span>
-      {renderedHtml ? (
-        <span dangerouslySetInnerHTML={{ __html: renderedHtml }} className="inline-flex items-center" />
-      ) : (
-        <span className="font-mono text-xs">{math || "O(1)"}</span>
-      )}
-    </div>
-  );
-}
 
 // Lookup company interview frequency for a given problem ID
 function getProblemCompanies(probId: number): Array<{ company: string; window: string; displayName: string }> {
@@ -140,6 +103,31 @@ function convertHtmlToMarkdown(problem: Problem, html?: string): string {
   return header + bodyMd;
 }
 
+// Safe clipboard copy with fallback
+async function safeCopyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {}
+  try {
+    if (typeof document !== "undefined") {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      return successful;
+    }
+  } catch {}
+  return false;
+}
+
 // Compact number formatter (e.g. 23.3M, 850.2K)
 function formatCompactNumber(num?: number): string {
   if (num === undefined || num === null || Number.isNaN(num) || num === 0) return "-";
@@ -204,10 +192,12 @@ tracksData.tracks.forEach((t) => {
 function CopyBlock({ label, content }: { label: string; content: string }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const ok = await safeCopyToClipboard(content);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -267,6 +257,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   const [activeTab, setActiveTab] = useState<"description" | "starter" | "solution">("description");
   const [selectedStarterLang, setSelectedStarterLang] = useState("python3");
   const [selectedSolLang, setSelectedSolLang] = useState("python3");
+  const [selectedSolAuthor, setSelectedSolAuthor] = useState<string>("walkccc");
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
   const [revealedHints, setRevealedHints] = useState<Record<number, boolean>>({});
   const [visibleCount, setVisibleCount] = useState(50);
@@ -309,7 +300,9 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
         setActiveProblem(null);
         setShowSortMenu(false);
         setShowFilterMenu(false);
-        window.history.pushState(null, "", "/");
+        if (typeof window !== "undefined" && window.location.pathname !== "/") {
+          window.history.pushState(null, "", "/");
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -393,6 +386,25 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     (catalogData as Problem[]).forEach((p) => map.set(p.id, p));
     return map;
   }, []);
+
+  // Handle Browser Back / Forward History Navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = typeof window !== "undefined" ? window.location.pathname.replace(/^\//, "") : "";
+      if (!path) {
+        setActiveProblem(null);
+      } else {
+        const found = catalogMap.get(Number(path)) || (catalogData as Problem[]).find((p) => p.slug === path);
+        if (found) {
+          setActiveProblem(found);
+        } else {
+          setActiveProblem(null);
+        }
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [catalogMap]);
 
   // Pick Random Problem
   const handlePickRandom = () => {
@@ -1270,7 +1282,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                     : "border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
                 }`}
               >
-                Solutions & Big-O ({problemDetail?.solutions ? problemDetail.solutions.length : 0})
+                Solutions ({problemDetail?.solutions ? problemDetail.solutions.length : 0})
               </button>
             </div>
 
@@ -1286,24 +1298,27 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               {!loadingDetail && activeTab === "description" && (
                 <div className="flex flex-col gap-4">
                   {/* Statement Top Action Bar */}
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Problem Statement</h3>
+                  <div className="flex items-center justify-between pb-0.5 text-zinc-500 dark:text-zinc-400 font-mono text-[11px]">
+                    <span>Problem Statement</span>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         const md = convertHtmlToMarkdown(activeProblem, problemDetail?.descriptionHtml);
-                        navigator.clipboard.writeText(md);
-                        setCopiedMarkdown(true);
-                        setTimeout(() => setCopiedMarkdown(false), 2000);
+                        const ok = await safeCopyToClipboard(md);
+                        if (ok) {
+                          setCopiedMarkdown(true);
+                          setTimeout(() => setCopiedMarkdown(false), 2000);
+                        }
                       }}
-                      className="text-xs px-2.5 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1 text-[11px] font-mono text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition cursor-pointer"
+                      title="Copy problem statement as Markdown"
                     >
                       {copiedMarkdown ? (
                         <>
-                          <Check className="size-3 text-emerald-500" /> Copied Markdown!
+                          <Check className="size-3 text-emerald-500" /> Copied!
                         </>
                       ) : (
                         <>
-                          <Copy className="size-3" /> Copy Markdown
+                          <Copy className="size-3" /> Copy
                         </>
                       )}
                     </button>
@@ -1491,44 +1506,117 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
               )}
 
               {!loadingDetail && activeTab === "solution" && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   {problemDetail?.solutions && problemDetail.solutions.length > 0 ? (
                     (() => {
+                      const allSols = problemDetail.solutions;
+
+                      // Map solutions by author
+                      const authorMap = new Map<string, any[]>();
+                      allSols.forEach((s: any) => {
+                        const authorKey = s.source === "walkccc" ? "walkccc" : "doocs";
+                        if (!authorMap.has(authorKey)) authorMap.set(authorKey, []);
+                        authorMap.get(authorKey)!.push(s);
+                      });
+
+                      const authorList = [
+                        { id: "walkccc", displayName: "walkccc", count: authorMap.get("walkccc")?.length || 0 },
+                        { id: "doocs", displayName: "Doocs", count: authorMap.get("doocs")?.length || 0 },
+                      ].filter((a) => a.count > 0);
+
+                      const activeAuthorId = authorList.some((a) => a.id === selectedSolAuthor)
+                        ? selectedSolAuthor
+                        : authorList[0]?.id || "doocs";
+
+                      const authorSolutions = authorMap.get(activeAuthorId) || allSols;
+
                       const activeSol =
-                        problemDetail.solutions.find(
-                          (s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang,
-                        ) || problemDetail.solutions[0];
+                        authorSolutions.find(
+                          (s: any) => s.langSlug === selectedSolLang || s.language.toLowerCase() === selectedSolLang,
+                        ) || authorSolutions[0];
+
                       return (
                         <>
-                          <div className="flex items-center justify-between gap-3 flex-wrap">
-                            <div className="flex items-center gap-2">
-                              <LatexMath label="Time" math={activeSol?.timeComplexity || "O(N)"} />
-                              <LatexMath label="Space" math={activeSol?.spaceComplexity || "O(1)"} />
-                            </div>
-
-                            <div className="flex items-center gap-1 flex-wrap">
-                              {problemDetail.solutions.map((sol: any, idx: number) => {
-                                const solKey = sol.langSlug || `${sol.language.toLowerCase()}-${idx}`;
-                                const isSelected = selectedSolLang === solKey || (!selectedSolLang && idx === 0);
-                                return (
-                                  <button
-                                    key={`${solKey}-${idx}`}
-                                    onClick={() => setSelectedSolLang(solKey)}
-                                    className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer border ${
-                                      isSelected
-                                        ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
-                                        : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
+                          {/* Row 1: Dedicated Author Selection Ribbon */}
+                          <div className="flex items-center justify-between gap-3 flex-wrap border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Author:</span>
+                              {authorList.map((auth) => (
+                                <button
+                                  key={auth.id}
+                                  onClick={() => {
+                                    setSelectedSolAuthor(auth.id);
+                                    const nextAuthSols = authorMap.get(auth.id) || [];
+                                    if (
+                                      nextAuthSols.length > 0 &&
+                                      !nextAuthSols.some((s: any) => s.langSlug === selectedSolLang)
+                                    ) {
+                                      setSelectedSolLang(nextAuthSols[0].langSlug);
+                                    }
+                                  }}
+                                  className={`text-xs px-3 py-1 rounded-lg border transition flex items-center gap-1.5 cursor-pointer font-medium ${
+                                    activeAuthorId === auth.id
+                                      ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 shadow-xs"
+                                      : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-950 dark:hover:text-zinc-200 hover:border-zinc-300"
+                                  }`}
+                                >
+                                  <span>{auth.displayName}</span>
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+                                      activeAuthorId === auth.id
+                                        ? "bg-zinc-800 dark:bg-zinc-200 text-zinc-300 dark:text-zinc-700 font-semibold"
+                                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"
                                     }`}
                                   >
-                                    {sol.language}
-                                  </button>
-                                );
-                              })}
+                                    {auth.count}
+                                  </span>
+                                </button>
+                              ))}
                             </div>
+
+                            {/* Clickable Reference Link */}
+                            {activeSol?.referenceUrl && (
+                              <a
+                                href={activeSol.referenceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white border border-zinc-200 dark:border-zinc-700 flex items-center gap-1 transition"
+                                title="View original solution source code repository"
+                              >
+                                <span>
+                                  Source: {activeSol?.source === "walkccc" ? "walkccc/LeetCode" : "doocs/leetcode"}
+                                </span>
+                                <ExternalLink className="size-2.5 opacity-70" />
+                              </a>
+                            )}
                           </div>
 
+                          {/* Row 2: Languages for Selected Author */}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 font-mono pr-1">
+                              Language:
+                            </span>
+                            {authorSolutions.map((sol: any, idx: number) => {
+                              const isSelected = activeSol === sol;
+                              return (
+                                <button
+                                  key={`${sol.langSlug}-${idx}`}
+                                  onClick={() => setSelectedSolLang(sol.langSlug)}
+                                  className={`text-[11px] px-2.5 py-1 rounded font-mono font-medium transition cursor-pointer border ${
+                                    isSelected
+                                      ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 shadow-2xs"
+                                      : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
+                                  }`}
+                                >
+                                  {sol.language}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Code Display */}
                           <CopyBlock
-                            label={`Reference Solution (${activeSol?.language || selectedSolLang})`}
+                            label={`${activeSol?.source === "walkccc" ? "walkccc" : "Doocs"} ${activeSol?.language || selectedSolLang} Solution`}
                             content={activeSol?.code || "// Reference solution"}
                           />
                         </>

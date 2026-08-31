@@ -46,16 +46,26 @@ export class ProblemFetcher {
   static async fetchProblem(idOrSlug: string | number): Promise<ProblemDetail> {
     const canonical = CatalogService.find(idOrSlug);
     const slug = canonical?.slug || String(idOrSlug);
-    const pid = canonical?.id || (typeof idOrSlug === "number" ? idOrSlug : parseInt(String(idOrSlug), 10) || 1);
-    const title = canonical?.title || slug;
-    const difficulty = canonical?.difficulty || "Medium";
+    let pid = canonical?.id || (typeof idOrSlug === "number" ? idOrSlug : parseInt(String(idOrSlug), 10) || 0);
+    let title = canonical?.title || slug;
+    let difficulty = canonical?.difficulty || "Medium";
     const topics = canonical?.topics || [];
-    const isPaid = canonical?.isPaidOnly || false;
+    let isPaid = canonical?.isPaidOnly || false;
 
     // 1. Fetch LeetCode Official GraphQL API
     const gqlData = await ProblemFetcher.fetchGraphQL(slug);
     let descriptionHtml = gqlData?.content ? decodeHtmlEntities(gqlData.content) : "";
     const starterCode: Record<string, string> = {};
+
+    if (gqlData) {
+      if (gqlData.questionFrontendId && !pid) {
+        pid = parseInt(gqlData.questionFrontendId, 10) || pid;
+      }
+      if (gqlData.title) title = gqlData.title;
+      if (gqlData.difficulty) difficulty = gqlData.difficulty as any;
+      if (gqlData.isPaidOnly !== undefined) isPaid = gqlData.isPaidOnly;
+    }
+    if (!pid) pid = 1;
 
     if (gqlData?.codeSnippets && gqlData.codeSnippets.length > 0) {
       for (const snippet of gqlData.codeSnippets) {
@@ -63,20 +73,37 @@ export class ProblemFetcher {
       }
     }
 
-    // 2. Fetch Solutions and fallback statement for paywalled problems from Mirror
-    let solutions: SolutionEntry[] = [];
-    const mirrorData = await ProblemFetcher.fetchDoocsMirror(pid, title, slug);
+    // 2. Fetch Solutions from both Doocs and walkccc repositories in parallel
+    const [mirrorData, walkcccSolutions] = await Promise.all([
+      ProblemFetcher.fetchDoocsMirror(pid, title, slug),
+      ProblemFetcher.fetchWalkcccSolutions(pid, title),
+    ]);
 
+    let solutions: SolutionEntry[] = [];
     if (mirrorData) {
       if (!descriptionHtml || isPaid) {
         descriptionHtml = mirrorData.descriptionHtml;
       }
-      solutions = mirrorData.solutions;
+      const startRange = Math.floor(pid / 100) * 100;
+      const endRange = startRange + 99;
+      const rangeStr = `${String(startRange).padStart(4, "0")}-${String(endRange).padStart(4, "0")}`;
+      const paddedId = String(pid).padStart(4, "0");
+      const doocsRepoUrl = `https://github.com/doocs/leetcode/tree/main/solution/${rangeStr}/${paddedId}.${encodeURIComponent(title)}`;
+
+      solutions = mirrorData.solutions.map((s) => ({
+        ...s,
+        source: "doocs" as const,
+        referenceUrl: s.referenceUrl || doocsRepoUrl,
+      }));
 
       // If official starter code was paywalled, construct starter signatures from mirror solutions
       if (Object.keys(starterCode).length === 0 && mirrorData.starterCode) {
         Object.assign(starterCode, mirrorData.starterCode);
       }
+    }
+
+    if (walkcccSolutions && walkcccSolutions.length > 0) {
+      solutions = [...solutions, ...walkcccSolutions];
     }
 
     // 3. Extract test cases universally from HTML description <pre> blocks
@@ -169,6 +196,45 @@ export class ProblemFetcher {
     }
   }
 
+  private static async fetchWalkcccSolutions(id: number, title: string): Promise<SolutionEntry[]> {
+    const encTitle = encodeURIComponent(title);
+    const base = `https://raw.githubusercontent.com/walkccc/LeetCode/main/solutions/${id}.%20${encTitle}`;
+    const extensions = [
+      { lang: "Python3", slug: "python3", ext: "py" },
+      { lang: "C++", slug: "cpp", ext: "cpp" },
+      { lang: "Java", slug: "java", ext: "java" },
+    ];
+
+    const results: SolutionEntry[] = [];
+    await Promise.all(
+      extensions.map(async ({ lang, slug, ext }) => {
+        try {
+          const url = `${base}/${id}.${ext}`;
+          const res = await fetch(url, {
+            headers: { "User-Agent": "LeetBank/1.0" },
+            signal: AbortSignal.timeout(5000),
+          });
+          if (res.ok) {
+            const code = await res.text();
+            if (code && !code.includes("404: Not Found")) {
+              results.push({
+                source: "walkccc",
+                language: lang,
+                langSlug: slug,
+                code: code.trim(),
+                timeComplexity: undefined,
+                spaceComplexity: undefined,
+                approachTitle: "walkccc concise reference",
+                referenceUrl: `https://github.com/walkccc/LeetCode/blob/main/solutions/${id}.%20${encTitle}/${id}.${ext}`,
+              });
+            }
+          }
+        } catch {}
+      }),
+    );
+    return results;
+  }
+
   private static async fetchDoocsMirror(
     probId: number,
     title: string,
@@ -185,7 +251,10 @@ export class ProblemFetcher {
       for (const filename of ["README_EN.md", "README.md"]) {
         const url = `${baseUrl}/${encodeURIComponent(folder)}/${filename}`;
         try {
-          const res = await fetch(url, { headers: { "User-Agent": "LeetBank/1.0" } });
+          const res = await fetch(url, {
+            headers: { "User-Agent": "LeetBank/1.0" },
+            signal: AbortSignal.timeout(5000),
+          });
           if (res.ok) {
             const md = await res.text();
             return ProblemFetcher.parseMirrorMarkdown(md);
@@ -240,6 +309,7 @@ export class ProblemFetcher {
       const fullCode = m[3].trim();
 
       solutions.push({
+        source: "doocs",
         language: langName,
         langSlug,
         code: fullCode,

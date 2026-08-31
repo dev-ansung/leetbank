@@ -7,6 +7,12 @@ CREATE TABLE IF NOT EXISTS problems (
   is_paid_only INTEGER DEFAULT 0,
   ac_rate TEXT,
   total_accepted TEXT,
+  description_html TEXT,
+  starter_code_json TEXT,
+  solutions_json TEXT,
+  test_cases_json TEXT,
+  hints_json TEXT,
+  cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

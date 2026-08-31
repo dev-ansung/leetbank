@@ -8,8 +8,9 @@ export interface ProblemSummary {
   difficulty: "Easy" | "Medium" | "Hard";
   topics: string[];
   isPaidOnly?: boolean;
-  acRate?: string;
-  totalAccepted?: string;
+  acRate?: number;
+  totalAcs?: number;
+  totalSubmitted?: number;
 }
 
 export interface TrackSummary {

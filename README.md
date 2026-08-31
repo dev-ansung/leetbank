@@ -1,124 +1,145 @@
 # 🏦 LeetBank
 
-> Fast, free LeetCode question bank with 4,000+ problems, company-curated tracks, 19 starter code languages, and reference solutions on Cloudflare Edge.
+> Ultra-fast, zero-paywall LeetCode question bank with 4,037 unlocked problems, company interview tracks, multi-author reference solutions, and 19 starter code languages deployed on Cloudflare Pages and D1 Edge.
 
-[![CI](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml/badge.svg)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
 [![Tests](https://img.shields.io/badge/tests-21%20passed-emerald)](#)
+[![Linter](https://img.shields.io/badge/linter-Biome-60a5fa?logo=biome)](https://biomejs.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue)](#)
 
 ---
 
-## 📸 Preview
+## About
 
-| Problemset Dashboard | Problem Detail & Solutions |
-| :---: | :---: |
-| <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/problem_modal_light.png" alt="LeetBank Problem Detail" width="100%" /> |
+LeetBank provides an instant, distraction-free environment for algorithmic practice and technical interview preparation. It unifies all 4,037 LeetCode problems (both free and locked premium questions) with multi-author reference implementations, company frequency filters, and official multi-language starter code.
 
----
-
-## ⚡ Key Features
-
-* 🔓 **4,037 Problems**: Full problem statements, test cases, and diagrams for free and premium questions.
-* 🏢 **Company-Curated Sets**: Question sets across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**) with 4 recency windows (**30 Days**, **3 Months**, **6 Months**, **All-Time**).
-* 🥞 **Curated Practice Roadmaps**: Built-in tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150 Interview**, **LeetCode Hot 100**, and **Carl 200**.
-* 🎛️ **Fast Filtering & Sorting**: Filter by topic, difficulty, access, and company. Sort by Question ID, Total Accepted, Total Submissions, and Acceptance Rate.
-* 💻 **19 Starter Code Languages**: Official templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
-* 💡 **Reference Solutions**: Multi-language implementations with time and space complexity breakdown.
-* 📋 **1-Click Markdown & Test Cases**: Copy complete problem statements as formatted GitHub Markdown, along with example test inputs/outputs.
+### Why LeetBank?
+- **Zero Paywalls**: Access complete statements, diagrams, and starter code for paywalled problems without a subscription.
+- **Multi-Author Solutions**: Compare concise algorithmic implementations from **walkccc** with comprehensive 16-language archives from **Doocs**.
+- **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
+- **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
 
 ---
 
-## 🎯 Critical User Journey (CUJ)
+## Preview
 
-### Company-Targeted Practice
-> **Goal**: Practice interview questions curated for a specific company and timeframe.
+| Problemset Dashboard | Problem Statement & Details | Multi-Author Solutions |
+| :---: | :---: | :---: |
+| <img src="./assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="./assets/problem_modal_light.png" alt="LeetBank Problem Detail" width="100%" /> | <img src="./assets/solutions_modal_light.png" alt="LeetBank Solutions" width="100%" /> |
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Candidate as "Candidate"
-    participant UI as "LeetBank Web UI"
-    participant Edge as "Cloudflare Edge API"
-    participant D1 as "Cloudflare D1 Database"
+---
 
-    Candidate->>UI: Select Company (e.g. Meta) & Window (30 Days)
-    UI->>Edge: GET /api/companies?company=meta&window=30-days
-    Edge->>D1: Query company questions
-    D1-->>Edge: Return question list
-    Edge-->>UI: Filtered problem list
-    UI-->>Candidate: Display question list (< 1ms)
-    Candidate->>UI: Click problem (e.g. #1249)
-    UI-->>Candidate: Open statement, 19 starter languages & solutions
+## Features
+
+- 🔓 **4,037 Complete Problems**: Statements, formatted examples, constraints, and follow-ups for all public and premium problems.
+- 📚 **Multi-Author Solutions**: Instant toggling between **walkccc** (clean Python3, C++, Java) and **Doocs** (16 languages) with direct GitHub source links.
+- 🏢 **Company Interview Sets**: Curated question frequency lists for 9 top companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**) across 4 recency windows (**30 Days**, **3 Months**, **6 Months**, **All-Time**).
+- 🎯 **Curated Practice Roadmaps**: Built-in problem tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150 Interview**, **LeetCode Hot 100**, and **Carl 200**.
+- 🏷️ **Official Topic Taxonomy**: Synchronized multi-tag associations with uniform filter badges.
+- 💡 **Progressive Hints & Similar Questions**: Collapsible hint disclosure cards and clickable related problems graph.
+- 💻 **19 Starter Code Languages**: Official templates for `Python3`, `TypeScript`, `C++`, `Java`, `Go`, `Rust`, `Swift`, `Kotlin`, `C#`, `PHP`, `Ruby`, `Scala`, and more.
+- 📋 **1-Click Markdown Copying**: Export clean GitHub Flavored Markdown problem descriptions.
+
+---
+
+## Quick Start (Local Development)
+
+### Requirements
+- [Bun](https://bun.sh) (>= 1.1)
+
+### Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/dev-ansung/leetbank.git
+cd leetbank
+
+# 2. Install dependencies
+bun install
+
+# 3. Start local development server
+bun dev
 ```
 
-1. **Select Target Company & Recency Window**:
-   * Open `https://leetbank.pages.dev/`.
-   * Click **Meta** and select the **30 Days** recency window.
-2. **Review Curated Questions**:
-   * The catalog displays questions associated with the company and window.
-3. **Practice & Review**:
-   * Click any question to inspect the statement, test cases, starter code in your language of choice, and reference solutions.
+Open [http://localhost:4321](http://localhost:4321) in your browser.
+
+### Running Tests & Linter
+
+```bash
+# Run test suite
+bun test
+
+# Run Biome linter check
+bun run lint
+
+# Auto-format and fix lint issues
+bun run lint:fix
+```
 
 ---
 
-## 🏛️ System Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
-    User["Client (Browser / IDE)"] -->|"HTTPS Requests"| EdgeRouter["Cloudflare Edge Router (Astro SSR)"]
+    User["Client (Browser / API Client)"] -->|"HTTPS"| EdgeRouter["Cloudflare Pages / Workers Edge Router"]
 
-    subgraph CF_Edge["Cloudflare Edge Infrastructure"]
-        EdgeRouter -->|"Catalog & Search API"| CatalogQuery["SQL Catalog & Filter Engine"]
-        EdgeRouter -->|"Company Questions API"| CompanyQuery["SQL Company Join"]
-        EdgeRouter -->|"Problem Detail API"| CacheAside["Cache-Aside Problem Controller"]
+    subgraph CF_Edge["Cloudflare Edge Layer"]
+        EdgeRouter -->|"Catalog Search"| CatalogEngine["Catalog & Filter Engine"]
+        EdgeRouter -->|"Company Sets"| CompanyEngine["Company & Recency Join Engine"]
+        EdgeRouter -->|"Problem Detail"| CacheController["Cache-Aside Problem Controller"]
         
-        CacheAside -->|"1. Fast DB Read (under 5ms)"| D1_DB[("Cloudflare D1 Database")]
-        CatalogQuery <-->|"Indexed SQL Queries"| D1_DB
-        CompanyQuery <-->|"SQL Joins (Company + Window)"| D1_DB
+        CacheController -->|"1. Fast DB Read (< 5ms)"| D1_DB[("Cloudflare D1 Database")]
+        CatalogEngine <-->|"Indexed SQL Queries"| D1_DB
+        CompanyEngine <-->|"Company / Window Lookups"| D1_DB
     end
 
     subgraph Upstream_Ingestion["Upstream Ingestion (On Cache-Miss)"]
-        CacheAside -->|"2. If not cached in D1"| IngestEngine["Dual-Source Ingestion Engine"]
-        IngestEngine -->|"Primary"| LC_GQL["LeetCode GraphQL API (19 Languages)"]
-        IngestEngine -->|"Fallback"| Doocs_CDN["GitHub Doocs Mirror CDN (Statements + Solutions)"]
-        IngestEngine -->|"3. Persist fetched payload"| D1_DB
-    end
-
-    subgraph CI_CD["Automated Freshness Pipeline"]
-        GHA["GitHub Actions (Weekly Cron)" ] -->|"wrangler d1 execute"| D1_DB
+        CacheController -->|"2. Fetch Upstream in Parallel"| Ingest["Ingestion Pipeline"]
+        Ingest -->|"Official Statements & Snippets"| LC_GQL["LeetCode GraphQL API"]
+        Ingest -->|"Mirror Solutions & Locked Statements"| Doocs_CDN["Doocs LeetCode Archive"]
+        Ingest -->|"Concise Multi-Lang Solutions"| Walkccc_CDN["walkccc / LeetCode Repository"]
+        Ingest -->|"3. Cache to D1"| D1_DB
     end
 ```
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 ### 1. `GET /api/problems`
-Search and paginate through the problem catalog.
+Search, filter, and paginate through the problem catalog.
+
+```bash
+curl -s "https://leetbank.pages.dev/api/problems?difficulty=Medium&topic=Array&limit=10" | jq .
+```
 
 | Parameter | Type | Description | Default |
 | :--- | :---: | :--- | :---: |
 | `difficulty` | `string` | Filter by `Easy`, `Medium`, or `Hard` | `All` |
-| `topic` | `string` | Filter by topic tag (e.g. `Array`, `Graph`) | `undefined` |
-| `q` | `string` | Search query for ID, title, or slug | `undefined` |
-| `limit` | `number` | Items per page | `50` |
+| `topic` | `string` | Filter by topic tag (e.g. `Array`, `Dynamic Programming`) | `undefined` |
+| `q` | `string` | Search query for ID, title, slug, or topic | `undefined` |
+| `limit` | `number` | Number of items per page | `50` |
 | `offset` | `number` | Pagination offset | `0` |
 
 ---
 
 ### 2. `GET /api/problem/:id`
-Fetch complete problem detail (HTML statement, starter code in 19 languages, reference solutions, test cases).
+Fetch complete problem detail (HTML statement, 19 starter code snippets, multi-author reference solutions, hints, similar questions).
 
 ```bash
-curl -s "https://leetbank.pages.dev/api/problem/269" | jq .
+curl -s "https://leetbank.pages.dev/api/problem/1" | jq .
 ```
 
 ---
 
 ### 3. `GET /api/companies`
-Fetch company question datasets.
+Fetch company interview question datasets with frequency metadata.
+
+```bash
+curl -s "https://leetbank.pages.dev/api/companies?company=meta&window=30-days" | jq .
+```
 
 | Parameter | Type | Description | Default |
 | :--- | :---: | :--- | :---: |
@@ -132,25 +153,17 @@ Returns live Cloudflare D1 database connection telemetry and record counts.
 
 ---
 
-## 🛠️ Local Development
+## Acknowledgments
 
-```bash
-# 1. Clone repository
-git clone https://github.com/dev-ansung/leetbank.git
-cd leetbank
-
-# 2. Install dependencies
-bun install
-
-# 3. Run automated tests
-bun test
-
-# 4. Start local development server
-bun dev
-```
+- [LeetCode](https://leetcode.com) for the original algorithmic problemset and GraphQL API.
+- [walkccc/LeetCode](https://github.com/walkccc/LeetCode) by **@walkccc** for concise, high-quality multi-language reference solutions.
+- [doocs/leetcode](https://github.com/doocs/leetcode) by **@doocs** for comprehensive open-source algorithmic solutions across 16 programming languages.
+- [Tech Interview Handbook](https://www.techinterviewhandbook.org/grind75) by **Yangshun Tay** for the Grind 75 curriculum.
+- [NeetCode](https://neetcode.io) for the NeetCode 150 practice roadmap.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is open source under the [MIT License](LICENSE).  
+For educational and interview preparation purposes. LeetCode is a registered trademark of LeetCode LLC.
