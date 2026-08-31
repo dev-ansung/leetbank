@@ -1,7 +1,8 @@
-# 🏦 LeetBank (`leetcode.anprogrammer.org`)
+# 🏦 LeetBank
 
 > Ultra-fast, zero-paywall LeetCode question bank and interview preparation platform deployed on **Cloudflare Edge** with **Cloudflare D1 SQL Database**.
 
+[![CI](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml/badge.svg)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
 [![Tests](https://img.shields.io/badge/tests-22%20passed-emerald)](#)
@@ -15,27 +16,27 @@ LeetBank is built as an edge-native application leveraging Cloudflare's serverle
 
 ```mermaid
 flowchart TD
-    User["Client (Browser / IDE)"] -->|HTTPS Requests| EdgeRouter["Cloudflare Edge Router (Astro SSR)"]
+    User["Client (Browser / IDE)"] -->|"HTTPS Requests"| EdgeRouter["Cloudflare Edge Router (Astro SSR)"]
 
     subgraph CF_Edge["Cloudflare Edge Infrastructure"]
-        EdgeRouter -->|Catalog & Search API| CatalogQuery["SQL Catalog & Filter Engine"]
-        EdgeRouter -->|Company Questions API| CompanyQuery["SQL Company Frequency Join"]
-        EdgeRouter -->|Problem Detail API| CacheAside["Cache-Aside Problem Controller"]
+        EdgeRouter -->|"Catalog & Search API"| CatalogQuery["SQL Catalog & Filter Engine"]
+        EdgeRouter -->|"Company Questions API"| CompanyQuery["SQL Company Frequency Join"]
+        EdgeRouter -->|"Problem Detail API"| CacheAside["Cache-Aside Problem Controller"]
         
-        CacheAside -->|1. Fast DB Read (< 5ms)| D1_DB[("Cloudflare D1 Database\n(leetbank-db)")]
-        CatalogQuery <-->|Indexed SQL Queries| D1_DB
-        CompanyQuery <-->|SQL Joins (Company + Window)| D1_DB
+        CacheAside -->|"1. Fast DB Read (under 5ms)"| D1_DB[("Cloudflare D1 Database")]
+        CatalogQuery <-->|"Indexed SQL Queries"| D1_DB
+        CompanyQuery <-->|"SQL Joins (Company + Window)"| D1_DB
     end
 
     subgraph Upstream_Ingestion["Upstream Ingestion (On Cache-Miss)"]
-        CacheAside -->|2. If not cached in D1| IngestEngine["Dual-Source Ingestion Engine"]
-        IngestEngine -->|Primary| LC_GQL["LeetCode GraphQL API\n(19 Starter Languages)"]
-        IngestEngine -->|Paywall Fallback| Doocs_CDN["GitHub Doocs Mirror CDN\n(Statements + Solutions)"]
-        IngestEngine -->|3. Persist fetched payload| D1_DB
+        CacheAside -->|"2. If not cached in D1"| IngestEngine["Dual-Source Ingestion Engine"]
+        IngestEngine -->|"Primary"| LC_GQL["LeetCode GraphQL API (19 Starter Languages)"]
+        IngestEngine -->|"Paywall Fallback"| Doocs_CDN["GitHub Doocs Mirror CDN (Statements + Solutions)"]
+        IngestEngine -->|"3. Persist fetched payload"| D1_DB
     end
 
     subgraph CI_CD["Automated Freshness Pipeline"]
-        GHA["GitHub Actions (Weekly Cron)"] -->|wrangler d1 execute| D1_DB
+        GHA["GitHub Actions (Weekly Cron)"] -->|"wrangler d1 execute"| D1_DB
     end
 ```
 
@@ -115,8 +116,8 @@ CREATE TABLE IF NOT EXISTS roadmap_problems (
 
 | Route | Description | Latency |
 | :--- | :--- | :---: |
-| **`GET /`** | Interactive Dashboard (Search, Tracks, Companies) | $< 10\text{ms}$ |
-| **`GET /:id`** | Dynamic Edge SSR Problem View (e.g. `/269`) | $< 50\text{ms}$ |
+| **`GET /`** | Interactive Dashboard (Search, Tracks, Companies, Topics) | $< 10\text{ms}$ |
+| **`GET /:id`** | Dynamic Edge SSR Problem View (e.g. `/234`, `/269`) | $< 50\text{ms}$ |
 | **`GET /api/problems`** | SQL Catalog Filter & Pagination API | $< 15\text{ms}$ |
 | **`GET /api/problem/:id`** | Problem Detail (Statements, 19 Starter Code, Solutions) | $< 5\text{ms}$ (Cached) |
 | **`GET /api/companies`** | Company Interview Frequencies & Pattern Tags | $< 10\text{ms}$ |
