@@ -109,6 +109,7 @@ export function LeetBankApp() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
   const [selectedAccess, setSelectedAccess] = useState<"all" | "free" | "premium">("all");
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
   
@@ -142,7 +143,7 @@ export function LeetBankApp() {
   // Reset pagination when search or filters change
   useEffect(() => {
     setVisibleCount(50);
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow]);
 
   // Fetch live problem details from API whenever activeProblem changes
   useEffect(() => {
@@ -206,6 +207,21 @@ export function LeetBankApp() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Top topics ranked by frequency
+  const sortedTopics = useMemo(() => {
+    const counts = new Map<string, number>();
+    (catalogData as Problem[]).forEach((p) => {
+      p.topics.forEach((t) => {
+        if (t && t !== "Algorithms") {
+          counts.set(t, (counts.get(t) || 0) + 1);
+        }
+      });
+    });
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([topic, count]) => ({ topic, count }));
+  }, []);
+
   // Quick lookup map for catalog problems
   const catalogMap = useMemo(() => {
     const map = new Map<number, Problem>();
@@ -248,6 +264,10 @@ export function LeetBankApp() {
         ordered = ordered.filter((p) => !!p.isPaidOnly);
       }
 
+      if (selectedTopic) {
+        ordered = ordered.filter((p) => p.topics.includes(selectedTopic));
+      }
+
       if (selectedDifficulty !== "All") {
         ordered = ordered.filter((p) => p.difficulty === selectedDifficulty);
       }
@@ -279,6 +299,10 @@ export function LeetBankApp() {
       list = list.filter((p) => !!p.isPaidOnly);
     }
 
+    if (selectedTopic) {
+      list = list.filter((p) => p.topics.includes(selectedTopic));
+    }
+
     if (selectedDifficulty !== "All") {
       list = list.filter((p) => p.difficulty === selectedDifficulty);
     }
@@ -294,7 +318,7 @@ export function LeetBankApp() {
     }
 
     return { filteredProblems: list, companyMetaMap: compMap };
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedCompany, selectedWindow, catalogMap]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, catalogMap]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans flex flex-col transition-colors duration-150">
@@ -463,6 +487,37 @@ export function LeetBankApp() {
                 }`}
               >
                 {a.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Topics Filter Row (Ranked by Frequency) */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[75px]">
+              Topics:
+            </span>
+            <button
+              onClick={() => setSelectedTopic(null)}
+              className={`text-xs px-2.5 py-1 rounded-md border font-medium transition cursor-pointer ${
+                !selectedTopic
+                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }`}
+            >
+              All Topics
+            </button>
+            {sortedTopics.slice(0, 16).map(({ topic, count }) => (
+              <button
+                key={topic}
+                onClick={() => setSelectedTopic(selectedTopic === topic ? null : topic)}
+                className={`text-xs px-2 py-1 rounded-md border font-medium transition cursor-pointer flex items-center gap-1 ${
+                  selectedTopic === topic
+                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                }`}
+              >
+                <span>{topic}</span>
+                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">({count})</span>
               </button>
             ))}
           </div>
