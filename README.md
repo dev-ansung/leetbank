@@ -12,11 +12,9 @@
 
 ## 📸 Preview
 
-### Problemset Dashboard
-![LeetBank Problemset Dashboard](assets/dashboard_dark.png)
-
-### Problem Detail & Reference Solutions
-![LeetBank Problem Detail & LaTeX Big-O](assets/problem_modal.png)
+| Problemset Dashboard | Problem Detail & Solutions |
+| :---: | :---: |
+| <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/problem_modal_light.png" alt="LeetBank Problem Detail & LaTeX Big-O" width="100%" /> |
 
 ---
 
