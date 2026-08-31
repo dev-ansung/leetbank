@@ -804,8 +804,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             <span>Title ({filteredProblems.length})</span>
             <div className="flex items-center gap-6">
               <span className="w-14 text-right">Acceptance</span>
-              <span className="w-12 text-center">Difficulty</span>
-              <span className="w-16 text-right">Access</span>
+              <span className="w-14 text-center">Difficulty</span>
+              <span className="w-20 text-right">Frequency</span>
             </div>
           </div>
 
@@ -841,7 +841,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                     </span>
 
                     <span
-                      className={`text-xs font-medium w-12 text-center ${
+                      className={`text-xs font-medium w-14 text-center ${
                         p.difficulty === "Easy"
                           ? "text-teal-600 dark:text-teal-400"
                           : p.difficulty === "Medium"
@@ -852,14 +852,24 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                       {p.difficulty === "Medium" ? "Med." : p.difficulty}
                     </span>
 
-                    <div className="w-16 text-right flex items-center justify-end">
-                      {p.isPaidOnly ? (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 flex items-center gap-1">
-                          <Lock className="size-2.5" /> Premium
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Free</span>
-                      )}
+                    {/* Frequency Column (LeetCode-Style Bar & Badge) */}
+                    <div className="w-20 flex items-center justify-end gap-1.5">
+                      {(() => {
+                        const freqVal = compMeta ? compMeta.freq : (globalFrequencyMap.get(p.id) || 0);
+                        return (
+                          <div className="flex items-center gap-1.5" title={`Interview Frequency: ${freqVal.toFixed(0)}%`}>
+                            <div className="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden shrink-0">
+                              <div
+                                className="h-full bg-zinc-700 dark:bg-zinc-300 rounded-full transition-all duration-300"
+                                style={{ width: `${Math.max(freqVal, 5)}%` }}
+                              />
+                            </div>
+                            {p.isPaidOnly && (
+                              <Lock className="size-3 text-zinc-400 dark:text-zinc-500 shrink-0" />
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
