@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    # Run weekly every Monday at 04:00 UTC to keep company questions fresh
+    # Run weekly every Monday at 04:00 UTC (post-contest) to sync new problems and company questions
     - cron: "0 4 * * 1"
   workflow_dispatch:
 
@@ -29,7 +29,11 @@ jobs:
         with:
           bun-version: latest
 
-      - name: 🔄 Sync Company Datasets & Refresh Fetch Date
+      - name: 🔄 Sync Catalog & New Problems from LeetCode
+        run: |
+          python3 scripts/sync-catalog.py
+
+      - name: 🔄 Sync Company Datasets & Refresh Recency Windows
         run: |
           python3 scripts/sync-companies.py
 

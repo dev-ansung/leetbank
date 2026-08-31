@@ -4,6 +4,7 @@
 
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
+[![Sync Pipeline](https://img.shields.io/badge/sync%20pipeline-weekly%20cron-blue?logo=githubactions)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Tests](https://img.shields.io/badge/tests-21%20passed-emerald)](#)
 [![Linter](https://img.shields.io/badge/linter-Biome-60a5fa?logo=biome)](https://biomejs.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue)](#)
@@ -18,6 +19,7 @@ LeetBank provides an instant, distraction-free environment for algorithmic pract
 - **Zero Paywalls**: Access complete statements, diagrams, and starter code for paywalled problems without a subscription.
 - **Multi-Author Solutions**: Compare concise algorithmic implementations from **walkccc** with comprehensive 16-language archives from **Doocs**.
 - **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
+- **Always Up to Date**: Automated weekly GitHub Actions cron synchronizes newly released contest problems, topic tags, and company frequency datasets.
 - **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
 
 ---
@@ -40,6 +42,38 @@ LeetBank provides an instant, distraction-free environment for algorithmic pract
 - 💡 **Progressive Hints & Similar Questions**: Collapsible hint disclosure cards and clickable related problems graph.
 - 💻 **19 Starter Code Languages**: Official templates for `Python3`, `TypeScript`, `C++`, `Java`, `Go`, `Rust`, `Swift`, `Kotlin`, `C#`, `PHP`, `Ruby`, `Scala`, and more.
 - 📋 **1-Click Markdown Copying**: Export clean GitHub Flavored Markdown problem descriptions.
+
+---
+
+## 🔄 Automated Data Freshness Pipeline
+
+To ensure the problem catalog and company question sets never go stale, LeetBank runs an automated synchronization pipeline:
+
+```mermaid
+flowchart TD
+    Cron["GitHub Actions Weekly Cron (Every Monday 04:00 UTC)"] -->|"1. Fetch New Problems"| LC_GQL["LeetCode Official GraphQL"]
+    Cron -->|"2. Sync Interview Frequencies"| Comp_Tracker["Company Interview Tracker CSVs"]
+    
+    LC_GQL -->|"New IDs + Topic Tags"| CatalogJSON["src/data/catalog.json"]
+    Comp_Tracker -->|"30d / 3m / 6m / All-Time"| CompJSON["src/data/companies.json"]
+    
+    CatalogJSON -->|"3. Automated Test Suite"| BunTest["bun test (21 Tests)"]
+    CompJSON -->|"3. Automated Test Suite"| BunTest
+    
+    BunTest -->|"4. Deploy Latest Build"| CF_Pages["Cloudflare Pages Deployment"]
+    
+    User["User opens problem"] -.->|"On-Demand Fetch"| LiveSol["Live walkccc & Doocs Raw Repositories"]
+```
+
+1. **Weekly Problemset Sync**:
+   * Runs automatically every Monday at 04:00 UTC (following LeetCode's weekly contests).
+   * Queries LeetCode GraphQL `problemsetQuestionList` to ingest newly published problem IDs, updated acceptance stats, and official topic tags.
+2. **Company Interview Frequency Refresh**:
+   * Pulls the latest frequency CSVs for Meta, Google, Amazon, Microsoft, and others across the 4 recency windows (`30 Days`, `3 Months`, `6 Months`, `All-Time`).
+3. **Live Multi-Author Solutions**:
+   * Solutions from `walkccc/LeetCode` and `doocs/leetcode` are pulled directly from their repositories, ensuring any upstream community additions and corrections are available immediately.
+4. **Automated CI/CD Verification**:
+   * Runs the full `bun test` suite and deploys the updated edge build to Cloudflare Pages automatically.
 
 ---
 
