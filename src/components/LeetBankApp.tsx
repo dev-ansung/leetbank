@@ -19,6 +19,7 @@ import {
   Loader2
 } from "lucide-react";
 import catalogData from "../data/catalog.json";
+import tracksData from "../data/tracks.json";
 import companyData from "../data/companies.json";
 
 // Types
@@ -295,10 +296,11 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
     let list = catalogData as Problem[];
 
-    if (selectedRoadmap === "blind75") {
-      list = list.filter((p) => BLIND_75_IDS.has(p.id));
-    } else if (selectedRoadmap === "neetcode150") {
-      list = list.filter((p) => NEETCODE_150_IDS.has(p.id));
+    if (selectedRoadmap && selectedRoadmap !== "All") {
+      const trackIds = TRACK_MAP.get(selectedRoadmap);
+      if (trackIds) {
+        list = list.filter((p) => trackIds.has(p.id));
+      }
     }
 
     if (selectedAccess === "free") {
@@ -456,21 +458,27 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[75px]">
               Tracks:
             </span>
-            {[
-              { id: "All", label: "All Problems" },
-              { id: "blind75", label: "Blind 75" },
-              { id: "neetcode150", label: "NeetCode 150" },
-            ].map((r) => (
+            <button
+              onClick={() => { setSelectedRoadmap("All"); setSelectedCompany(null); }}
+              className={`text-xs px-2.5 py-1 rounded-md border font-medium transition cursor-pointer ${
+                selectedRoadmap === "All" && !selectedCompany
+                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }`}
+            >
+              All Problems (4,037)
+            </button>
+            {tracksData.tracks.map((track) => (
               <button
-                key={r.id}
-                onClick={() => { setSelectedRoadmap(r.id); setSelectedCompany(null); }}
+                key={track.id}
+                onClick={() => { setSelectedRoadmap(track.id); setSelectedCompany(null); }}
                 className={`text-xs px-2.5 py-1 rounded-md border font-medium transition cursor-pointer ${
-                  selectedRoadmap === r.id && !selectedCompany
+                  selectedRoadmap === track.id && !selectedCompany
                     ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
                     : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
-                {r.label}
+                {track.name}
               </button>
             ))}
           </div>

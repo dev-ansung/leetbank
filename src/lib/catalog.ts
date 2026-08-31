@@ -1,4 +1,5 @@
 import catalogData from "../data/catalog.json";
+import tracksData from "../data/tracks.json";
 
 export interface ProblemSummary {
   id: number;
@@ -11,6 +12,14 @@ export interface ProblemSummary {
   totalAccepted?: string;
 }
 
+export interface TrackSummary {
+  id: string;
+  name: string;
+  description: string;
+  total: number;
+  problemIds: number[];
+}
+
 export interface SearchCriteria {
   difficulty?: string;
   topic?: string;
@@ -18,13 +27,20 @@ export interface SearchCriteria {
   isPaidOnly?: boolean;
 }
 
-const BLIND_75_IDS = new Set([1, 11, 15, 19, 20, 21, 23, 33, 39, 48, 49, 53, 54, 55, 56, 57, 62, 70, 73, 76, 79, 91, 98, 100, 102, 104, 105, 121, 124, 125, 128, 133, 139, 141, 143, 146, 152, 153, 190, 191, 198, 200, 206, 207, 208, 211, 212, 213, 217, 226, 230, 235, 238, 242, 252, 253, 261, 268, 269, 287, 295, 297, 300, 322, 323, 338, 347, 371, 417, 424, 435, 438, 572, 647, 1143]);
+const TRACK_MAP = new Map<string, Set<number>>();
+tracksData.tracks.forEach((t) => {
+  TRACK_MAP.set(t.id, new Set(t.problemIds));
+});
 
 export class CatalogService {
   private static catalog: ProblemSummary[] = catalogData as ProblemSummary[];
 
   static getAll(): ProblemSummary[] {
     return this.catalog;
+  }
+
+  static getTracks(): TrackSummary[] {
+    return tracksData.tracks;
   }
 
   static find(idOrSlug: number | string): ProblemSummary | undefined {
@@ -62,8 +78,9 @@ export class CatalogService {
   }
 
   static getRoadmap(roadmapId: string): ProblemSummary[] {
-    if (roadmapId === "blind75") {
-      return this.catalog.filter((p) => BLIND_75_IDS.has(p.id));
+    const ids = TRACK_MAP.get(roadmapId);
+    if (ids) {
+      return this.catalog.filter((p) => ids.has(p.id));
     }
     return this.catalog;
   }
