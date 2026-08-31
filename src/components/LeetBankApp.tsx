@@ -451,7 +451,7 @@ export function LeetBankApp() {
             {[
               { id: "all", label: "All Access" },
               { id: "free", label: "Free Only" },
-              { id: "premium", label: "🔒 Premium Only (800+)" },
+              { id: "premium", label: "🔒 Premium" },
             ].map((a) => (
               <button
                 key={a.id}
@@ -597,7 +597,7 @@ export function LeetBankApp() {
                 </span>
                 {activeProblem.isPaidOnly && (
                   <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
-                    Premium Unlocked
+                    Premium
                   </span>
                 )}
               </div>
