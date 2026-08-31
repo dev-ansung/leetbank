@@ -714,44 +714,48 @@ export function LeetBankApp() {
                 <div className="flex flex-col gap-3">
                   {problemDetail?.solutions && problemDetail.solutions.length > 0 ? (
                     <>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
-                            Time: {problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.timeComplexity || "O(N)"}
-                          </span>
-                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
-                            Space: {problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.spaceComplexity || "O(1)"}
-                          </span>
-                        </div>
+                      {(() => {
+                        const activeSol = problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang) || problemDetail.solutions[0];
+                        return (
+                          <>
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700">
+                                  Time: {activeSol?.timeComplexity || "O(N)"}
+                                </span>
+                                <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono border border-zinc-200 dark:border-zinc-700">
+                                  Space: {activeSol?.spaceComplexity || "O(1)"}
+                                </span>
+                              </div>
 
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {problemDetail.solutions.map((sol: any) => {
-                            const solKey = sol.langSlug || sol.language.toLowerCase();
-                            return (
-                              <button
-                                key={solKey}
-                                onClick={() => setSelectedSolLang(solKey)}
-                                className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer ${
-                                  selectedSolLang === solKey
-                                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
-                                }`}
-                              >
-                                {sol.language}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
+                              <div className="flex items-center gap-1 flex-wrap">
+                                {problemDetail.solutions.map((sol: any, idx: number) => {
+                                  const solKey = sol.langSlug || `${sol.language.toLowerCase()}-${idx}`;
+                                  const isSelected = (selectedSolLang === solKey) || (!selectedSolLang && idx === 0);
+                                  return (
+                                    <button
+                                      key={`${solKey}-${idx}`}
+                                      onClick={() => setSelectedSolLang(solKey)}
+                                      className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium transition cursor-pointer border ${
+                                        isSelected
+                                          ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100"
+                                          : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200"
+                                      }`}
+                                    >
+                                      {sol.language}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
 
-                      <CopyBlock
-                        label={`Reference ${selectedSolLang} Solution`}
-                        content={
-                          problemDetail.solutions.find((s: any) => (s.langSlug || s.language.toLowerCase()) === selectedSolLang)?.code ||
-                          problemDetail.solutions[0]?.code ||
-                          "// Reference solution"
-                        }
-                      />
+                            <CopyBlock
+                              label={`Reference Solution (${activeSol?.language || selectedSolLang})`}
+                              content={activeSol?.code || "// Reference solution"}
+                            />
+                          </>
+                        );
+                      })()}
                     </>
                   ) : (
                     <div className="p-4 text-center text-zinc-500">

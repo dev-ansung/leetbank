@@ -175,25 +175,33 @@ export class ProblemFetcher {
       descriptionHtml = `<p>${rawDesc.replace(/#.*\n/g, "").trim()}</p>`;
     }
 
-    // Extract Big-O complexity analysis from markdown if present
-    let parsedTime = "O(N)";
-    let parsedSpace = "O(1)";
+    // Extract clean concise mathematical Big-O notation
+    const cleanBigO = (text?: string): string | undefined => {
+      if (!text) return undefined;
+      const m = text.match(/O\([^)]+\)/);
+      if (m) return m[0];
+      const cleaned = text.replace(/is\s+/i, "").replace(/[`$]/g, "").split(",")[0].trim();
+      return cleaned || undefined;
+    };
+
     const timeMatch = md.match(/time\s+complexity:?\s*([^\n\r.]+)/i);
     const spaceMatch = md.match(/space\s+complexity:?\s*([^\n\r.]+)/i);
-    if (timeMatch && timeMatch[1]) {
-      parsedTime = timeMatch[1].replace(/is\s+/i, "").replace(/[`$]/g, "").trim();
-    }
-    if (spaceMatch && spaceMatch[1]) {
-      parsedSpace = spaceMatch[1].replace(/is\s+/i, "").replace(/[`$]/g, "").trim();
-    }
+    const parsedTime = cleanBigO(timeMatch?.[1]) || "O(N)";
+    const parsedSpace = cleanBigO(spaceMatch?.[1]) || "O(1)";
 
     const solutions: SolutionEntry[] = [];
     const starterCode: Record<string, string> = {};
-    const codeBlocks = md.matchAll(/####\s+([A-Za-z0-9+# ]+)[\s\S]*?```([a-z0-9]+)?\n([\s\S]*?)```/g);
+    const codeBlocks = md.matchAll(/####\s+([A-Za-z0-9+# ]+)[^\n]*\n[\s\S]*?```([a-z0-9]+)?\n([\s\S]*?)```/g);
+
+    const langCounts: Record<string, number> = {};
 
     for (const m of codeBlocks) {
-      const langName = m[1].trim();
-      const langSlug = (m[2] || langName).toLowerCase().replace(/\+/g, "p").replace(/#/g, "sharp");
+      const rawLang = m[1].trim();
+      langCounts[rawLang] = (langCounts[rawLang] || 0) + 1;
+      const count = langCounts[rawLang];
+      const langName = count > 1 ? `${rawLang} (Approach ${count})` : rawLang;
+      const baseSlug = (m[2] || rawLang).toLowerCase().replace(/\+/g, "p").replace(/#/g, "sharp");
+      const langSlug = count > 1 ? `${baseSlug}-${count}` : baseSlug;
       const fullCode = m[3].trim();
 
       solutions.push({
