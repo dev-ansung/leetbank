@@ -26,7 +26,7 @@
 * 🎛️ **Fast Filtering & Sorting**: Filter by topic, difficulty, access, and company. Sort by Question ID, Total Accepted, Total Submissions, and Acceptance Rate.
 * 💻 **19 Starter Code Languages**: Official templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
 * 💡 **Reference Solutions**: Multi-language implementations with time and space complexity breakdown.
-* 📋 **1-Click Test Cases**: Copy formatted example inputs and expected outputs directly to your local editor.
+* 📋 **1-Click Markdown & Test Cases**: Copy complete problem statements as formatted GitHub Markdown, along with example test inputs/outputs.
 
 ---
 
