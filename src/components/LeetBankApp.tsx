@@ -67,7 +67,7 @@ function formatCompactNumber(num?: number): string {
 }
 
 // Sorter & Filter Types
-export type SortField = "id-asc" | "id-desc" | "title-asc" | "title-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc";
+export type SortField = "id-asc" | "id-desc" | "title-asc" | "title-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "accepted-desc" | "accepted-asc" | "submitted-desc" | "submitted-asc" | "access-desc" | "access-asc";
 
 export interface FilterRule {
   id: string;
@@ -291,7 +291,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   };
 
   // Column Header Sort Toggle
-  const handleHeaderSort = (field: "id" | "title" | "difficulty" | "ac" | "accepted" | "submitted") => {
+  const handleHeaderSort = (field: "id" | "title" | "difficulty" | "ac" | "accepted" | "submitted" | "access") => {
     if (field === "id") {
       setSortBy(sortBy === "id-asc" ? "id-desc" : "id-asc");
     } else if (field === "title") {
@@ -304,6 +304,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       setSortBy(sortBy === "accepted-desc" ? "accepted-asc" : "accepted-desc");
     } else if (field === "submitted") {
       setSortBy(sortBy === "submitted-desc" ? "submitted-asc" : "submitted-desc");
+    } else if (field === "access") {
+      setSortBy(sortBy === "access-desc" ? "access-asc" : "access-desc");
     }
   };
 
@@ -430,6 +432,10 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           return subB - subA || a.id - b.id;
         case "submitted-asc":
           return subA - subB || a.id - b.id;
+        case "access-desc":
+          return (b.isPaidOnly ? 1 : 0) - (a.isPaidOnly ? 1 : 0) || a.id - b.id;
+        case "access-asc":
+          return (a.isPaidOnly ? 1 : 0) - (b.isPaidOnly ? 1 : 0) || a.id - b.id;
         default:
           return a.id - b.id;
       }
@@ -634,6 +640,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                   { id: "id-desc", label: "Question ID (Descending)" },
                   { id: "diff-asc", label: "Difficulty (Easy → Hard)" },
                   { id: "diff-desc", label: "Difficulty (Hard → Easy)" },
+                  { id: "access-desc", label: "Access (Premium First)" },
+                  { id: "access-asc", label: "Access (Free First)" },
                   { id: "ac-desc", label: "Acceptance (High → Low)" },
                   { id: "ac-asc", label: "Acceptance (Low → High)" },
                                   ].map((opt) => (
@@ -897,7 +905,15 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                 {sortBy === "diff-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
               </button>
 
-              <span className="w-14 text-right">Access</span>
+              <button
+                onClick={() => handleHeaderSort("access")}
+                className="w-14 text-right flex items-center justify-end gap-0.5 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+                title="Sort by Access (Premium / Free)"
+              >
+                <span>Access</span>
+                {sortBy === "access-desc" && <ChevronDown className="size-3 text-zinc-900 dark:text-white" />}
+                {sortBy === "access-asc" && <ChevronUp className="size-3 text-zinc-900 dark:text-white" />}
+              </button>
             </div>
           </div>
 
