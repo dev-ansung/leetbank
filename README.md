@@ -1,6 +1,6 @@
 # 🏦 LeetBank
 
-> Ultra-fast, zero-paywall LeetCode question bank and interview preparation platform deployed on **Cloudflare Edge** with **Cloudflare D1 SQL Database**.
+> Fast, free LeetCode question bank and interview preparation platform deployed on **Cloudflare Edge** with **Cloudflare D1 SQL Database**.
 
 [![CI](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml/badge.svg)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
@@ -10,9 +10,61 @@
 
 ---
 
+## ⚡ Features
+
+LeetBank provides a complete, fast environment for coding interview preparation:
+
+* 🔓 **4,037 Questions**: Full problem statements, test cases, and diagrams for free and premium LeetCode questions.
+* 🏢 **Top Tech Company Tracks**: Interview frequency data across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**).
+* 📅 **4 Recency Windows**: Filter questions asked in the **Last 30 Days**, **3 Months**, **6 Months**, and **All-Time**.
+* 🥞 **Curated Roadmaps**: Built-in practice tracks for **Blind 75** and **NeetCode 150**.
+* 🧩 **Topic Filtering**: Filter questions by algorithm patterns and data structures (**Array**, **Hash Table**, **Dynamic Programming**, **Binary Tree**, **Graph**, etc.).
+* 💻 **19 Programming Languages**: Official starter templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
+* 💡 **Solutions & Big-$O$ Complexity**: Reference implementations with time and space complexity analysis.
+* 📋 **1-Click Test Case Copying**: Structured example inputs and expected outputs ready to paste into your local editor.
+* 🌓 **Dark & Light Mode**: Fast, responsive monochrome interface.
+
+---
+
+## 🎯 Critical User Journey (CUJ)
+
+### Company-Targeted Interview Sprint
+> **Goal**: A candidate preparing for an upcoming technical interview practices the most frequently asked questions for their target company within a specific timeframe.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Candidate as "Candidate"
+    participant UI as "LeetBank Web UI"
+    participant Edge as "Cloudflare Edge API"
+    participant D1 as "Cloudflare D1 Database"
+
+    Candidate->>UI: Select Company (e.g. Meta) & Window (30 Days)
+    UI->>Edge: GET /api/companies?company=meta&window=30-days
+    Edge->>D1: Query company frequencies
+    D1-->>Edge: Return ranked questions
+    Edge-->>UI: Problem list with frequency & pattern tags
+    UI-->>Candidate: Display ranked question list (< 1ms)
+    Candidate->>UI: Click problem (e.g. #1249)
+    UI-->>Candidate: Open statement, 19 starter languages & solutions
+```
+
+1. **Select Target Company & Recency Window**:
+   * Open `https://leetbank.pages.dev/`.
+   * Click **Meta** and select the **30 Days** recency window.
+2. **Review High-Yield Questions**:
+   * The catalog displays questions ordered by interview frequency percentage:
+     * **#1249 Minimum Remove to Make Valid Parentheses** (100% Frequency • *Sorting / Prefix / Scan*)
+     * **#339 Nested List Weight Sum** (85% Frequency • *Two Pointers / Recursion*)
+     * **#1 Two Sum** (75% Frequency • *Hash Table / Two Pointers*)
+3. **Practice & Review**:
+   * Click any question to inspect the complete statement, structured test cases, 19 starter code languages, and verified reference solutions with Big-$O$ complexity.
+
+---
+
 ## 🏛️ High-Level System Architecture (HLD)
 
-LeetBank is built as an edge-native application leveraging Cloudflare's serverless infrastructure:
+LeetBank runs entirely on Cloudflare's serverless edge infrastructure:
 
 ```mermaid
 flowchart TD
@@ -30,97 +82,131 @@ flowchart TD
 
     subgraph Upstream_Ingestion["Upstream Ingestion (On Cache-Miss)"]
         CacheAside -->|"2. If not cached in D1"| IngestEngine["Dual-Source Ingestion Engine"]
-        IngestEngine -->|"Primary"| LC_GQL["LeetCode GraphQL API (19 Starter Languages)"]
-        IngestEngine -->|"Paywall Fallback"| Doocs_CDN["GitHub Doocs Mirror CDN (Statements + Solutions)"]
+        IngestEngine -->|"Primary"| LC_GQL["LeetCode GraphQL API (19 Languages)"]
+        IngestEngine -->|"Fallback"| Doocs_CDN["GitHub Doocs Mirror CDN (Statements + Solutions)"]
         IngestEngine -->|"3. Persist fetched payload"| D1_DB
     end
 
     subgraph CI_CD["Automated Freshness Pipeline"]
-        GHA["GitHub Actions (Weekly Cron)"] -->|"wrangler d1 execute"| D1_DB
+        GHA["GitHub Actions (Weekly Cron)" ] -->|"wrangler d1 execute"| D1_DB
     end
 ```
 
 ---
 
-## 🗄️ Data Model
+## 🔌 Edge REST API Reference
 
-Cloudflare D1 (Globally Replicated SQLite) persists the canonical catalog, company frequency mappings, and cached problem statements:
+All API routes return standard JSON with edge caching headers.
 
-```mermaid
-erDiagram
-    PROBLEMS ||--o{ COMPANY_FREQUENCIES : "tracks frequency"
-    PROBLEMS ||--o{ ROADMAP_PROBLEMS : "indexed in roadmaps"
+### 1. `GET /api/problems`
+Search and paginate through the problem catalog.
 
-    PROBLEMS {
-        int id PK "Canonical Problem ID"
-        string slug UK "URL slug"
-        string title "Problem title"
-        string difficulty "Easy | Medium | Hard"
-        string topics "Comma-separated topic tags"
-        int is_paid_only "0: Free, 1: Premium"
-        string ac_rate "Acceptance percentage"
-        string total_accepted "Total submission count"
-        string description_html "Cached full problem statement HTML"
-        string starter_code_json "Cached official starter languages (19)"
-        string solutions_json "Cached multi-language reference solutions"
-        string test_cases_json "Cached structured test cases"
-        string hints_json "Cached problem hints"
-        timestamp cached_at "Last upstream edge cache timestamp"
-        timestamp created_at "Record creation timestamp"
+| Parameter | Type | Description | Default |
+| :--- | :---: | :--- | :---: |
+| `difficulty` | `string` | Filter by `Easy`, `Medium`, or `Hard` | `All` |
+| `topic` | `string` | Filter by topic tag (e.g. `Array`, `Graph`) | `undefined` |
+| `q` | `string` | Search query for ID, title, or slug | `undefined` |
+| `limit` | `number` | Items per page | `50` |
+| `offset` | `number` | Pagination offset | `0` |
+
+---
+
+### 2. `GET /api/problem/:id`
+Fetch complete problem detail (HTML statement, starter code in 19 languages, reference solutions, test cases).
+
+```bash
+curl -s "https://leetbank.pages.dev/api/problem/269" | jq .
+```
+
+<details>
+<summary>Sample JSON Response</summary>
+
+```json
+{
+  "id": 269,
+  "slug": "alien-dictionary",
+  "title": "Alien Dictionary",
+  "difficulty": "Hard",
+  "topics": ["Array", "String", "Graph", "Topological Sort"],
+  "isPaidOnly": true,
+  "descriptionHtml": "<p>There is a new alien language that uses the English alphabet...</p>",
+  "starterCode": {
+    "python3": "class Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        pass",
+    "typescript": "function alienOrder(words: string[]): string {\n    \n};",
+    "golang": "func alienOrder(words []string) string {\n    \n}"
+  },
+  "solutions": [
+    {
+      "language": "Python3",
+      "langSlug": "python3",
+      "code": "class Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        ...",
+      "timeComplexity": "O(N + |Σ|)",
+      "spaceComplexity": "O(|Σ|)"
     }
-
-    COMPANY_FREQUENCIES {
-        int id PK "Surrogate Key"
-        int problem_id FK "References PROBLEMS(id)"
-        string company "meta | google | amazon | microsoft | ..."
-        string window "30-days | 3-months | 6-months | all-time"
-        float frequency_percent "Interview frequency percentage"
-        string pattern "Algorithmic pattern tag"
-        string priority "High | Medium | Low"
+  ],
+  "testCases": [
+    {
+      "id": 1,
+      "name": "Example 1",
+      "input": "words = [\"wrt\",\"wrf\",\"er\",\"ett\",\"rftt\"]",
+      "expected": "\"wertf\""
     }
+  ],
+  "source": "d1_cache"
+}
+```
+</details>
 
-    ROADMAP_PROBLEMS {
-        string roadmap_id PK "blind75 | neetcode150"
-        int problem_id PK, FK "References PROBLEMS(id)"
-        int order_index "Sequential track ordering"
-    }
+---
+
+### 3. `GET /api/companies`
+Fetch company interview frequency datasets.
+
+| Parameter | Type | Description | Default |
+| :--- | :---: | :--- | :---: |
+| `company` | `string` | `meta`, `google`, `amazon`, `microsoft`, `bloomberg`, `apple`, `uber`, `bytedance`, `netflix` | `undefined` |
+| `window` | `string` | `30-days`, `3-months`, `6-months`, `all-time` | `all-time` |
+
+---
+
+### 4. `GET /api/d1-health`
+Returns live Cloudflare D1 database connection telemetry and record counts.
+
+---
+
+## 🔄 Automated Data Sync & Deployment
+
+LeetBank uses GitHub Actions to keep company interview questions up to date and deploy automatically:
+
+* **Workflow**: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+* **Schedule**: Runs automatically every Monday at `04:00 UTC` and on every push to `main`.
+* **Process**:
+  1. Synchronizes latest company interview frequency datasets.
+  2. Runs the automated test suite.
+  3. Builds the Astro Edge SSR application.
+  4. Deploys directly to Cloudflare Pages.
+
+---
+
+## 🛠️ Local Development
+
+```bash
+# 1. Clone repository
+git clone https://github.com/dev-ansung/leetbank.git
+cd leetbank
+
+# 2. Install dependencies
+bun install
+
+# 3. Run automated tests
+bun test
+
+# 4. Start local development server
+bun dev
 ```
 
 ---
 
-## 🔄 Core Data Flows
+## 📄 License
 
-### 1. Problem Detail Cache-Aside Pattern (`GET /api/problem/:id`)
-1. **D1 Read**: Worker queries `SELECT * FROM problems WHERE id = ? OR slug = ?`.
-2. **Cache Hit**: If `description_html` and `starter_code_json` are populated, returns the cached payload in **$< 5\text{ms}$**.
-3. **Cache Miss**:
-   * Fetches official starter code and metadata from LeetCode GraphQL.
-   * If locked or solutions missing, queries GitHub Doocs Mirror CDN.
-   * Parses statements, test cases, and Big-$O$ complexity.
-   * Asynchronously updates D1 with the parsed payload so subsequent hits worldwide are instant.
-
-### 2. Company Filtering & Ranking (`GET /api/companies?company=amazon&window=30-days`)
-* Executes an indexed SQL join between `problems` and `company_frequencies` ordered by `frequency_percent DESC`.
-
----
-
-## 🚀 Live Endpoints
-
-| Route | Description | Latency |
-| :--- | :--- | :---: |
-| **`GET /`** | Interactive Dashboard (Search, Tracks, Companies, Topics) | $< 10\text{ms}$ |
-| **`GET /:id`** | Dynamic Edge SSR Problem View (e.g. `/234`, `/269`) | $< 50\text{ms}$ |
-| **`GET /api/problems`** | SQL Catalog Filter & Pagination API | $< 15\text{ms}$ |
-| **`GET /api/problem/:id`** | Problem Detail (Statements, 19 Starter Code, Solutions) | $< 5\text{ms}$ (Cached) |
-| **`GET /api/companies`** | Company Interview Frequencies & Pattern Tags | $< 10\text{ms}$ |
-| **`GET /api/d1-health`** | Cloudflare D1 Live Connection Telemetry | $< 6\text{ms}$ |
-
----
-
-## 💻 Tech Stack
-
-* **Edge Hosting**: [Cloudflare Pages](https://pages.cloudflare.com/) + [Cloudflare Workers](https://workers.cloudflare.com/)
-* **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (Edge SQLite)
-* **Framework**: [Astro 5](https://astro.build/) (Edge SSR Mode) + [React 19](https://react.dev/)
-* **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn-ui](https://ui.shadcn.com/) design tokens
-* **Testing**: [Bun Test](https://bun.sh/) (22 unit & integration tests)
+This project is licensed under the [MIT License](LICENSE).
