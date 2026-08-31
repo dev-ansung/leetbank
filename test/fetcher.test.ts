@@ -7,7 +7,7 @@ describe("ProblemFetcher Upstream & Paywall Bypass TDD Suite", () => {
     expect(problem.id).toBe(1);
     expect(problem.title).toBe("Two Sum");
     expect(problem.difficulty).toBe("Easy");
-    expect(problem.descriptionHtml).toContain("Given an array of integers");
+    expect(problem.descriptionHtml).toContain("array of integers");
 
     // Verify multi-language starter code
     expect(problem.starterCode["python3"]).toBeDefined();

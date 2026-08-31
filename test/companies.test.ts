@@ -45,11 +45,12 @@ describe("Company Tag & Recency Window TDD Suite", () => {
 
     const parsed = CompanyService.parseCompanyCsv("meta", "30-days", sampleCsv);
     expect(parsed.length).toBe(2);
-    expect(parsed[0].problemId).toBe(1249);
-    expect(parsed[0].frequencyPercent).toBe(62.5);
-    expect(parsed[0].pattern).toBe("Sorting / Prefix / Scan");
-    expect(parsed[0].priority).toBe("High");
-    expect(parsed[1].problemId).toBe(1);
-    expect(parsed[1].frequencyPercent).toBe(100.0);
+    // Two sum has 100.0% frequency, so it sorts first in descending order
+    expect(parsed[0].problemId).toBe(1);
+    expect(parsed[0].frequencyPercent).toBe(100.0);
+    expect(parsed[1].problemId).toBe(1249);
+    expect(parsed[1].frequencyPercent).toBe(62.5);
+    expect(parsed[1].pattern).toBe("Sorting / Prefix / Scan");
+    expect(parsed[1].priority).toBe("High");
   });
 });

@@ -11,13 +11,13 @@ describe("HTML Entity Decoder & Sanitizer TDD Suite", () => {
   it("should decode standard XML/HTML entities", () => {
     const input = "&lt;div class=&quot;example&quot;&gt;5 &amp; 10 &#39;test&#39; &nbsp;&lt;/div&gt;";
     const decoded = decodeHtmlEntities(input);
-    expect(decoded).toBe('<div class="example">5 & 10 'test'  </div>');
+    expect(decoded).toBe('<div class="example">5 & 10 \'test\'  </div>');
   });
 
   it("should decode numeric decimal character entities", () => {
     const input = "&#34;hello&#34; &#39;world&#39;";
     const decoded = decodeHtmlEntities(input);
-    expect(decoded).toBe('"hello" 'world'');
+    expect(decoded).toBe('"hello" \'world\'');
   });
 
   it("should sanitize harmful script tags while preserving pre and code blocks", () => {

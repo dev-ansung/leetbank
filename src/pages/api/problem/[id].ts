@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import catalog from "../../../data/catalog.json";
+import { ProblemFetcher } from "../../../lib/fetcher";
 
 export const prerender = false;
 
@@ -9,31 +9,19 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response(JSON.stringify({ error: "Problem ID or slug required" }), { status: 400 });
   }
 
-  const problem = !isNaN(Number(id))
-    ? catalog.find(p => p.id === Number(id))
-    : catalog.find(p => p.slug === id);
-
-  if (!problem) {
-    return new Response(JSON.stringify({ error: "Problem not found" }), { status: 404 });
+  try {
+    const problem = await ProblemFetcher.fetchProblem(id);
+    return new Response(JSON.stringify(problem), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=86400, s-maxage=604800"
+      }
+    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message || "Failed to fetch problem" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
-
-  return new Response(JSON.stringify({
-    id: problem.id,
-    slug: problem.slug,
-    title: problem.title,
-    difficulty: problem.difficulty,
-    topics: problem.topics,
-    isPaidOnly: problem.isPaidOnly || false,
-    starterCode: {
-      python3: `class Solution:\n    def solve(self):\n        pass`,
-      typescript: `function solve() {}`
-    },
-    testCases: []
-  }), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=86400, s-maxage=604800"
-    }
-  });
 };
