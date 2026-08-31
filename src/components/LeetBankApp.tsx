@@ -22,11 +22,11 @@ import tracksData from "../data/tracks.json";
 import companyData from "../data/companies.json";
 
 // Sorter & Filter Types
-export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc" | "freq-desc";
+export type SortField = "id-asc" | "id-desc" | "diff-asc" | "diff-desc" | "ac-desc" | "ac-asc";
 
 export interface FilterRule {
   id: string;
-  field: "difficulty" | "topics" | "language" | "company" | "access" | "frequency";
+  field: "difficulty" | "topics" | "language" | "company" | "access";
   operator: "is" | "is_not";
   value: string;
 }
@@ -246,14 +246,14 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
   // Main Filtering & Sorting Pipeline
   const { filteredProblems, companyMetaMap } = useMemo(() => {
-    let compMap: Record<number, { freq: number; pattern: string; priority: string }> = {};
+    let compMap: Record<number, { pattern: string; priority: string }> = {};
 
     const effectiveCompany = selectedCompany || filterRules.find(r => r.field === "company")?.value;
     if (effectiveCompany) {
       const cData = ((companyData as any).companies || companyData)[effectiveCompany];
       const winList = cData?.[selectedWindow] || cData?.["all-time"] || [];
       winList.forEach((q: any) => {
-        compMap[q.id] = { freq: q.freq, pattern: q.pattern, priority: q.priority };
+        compMap[q.id] = { pattern: q.pattern, priority: q.priority };
       });
     }
 
@@ -318,11 +318,6 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             matches = rule.value === "free" ? !p.isPaidOnly : !!p.isPaidOnly;
           } else if (rule.field === "company") {
             matches = compMap[p.id] !== undefined;
-          } else if (rule.field === "frequency") {
-            const freq = compMap[p.id]?.freq || 0;
-            if (rule.value === "high") matches = freq >= 70;
-            else if (rule.value === "medium") matches = freq >= 40 && freq < 70;
-            else matches = freq > 0;
           } else if (rule.field === "language") {
             matches = true;
           }
@@ -352,8 +347,6 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
       const diffOrder: Record<string, number> = { Easy: 1, Medium: 2, Hard: 3 };
       const acA = (a as any).acRate ?? 50;
       const acB = (b as any).acRate ?? 50;
-      const freqA = compMap[a.id]?.freq || 0;
-      const freqB = compMap[b.id]?.freq || 0;
 
       switch (sortBy) {
         case "id-asc":
@@ -368,8 +361,6 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           return acB - acA || a.id - b.id;
         case "ac-asc":
           return acA - acB || a.id - b.id;
-        case "freq-desc":
-          return freqB - freqA || a.id - b.id;
         default:
           return a.id - b.id;
       }
@@ -591,8 +582,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                   { id: "diff-desc", label: "Difficulty (Hard → Easy)" },
                   { id: "ac-desc", label: "Acceptance (High → Low)" },
                   { id: "ac-asc", label: "Acceptance (Low → High)" },
-                  { id: "freq-desc", label: "Frequency (High → Low)" },
-                ].map((opt) => (
+                                  ].map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => { setSortBy(opt.id as SortField); setShowSortMenu(false); }}
@@ -671,8 +661,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                           <option value="topics">Topics</option>
                           <option value="access">Access</option>
                           <option value="company">Company</option>
-                          <option value="frequency">Frequency</option>
-                          <option value="language">Language</option>
+                                                    <option value="language">Language</option>
                         </select>
 
                         <select
@@ -734,17 +723,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                           </select>
                         )}
 
-                        {rule.field === "frequency" && (
-                          <select
-                            value={rule.value}
-                            onChange={(e) => setFilterRules(filterRules.map(r => r.id === rule.id ? { ...r, value: e.target.value } : r))}
-                            className="flex-1 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs font-medium"
-                          >
-                            <option value="high">High (70%+)</option>
-                            <option value="medium">Medium (40-70%)</option>
-                            <option value="any">Any (In Dataset)</option>
-                          </select>
-                        )}
+
 
                         {rule.field === "language" && (
                           <select
@@ -805,7 +784,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
             <div className="flex items-center gap-6">
               <span className="w-14 text-right">Acceptance</span>
               <span className="w-14 text-center">Difficulty</span>
-              <span className="w-20 text-right">Frequency</span>
+              <span className="w-16 text-right">Access</span>
             </div>
           </div>
 
@@ -828,11 +807,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                     <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-950 dark:group-hover:text-white transition truncate">
                       {p.title}
                     </span>
-                    {compMeta && (
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 shrink-0 flex items-center gap-1 font-mono">
-                        <TrendingUp className="size-2.5 text-blue-500" /> {compMeta.freq.toFixed(0)}%
-                      </span>
-                    )}
+
                   </div>
 
                   <div className="flex items-center gap-6 shrink-0">
@@ -852,24 +827,14 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                       {p.difficulty === "Medium" ? "Med." : p.difficulty}
                     </span>
 
-                    {/* Frequency Column (LeetCode-Style Bar & Badge) */}
-                    <div className="w-20 flex items-center justify-end gap-1.5">
-                      {(() => {
-                        const freqVal = compMeta ? compMeta.freq : (globalFrequencyMap.get(p.id) || 0);
-                        return (
-                          <div className="flex items-center gap-1.5" title={`Interview Frequency: ${freqVal.toFixed(0)}%`}>
-                            <div className="w-12 h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden shrink-0">
-                              <div
-                                className="h-full bg-zinc-700 dark:bg-zinc-300 rounded-full transition-all duration-300"
-                                style={{ width: `${Math.max(freqVal, 5)}%` }}
-                              />
-                            </div>
-                            {p.isPaidOnly && (
-                              <Lock className="size-3 text-zinc-400 dark:text-zinc-500 shrink-0" />
-                            )}
-                          </div>
-                        );
-                      })()}
+                    <div className="w-16 text-right flex items-center justify-end">
+                      {p.isPaidOnly ? (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700 flex items-center gap-1">
+                          <Lock className="size-2.5" /> Premium
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Free</span>
+                      )}
                     </div>
                   </div>
                 </div>

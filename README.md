@@ -5,7 +5,7 @@
 [![CI](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml/badge.svg)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
 [![Database](https://img.shields.io/badge/database-Cloudflare%20D1%20SQLite-007acc?logo=sqlite)](https://developers.cloudflare.com/d1/)
-[![Tests](https://img.shields.io/badge/tests-22%20passed-emerald)](#)
+[![Tests](https://img.shields.io/badge/tests-21%20passed-emerald)](#)
 [![License](https://img.shields.io/badge/license-MIT-blue)](#)
 
 ---
@@ -15,9 +15,9 @@
 LeetBank provides a complete, fast environment for coding interview preparation:
 
 * 🔓 **4,037 Questions**: Full problem statements, test cases, and diagrams for free and premium LeetCode questions.
-* 🏢 **Top Tech Company Tracks**: Interview frequency data across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**).
+* 🏢 **Top Tech Company Tracks**: Curated question sets across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**).
 * 📅 **4 Recency Windows**: Filter questions asked in the **Last 30 Days**, **3 Months**, **6 Months**, and **All-Time**.
-* 🥞 **Curated Roadmaps**: Built-in practice tracks for **Blind 75** and **NeetCode 150**.
+* 🥞 **Curated Roadmaps**: Built-in practice tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150**, **Hot 100**, and **Carl 200**.
 * 🧩 **Topic Filtering**: Filter questions by algorithm patterns and data structures (**Array**, **Hash Table**, **Dynamic Programming**, **Binary Tree**, **Graph**, etc.).
 * 💻 **19 Programming Languages**: Official starter templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
 * 💡 **Solutions & Big-$O$ Complexity**: Reference implementations with time and space complexity analysis.
@@ -28,8 +28,8 @@ LeetBank provides a complete, fast environment for coding interview preparation:
 
 ## 🎯 Critical User Journey (CUJ)
 
-### Company-Targeted Interview Sprint
-> **Goal**: A candidate preparing for an upcoming technical interview practices the most frequently asked questions for their target company within a specific timeframe.
+### Company-Targeted Practice
+> **Goal**: Practice interview questions curated for a specific company and timeframe.
 
 ```mermaid
 sequenceDiagram
@@ -41,10 +41,10 @@ sequenceDiagram
 
     Candidate->>UI: Select Company (e.g. Meta) & Window (30 Days)
     UI->>Edge: GET /api/companies?company=meta&window=30-days
-    Edge->>D1: Query company frequencies
-    D1-->>Edge: Return ranked questions
-    Edge-->>UI: Problem list with frequency & pattern tags
-    UI-->>Candidate: Display ranked question list (< 1ms)
+    Edge->>D1: Query company questions
+    D1-->>Edge: Return question list
+    Edge-->>UI: Filtered problem list
+    UI-->>Candidate: Display question list (< 1ms)
     Candidate->>UI: Click problem (e.g. #1249)
     UI-->>Candidate: Open statement, 19 starter languages & solutions
 ```
@@ -52,11 +52,8 @@ sequenceDiagram
 1. **Select Target Company & Recency Window**:
    * Open `https://leetbank.pages.dev/`.
    * Click **Meta** and select the **30 Days** recency window.
-2. **Review High-Yield Questions**:
-   * The catalog displays questions ordered by interview frequency percentage:
-     * **#1249 Minimum Remove to Make Valid Parentheses** (100% Frequency • *Sorting / Prefix / Scan*)
-     * **#339 Nested List Weight Sum** (85% Frequency • *Two Pointers / Recursion*)
-     * **#1 Two Sum** (75% Frequency • *Hash Table / Two Pointers*)
+2. **Review Curated Questions**:
+   * The catalog displays questions associated with the company and window.
 3. **Practice & Review**:
    * Click any question to inspect the complete statement, structured test cases, 19 starter code languages, and verified reference solutions with Big-$O$ complexity.
 
@@ -72,7 +69,7 @@ flowchart TD
 
     subgraph CF_Edge["Cloudflare Edge Infrastructure"]
         EdgeRouter -->|"Catalog & Search API"| CatalogQuery["SQL Catalog & Filter Engine"]
-        EdgeRouter -->|"Company Questions API"| CompanyQuery["SQL Company Frequency Join"]
+        EdgeRouter -->|"Company Questions API"| CompanyQuery["SQL Company Join"]
         EdgeRouter -->|"Problem Detail API"| CacheAside["Cache-Aside Problem Controller"]
         
         CacheAside -->|"1. Fast DB Read (under 5ms)"| D1_DB[("Cloudflare D1 Database")]
@@ -118,49 +115,10 @@ Fetch complete problem detail (HTML statement, starter code in 19 languages, ref
 curl -s "https://leetbank.pages.dev/api/problem/269" | jq .
 ```
 
-<details>
-<summary>Sample JSON Response</summary>
-
-```json
-{
-  "id": 269,
-  "slug": "alien-dictionary",
-  "title": "Alien Dictionary",
-  "difficulty": "Hard",
-  "topics": ["Array", "String", "Graph", "Topological Sort"],
-  "isPaidOnly": true,
-  "descriptionHtml": "<p>There is a new alien language that uses the English alphabet...</p>",
-  "starterCode": {
-    "python3": "class Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        pass",
-    "typescript": "function alienOrder(words: string[]): string {\n    \n};",
-    "golang": "func alienOrder(words []string) string {\n    \n}"
-  },
-  "solutions": [
-    {
-      "language": "Python3",
-      "langSlug": "python3",
-      "code": "class Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        ...",
-      "timeComplexity": "O(N + |Σ|)",
-      "spaceComplexity": "O(|Σ|)"
-    }
-  ],
-  "testCases": [
-    {
-      "id": 1,
-      "name": "Example 1",
-      "input": "words = [\"wrt\",\"wrf\",\"er\",\"ett\",\"rftt\"]",
-      "expected": "\"wertf\""
-    }
-  ],
-  "source": "d1_cache"
-}
-```
-</details>
-
 ---
 
 ### 3. `GET /api/companies`
-Fetch company interview frequency datasets.
+Fetch company question datasets.
 
 | Parameter | Type | Description | Default |
 | :--- | :---: | :--- | :---: |
@@ -171,20 +129,6 @@ Fetch company interview frequency datasets.
 
 ### 4. `GET /api/d1-health`
 Returns live Cloudflare D1 database connection telemetry and record counts.
-
----
-
-## 🔄 Automated Data Sync & Deployment
-
-LeetBank uses GitHub Actions to keep company interview questions up to date and deploy automatically:
-
-* **Workflow**: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-* **Schedule**: Runs automatically every Monday at `04:00 UTC` and on every push to `main`.
-* **Process**:
-  1. Synchronizes latest company interview frequency datasets.
-  2. Runs the automated test suite.
-  3. Builds the Astro Edge SSR application.
-  4. Deploys directly to Cloudflare Pages.
 
 ---
 
