@@ -11,6 +11,20 @@
 
 ---
 
+## 📸 Preview
+
+### 🖥️ Problemset Dashboard & Company Interview Tracks
+![LeetBank Problemset Dashboard](./assets/dashboard.png)
+
+---
+
+### 🔍 Problem Detail & Multi-Author Solutions
+| Problem Statement, Hints & Topics | Multi-Author Solutions (walkccc & Doocs) |
+| :---: | :---: |
+| <img src="./assets/problem_detail.png" alt="Problem Statement & Hints" width="100%" /> | <img src="./assets/problem_solutions.png" alt="Multi-Author Solutions" width="100%" /> |
+
+---
+
 ## About
 
 LeetBank provides an instant, distraction-free environment for algorithmic practice and technical interview preparation. It unifies all 4,037 LeetCode problems (both free and locked premium questions) with multi-author reference implementations, company frequency filters, and official multi-language starter code.
@@ -21,14 +35,6 @@ LeetBank provides an instant, distraction-free environment for algorithmic pract
 - **Company & Recency Filtering**: Filter questions asked in real interviews at Meta, Google, Amazon, and more across 4 recency windows.
 - **Always Up to Date**: Automated weekly GitHub Actions cron synchronizes newly released contest problems, topic tags, and company frequency datasets.
 - **Edge Speed**: Sub-millisecond queries powered by Cloudflare Pages and D1 SQLite.
-
----
-
-## Preview
-
-| Problemset Dashboard | Problem Statement & Details | Multi-Author Solutions |
-| :---: | :---: | :---: |
-| <img src="./assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="./assets/problem_modal_light.png" alt="LeetBank Problem Detail" width="100%" /> | <img src="./assets/solutions_modal_light.png" alt="LeetBank Solutions" width="100%" /> |
 
 ---
 
