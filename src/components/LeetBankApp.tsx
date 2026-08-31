@@ -15,9 +15,10 @@ import {
   Layers,
   Sun,
   Moon,
-  Terminal
+  TrendingUp
 } from "lucide-react";
 import catalogData from "../data/catalog.json";
+import companyData from "../data/companies.json";
 
 // Types
 interface Problem {
@@ -70,65 +71,48 @@ function CopyBlock({ content, label, language }: { content: string; label?: stri
   );
 }
 
-// Sample Company Data for POC demonstration
-const COMPANY_DATA: Record<string, Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>> = {
-  meta: {
-    "30-days": [
-      { id: 1249, freq: 100, pattern: "Sorting / Prefix / Scan", priority: "High" },
-      { id: 339, freq: 85, pattern: "Two Pointers / Recursion", priority: "High" },
-      { id: 1, freq: 75, pattern: "Hash Table / Two Pointers", priority: "High" },
-      { id: 20, freq: 70, pattern: "Stack / String", priority: "High" },
-      { id: 1004, freq: 65, pattern: "Sliding Window", priority: "Medium" },
-      { id: 269, freq: 60, pattern: "Graph / Topological Sort", priority: "High" },
-    ],
-    "3-months": [
-      { id: 1, freq: 95, pattern: "Hash Table", priority: "High" },
-      { id: 1249, freq: 90, pattern: "Stack / Scan", priority: "High" },
-      { id: 269, freq: 80, pattern: "Topological Sort", priority: "High" },
-      { id: 236, freq: 75, pattern: "Tree LCA", priority: "High" },
-    ],
-    "all-time": [
-      { id: 1, freq: 100, pattern: "Hash Table", priority: "High" },
-      { id: 269, freq: 90, pattern: "Topological Sort", priority: "High" },
-      { id: 253, freq: 85, pattern: "Intervals / Heap", priority: "High" },
-    ]
-  },
-  google: {
-    "30-days": [
-      { id: 2007, freq: 100, pattern: "Hash Map / Sorting", priority: "High" },
-      { id: 269, freq: 90, pattern: "Graph / Topological Sort", priority: "High" },
-      { id: 1, freq: 85, pattern: "Hash Table", priority: "High" },
-      { id: 23, freq: 80, pattern: "Priority Queue / Merge", priority: "High" },
-    ],
-    "all-time": [
-      { id: 1, freq: 100, pattern: "Hash Table", priority: "High" },
-      { id: 200, freq: 95, pattern: "BFS / DFS Grid", priority: "High" },
-      { id: 269, freq: 90, pattern: "Topological Sort", priority: "High" },
-    ]
-  },
-  amazon: {
-    "30-days": [
-      { id: 1, freq: 100, pattern: "Hash Table", priority: "High" },
-      { id: 200, freq: 90, pattern: "Graph / Matrix DFS", priority: "High" },
-      { id: 146, freq: 85, pattern: "LRU Cache / Doubly Linked List", priority: "High" },
-    ],
-    "all-time": [
-      { id: 146, freq: 100, pattern: "LRU Cache", priority: "High" },
-      { id: 200, freq: 95, pattern: "Matrix BFS/DFS", priority: "High" },
-    ]
-  }
-};
+const BLIND_75_IDS = new Set([
+  1, 11, 15, 19, 20, 21, 23, 33, 39, 48, 49, 53, 54, 55, 56, 57, 62, 70, 73, 76,
+  79, 91, 98, 100, 102, 104, 105, 121, 124, 125, 128, 133, 139, 141, 143, 152, 153,
+  190, 191, 198, 200, 206, 207, 208, 211, 212, 213, 217, 226, 230, 235, 238, 242,
+  252, 253, 261, 268, 269, 295, 297, 300, 322, 323, 338, 347, 371, 417, 424, 435,
+  438, 572, 647, 1143, 146, 287
+]);
 
-const BLIND_75_IDS = new Set([1, 15, 20, 21, 23, 33, 49, 53, 55, 56, 57, 70, 73, 76, 79, 91, 98, 100, 102, 104, 105, 121, 124, 125, 128, 133, 139, 141, 143, 152, 153, 190, 191, 198, 200, 206, 207, 208, 211, 212, 213, 217, 226, 230, 235, 238, 242, 252, 253, 268, 269, 295, 297, 300, 322, 338, 347, 371, 417, 424, 435, 572, 647]);
+const NEETCODE_150_IDS = new Set([
+  1, 11, 15, 20, 21, 22, 23, 33, 36, 39, 40, 42, 45, 46, 48, 49, 51, 53, 54, 55,
+  56, 57, 62, 70, 72, 73, 74, 76, 78, 79, 84, 90, 91, 98, 100, 102, 104, 105, 110,
+  115, 121, 124, 125, 127, 128, 130, 131, 133, 134, 138, 139, 141, 143, 146, 150,
+  152, 153, 155, 167, 190, 191, 198, 199, 200, 202, 206, 207, 208, 210, 211, 212,
+  213, 215, 217, 226, 230, 235, 238, 239, 242, 252, 253, 261, 268, 269, 286, 287,
+  295, 297, 300, 309, 312, 322, 323, 329, 332, 338, 347, 355, 371, 416, 417, 424,
+  435, 494, 518, 543, 567, 572, 621, 647, 684, 695, 703, 704, 739, 743, 746, 763,
+  778, 787, 846, 853, 875, 973, 981, 994, 1046, 1143, 1448, 1584, 1851, 1899, 2013
+]);
+
+const COMPANY_LIST = [
+  { id: "meta", label: "Meta" },
+  { id: "google", label: "Google" },
+  { id: "amazon", label: "Amazon" },
+  { id: "microsoft", label: "Microsoft" },
+  { id: "bloomberg", label: "Bloomberg" },
+  { id: "apple", label: "Apple" },
+  { id: "uber", label: "Uber" },
+  { id: "bytedance", label: "ByteDance" },
+  { id: "netflix", label: "Netflix" },
+];
 
 export function LeetBankApp() {
   const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Reset pagination when search or filters change
-  useEffect(() => {
-    setVisibleCount(50);
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
+  const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [selectedWindow, setSelectedWindow] = useState<string>("all-time");
+  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
+  const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
+  const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   // Initialize theme state on mount
   useEffect(() => {
@@ -147,16 +131,11 @@ export function LeetBankApp() {
       localStorage.setItem("theme", "light");
     }
   };
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
-  const [selectedRoadmap, setSelectedRoadmap] = useState<string>("All");
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [selectedWindow, setSelectedWindow] = useState<string>("30-days");
-  const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
-  const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
-  const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
-  const [visibleCount, setVisibleCount] = useState<number>(50);
 
-
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
 
   // Keyboard shortcut listener ('/' to focus search)
   useEffect(() => {
@@ -173,61 +152,107 @@ export function LeetBankApp() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Filtered problem list
-  const filteredProblems = useMemo(() => {
-    let list = catalogData as Problem[];
+  // Quick lookup map for catalog problems
+  const catalogMap = useMemo(() => {
+    const map = new Map<number, Problem>();
+    (catalogData as Problem[]).forEach((p) => map.set(p.id, p));
+    return map;
+  }, []);
 
-    if (selectedCompany && COMPANY_DATA[selectedCompany]) {
-      const compMap = COMPANY_DATA[selectedCompany][selectedWindow] || COMPANY_DATA[selectedCompany]["all-time"] || [];
-      const compIds = new Set(compMap.map(c => c.id));
-      list = list.filter(p => compIds.has(p.id));
+  // Filtered problem list with company metadata
+  const { filteredProblems, companyMetaMap } = useMemo(() => {
+    const compMap = new Map<number, { freq: number; pattern: string; priority: string }>();
+
+    if (selectedCompany && (companyData as any)[selectedCompany]) {
+      const cData = (companyData as any)[selectedCompany];
+      const winList = cData[selectedWindow] || cData["all-time"] || [];
+      winList.forEach((item: any) => {
+        compMap.set(item.id, { freq: item.freq, pattern: item.pattern, priority: item.priority });
+      });
+
+      // Build ordered list based on company frequency
+      let ordered: Problem[] = [];
+      winList.forEach((item: any) => {
+        const found = catalogMap.get(item.id);
+        if (found) {
+          ordered.push(found);
+        } else {
+          ordered.push({
+            id: item.id,
+            slug: `problem-${item.id}`,
+            title: item.pattern || `Problem #${item.id}`,
+            difficulty: "Medium",
+            topics: ["Algorithms"]
+          });
+        }
+      });
+
+      if (selectedDifficulty !== "All") {
+        ordered = ordered.filter((p) => p.difficulty === selectedDifficulty);
+      }
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        ordered = ordered.filter((p) => 
+          p.id.toString() === q ||
+          p.title.toLowerCase().includes(q) ||
+          p.slug.toLowerCase().includes(q) ||
+          p.topics.some((t) => t.toLowerCase().includes(q))
+        );
+      }
+
+      return { filteredProblems: ordered, companyMetaMap: compMap };
     }
 
+    let list = catalogData as Problem[];
+
     if (selectedRoadmap === "blind75") {
-      list = list.filter(p => BLIND_75_IDS.has(p.id));
+      list = list.filter((p) => BLIND_75_IDS.has(p.id));
+    } else if (selectedRoadmap === "neetcode150") {
+      list = list.filter((p) => NEETCODE_150_IDS.has(p.id));
     }
 
     if (selectedDifficulty !== "All") {
-      list = list.filter(p => p.difficulty === selectedDifficulty);
+      list = list.filter((p) => p.difficulty === selectedDifficulty);
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      list = list.filter(p => 
+      list = list.filter((p) => 
         p.id.toString() === q ||
         p.title.toLowerCase().includes(q) ||
         p.slug.toLowerCase().includes(q) ||
-        p.topics.some(t => t.toLowerCase().includes(q))
+        p.topics.some((t) => t.toLowerCase().includes(q))
       );
     }
 
-    return list;
-  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
+    return { filteredProblems: list, companyMetaMap: compMap };
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow, catalogMap]);
 
   const CODE_TEMPLATES: Record<string, string> = {
     python3: `class Solution:
-    def two_sum(self, nums: list[int], target: int) -> list[int]:
-        # Python 3.14 PEP 585 / 604 Modernized
+    def solve(self):
+        # Modern Python 3.14 PEP 585 / 604
         pass`,
-    typescript: `function twoSum(nums: number[], target: number): number[] {
+    typescript: `function solve(): void {
     
 };`,
-    golang: `func twoSum(nums []int, target int) []int {
+    golang: `func solve() {
     
 }`,
     rust: `impl Solution {
-    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    pub fn solve() {
         
     }
 }`,
     cpp: `class Solution {
 public:
-    vector<int> twoSum(vector<int>& nums, int target) {
+    void solve() {
         
     }
 };`,
     java: `class Solution {
-    public int[] twoSum(int[] nums, int target) {
+    public void solve() {
         
     }
 }`
@@ -235,32 +260,14 @@ public:
 
   const REFERENCE_SOLUTIONS: Record<string, string> = {
     python3: `class Solution:
-    def two_sum(self, nums: list[int], target: int) -> list[int]:
-        d = {}
-        for i, x in enumerate(nums):
-            if (y := target - x) in d:
-                return [d[y], i]
-            d[x] = i`,
-    typescript: `function twoSum(nums: number[], target: number): number[] {
-    const map = new Map<number, number>();
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (map.has(complement)) {
-            return [map.get(complement)!, i];
-        }
-        map.set(nums[i], i);
-    }
-    return [];
+    def solve(self):
+        # Optimal Reference Solution
+        pass`,
+    typescript: `function solve() {
+    // Optimal Reference Solution
 };`,
-    golang: `func twoSum(nums []int, target int) []int {
-    m := make(map[int]int)
-    for i, x := range nums {
-        if j, ok := m[target-x]; ok {
-            return []int{j, i}
-        }
-        m[x] = i
-    }
-    return nil
+    golang: `func solve() {
+    // Optimal Reference Solution
 }`
   };
 
@@ -338,11 +345,7 @@ public:
               <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium min-w-[75px]">
                 Companies:
               </span>
-              {[
-                { id: "meta", label: "Meta" },
-                { id: "google", label: "Google" },
-                { id: "amazon", label: "Amazon" },
-              ].map((c) => (
+              {COMPANY_LIST.map((c) => (
                 <button
                   key={c.id}
                   onClick={() => setSelectedCompany(selectedCompany === c.id ? null : c.id)}
@@ -372,6 +375,7 @@ public:
                 {[
                   { id: "30-days", label: "30 Days" },
                   { id: "3-months", label: "3 Months" },
+                  { id: "6-months", label: "6 Months" },
                   { id: "all-time", label: "All-Time" },
                 ].map((w) => (
                   <button
@@ -419,7 +423,7 @@ public:
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
           <div className="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
             <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              {filteredProblems.length} questions
+              {filteredProblems.length} questions {selectedCompany ? `(${selectedCompany.toUpperCase()} - ${selectedWindow})` : ""}
             </span>
             <div className="flex items-center gap-1">
               {["All", "Easy", "Medium", "Hard"].map((d) => (
@@ -453,6 +457,8 @@ public:
                 p.difficulty === "Medium" ? "text-amber-600 dark:text-amber-400" :
                 "text-rose-600 dark:text-rose-400";
 
+              const compMeta = companyMetaMap.get(p.id);
+
               return (
                 <div
                   key={p.id}
@@ -471,16 +477,28 @@ public:
                         Premium
                       </span>
                     )}
+                    {compMeta && (
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 shrink-0 flex items-center gap-1 font-mono">
+                        <TrendingUp className="size-2.5 text-blue-500" /> {compMeta.freq.toFixed(0)}%
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <div className="hidden sm:flex gap-1">
-                      {p.topics.slice(0, 2).map((t) => (
-                        <span key={t} className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
+                    {compMeta?.pattern && (
+                      <span className="hidden md:inline text-[11px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800/80 text-zinc-500 dark:text-zinc-400 max-w-[180px] truncate">
+                        {compMeta.pattern}
+                      </span>
+                    )}
+                    {!compMeta && (
+                      <div className="hidden sm:flex gap-1">
+                        {p.topics.slice(0, 2).map((t) => (
+                          <span key={t} className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <span className={`text-xs font-medium ${diffStyle}`}>
                       {p.difficulty}
                     </span>

@@ -1,3 +1,5 @@
+import companyData from "../data/companies.json";
+
 export type CompanyId =
   | "google"
   | "meta"
@@ -22,8 +24,8 @@ export interface CompanyQuestion {
 }
 
 const SUPPORTED_COMPANIES: CompanyId[] = [
-  "google",
   "meta",
+  "google",
   "amazon",
   "microsoft",
   "bloomberg",
@@ -33,63 +35,22 @@ const SUPPORTED_COMPANIES: CompanyId[] = [
   "netflix",
 ];
 
-// In-memory sample data fallback
-const LOCAL_COMPANY_DATA: Record<string, Record<string, CompanyQuestion[]>> = {
-  meta: {
-    "30-days": [
-      { problemId: 1249, title: "Minimum Remove to Make Valid Parentheses", difficulty: "Medium", frequencyPercent: 100.0, pattern: "Sorting / Prefix / Scan", priority: "High" },
-      { problemId: 339, title: "Nested List Weight Sum", difficulty: "Medium", frequencyPercent: 85.0, pattern: "Two Pointers / Recursion", priority: "High" },
-      { problemId: 1, title: "Two Sum", difficulty: "Easy", frequencyPercent: 75.0, pattern: "Hash Table / Two Pointers", priority: "High" },
-      { problemId: 20, title: "Valid Parentheses", difficulty: "Easy", frequencyPercent: 70.0, pattern: "Stack / String", priority: "High" },
-      { problemId: 1004, title: "Max Consecutive Ones III", difficulty: "Medium", frequencyPercent: 65.0, pattern: "Sliding Window", priority: "Medium" },
-      { problemId: 269, title: "Alien Dictionary", difficulty: "Hard", frequencyPercent: 60.0, pattern: "Graph / Topological Sort", priority: "High" }
-    ],
-    "3-months": [
-      { problemId: 1, frequencyPercent: 95.0, pattern: "Hash Table", priority: "High" },
-      { problemId: 1249, frequencyPercent: 90.0, pattern: "Stack / Scan", priority: "High" },
-      { problemId: 269, frequencyPercent: 80.0, pattern: "Topological Sort", priority: "High" }
-    ],
-    "6-months": [
-      { problemId: 1, frequencyPercent: 100.0, pattern: "Hash Table", priority: "High" },
-      { problemId: 269, frequencyPercent: 90.0, pattern: "Topological Sort", priority: "High" }
-    ],
-    "all-time": [
-      { problemId: 1, frequencyPercent: 100.0, pattern: "Hash Table", priority: "High" },
-      { problemId: 269, frequencyPercent: 90.0, pattern: "Topological Sort", priority: "High" },
-      { problemId: 253, frequencyPercent: 85.0, pattern: "Intervals / Heap", priority: "High" }
-    ]
-  },
-  google: {
-    "30-days": [
-      { problemId: 2007, frequencyPercent: 100.0, pattern: "Hash Map / Sorting", priority: "High" },
-      { problemId: 269, frequencyPercent: 90.0, pattern: "Graph / Topological Sort", priority: "High" },
-      { problemId: 1, frequencyPercent: 85.0, pattern: "Hash Table", priority: "High" }
-    ],
-    "all-time": [
-      { problemId: 1, frequencyPercent: 100.0, pattern: "Hash Table", priority: "High" },
-      { problemId: 200, frequencyPercent: 95.0, pattern: "BFS / DFS Grid", priority: "High" },
-      { problemId: 269, frequencyPercent: 90.0, pattern: "Topological Sort", priority: "High" },
-      { problemId: 23, frequencyPercent: 85.0, pattern: "Priority Queue / Merge", priority: "High" },
-      { problemId: 4, frequencyPercent: 80.0, pattern: "Binary Search", priority: "High" },
-      { problemId: 42, frequencyPercent: 78.0, pattern: "Two Pointers / Stack", priority: "High" },
-      { problemId: 146, frequencyPercent: 75.0, pattern: "LRU Cache", priority: "High" },
-      { problemId: 3, frequencyPercent: 72.0, pattern: "Sliding Window", priority: "High" },
-      { problemId: 56, frequencyPercent: 70.0, pattern: "Intervals", priority: "High" },
-      { problemId: 121, frequencyPercent: 68.0, pattern: "Dynamic Programming", priority: "High" },
-      { problemId: 15, frequencyPercent: 65.0, pattern: "Two Pointers", priority: "High" }
-    ]
-  }
-};
-
 export class CompanyService {
+  private static data = companyData as Record<string, Record<string, Array<{ id: number; freq: number; pattern: string; priority: string }>>>;
+
   static getSupportedCompanies(): CompanyId[] {
     return SUPPORTED_COMPANIES;
   }
 
   static async getQuestionsForCompany(company: string, window: RecencyWindow = "all-time"): Promise<CompanyQuestion[]> {
     const compKey = company.toLowerCase();
-    const data = LOCAL_COMPANY_DATA[compKey]?.[window] || LOCAL_COMPANY_DATA[compKey]?.["all-time"] || [];
-    return [...data].sort((a, b) => b.frequencyPercent - a.frequencyPercent);
+    const rawList = this.data[compKey]?.[window] || this.data[compKey]?.["all-time"] || [];
+    return rawList.map((item) => ({
+      problemId: item.id,
+      frequencyPercent: item.freq,
+      pattern: item.pattern,
+      priority: item.priority as any
+    })).sort((a, b) => b.frequencyPercent - a.frequencyPercent);
   }
 
   static parseCompanyCsv(company: string, window: RecencyWindow, csvContent: string): CompanyQuestion[] {
