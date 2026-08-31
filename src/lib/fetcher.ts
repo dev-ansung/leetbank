@@ -1,12 +1,12 @@
 import { decodeHtmlEntities } from "./html-cleaner";
-import { PythonModernizer } from "./modernizer";
 import { CatalogService } from "./catalog";
 
 export interface TestCase {
   id: number;
   name: string;
-  input: Record<string, any> | any[];
-  expected: any;
+  input: string;
+  expected?: string;
+  explanation?: string;
 }
 
 export interface SolutionEntry {
@@ -44,51 +44,35 @@ export class ProblemFetcher {
     const topics = canonical?.topics || [];
     const isPaid = canonical?.isPaidOnly || false;
 
-    // 1. Fetch LeetCode GraphQL
+    // 1. Fetch LeetCode Official GraphQL API
     const gqlData = await this.fetchGraphQL(slug);
     let descriptionHtml = gqlData?.content ? decodeHtmlEntities(gqlData.content) : "";
     const starterCode: Record<string, string> = {};
 
-    if (gqlData?.codeSnippets) {
+    if (gqlData?.codeSnippets && gqlData.codeSnippets.length > 0) {
       for (const snippet of gqlData.codeSnippets) {
-        starterCode[snippet.langSlug] = snippet.code; // 100% original untouched official starter code
+        starterCode[snippet.langSlug] = snippet.code;
       }
     }
 
-    // 2. If problem is paid or missing description, fallback to Doocs mirror
+    // 2. Fetch Solutions and fallback statement for paywalled problems from Mirror
     let solutions: SolutionEntry[] = [];
-    if (!descriptionHtml || isPaid) {
-      const mirrorData = await this.fetchDoocsMirror(pid, title, slug);
-      if (mirrorData) {
-        if (!descriptionHtml) {
-          descriptionHtml = mirrorData.descriptionHtml;
-        }
-        solutions = mirrorData.solutions;
+    const mirrorData = await this.fetchDoocsMirror(pid, title, slug);
+
+    if (mirrorData) {
+      if (!descriptionHtml || isPaid) {
+        descriptionHtml = mirrorData.descriptionHtml;
+      }
+      solutions = mirrorData.solutions;
+
+      // If official starter code was paywalled, construct starter signatures from mirror solutions
+      if (Object.keys(starterCode).length === 0 && mirrorData.starterCode) {
+        Object.assign(starterCode, mirrorData.starterCode);
       }
     }
 
-    // Ensure fallback solutions if empty
-    if (solutions.length === 0) {
-      solutions = [
-        {
-          language: "Python3",
-          langSlug: "python3",
-          code: `class Solution:\n    def solve(self):\n        pass`,
-          timeComplexity: "O(N)",
-          spaceComplexity: "O(1)"
-        }
-      ];
-    }
-
-    // Fallback starter code templates if empty (for locked problems)
-    if (Object.keys(starterCode).length === 0) {
-      starterCode["python3"] = `class Solution:\n    def solve(self):\n        pass`;
-      starterCode["typescript"] = `function solve() {}`;
-      starterCode["golang"] = `func solve() {}`;
-    }
-
-    // Parse example test cases
-    const testCases = this.parseExampleTestCases(slug, descriptionHtml, gqlData?.exampleTestcaseList);
+    // 3. Extract test cases universally from HTML description <pre> blocks
+    const testCases = this.extractTestCasesFromHtml(descriptionHtml, gqlData?.exampleTestcaseList);
 
     return {
       id: pid,
@@ -147,7 +131,11 @@ export class ProblemFetcher {
     }
   }
 
-  private static async fetchDoocsMirror(probId: number, title: string, slug: string): Promise<{ descriptionHtml: string; solutions: SolutionEntry[] } | null> {
+  private static async fetchDoocsMirror(
+    probId: number,
+    title: string,
+    slug: string
+  ): Promise<{ descriptionHtml: string; solutions: SolutionEntry[]; starterCode: Record<string, string> } | null> {
     const startRange = Math.floor(probId / 100) * 100;
     const endRange = startRange + 99;
     const rangeStr = `${String(startRange).padStart(4, "0")}-${String(endRange).padStart(4, "0")}`;
@@ -173,7 +161,11 @@ export class ProblemFetcher {
     return null;
   }
 
-  private static parseMirrorMarkdown(md: string): { descriptionHtml: string; solutions: SolutionEntry[] } {
+  private static parseMirrorMarkdown(md: string): {
+    descriptionHtml: string;
+    solutions: SolutionEntry[];
+    starterCode: Record<string, string>;
+  } {
     let descriptionHtml = "";
     const descMatch = md.match(/<!-- description:start -->([\s\S]*?)<!-- description:end -->/);
     if (descMatch) {
@@ -183,59 +175,95 @@ export class ProblemFetcher {
       descriptionHtml = `<p>${rawDesc.replace(/#.*\n/g, "").trim()}</p>`;
     }
 
+    // Extract Big-O complexity analysis from markdown if present
+    let parsedTime = "O(N)";
+    let parsedSpace = "O(1)";
+    const timeMatch = md.match(/time\s+complexity:?\s*([^\n\r.]+)/i);
+    const spaceMatch = md.match(/space\s+complexity:?\s*([^\n\r.]+)/i);
+    if (timeMatch && timeMatch[1]) {
+      parsedTime = timeMatch[1].replace(/is\s+/i, "").replace(/[`$]/g, "").trim();
+    }
+    if (spaceMatch && spaceMatch[1]) {
+      parsedSpace = spaceMatch[1].replace(/is\s+/i, "").replace(/[`$]/g, "").trim();
+    }
+
     const solutions: SolutionEntry[] = [];
-    const codeBlocks = md.matchAll(/####\s+([A-Za-z0-9+#]+)[\s\S]*?```([a-z0-9]+)?\n([\s\S]*?)```/g);
+    const starterCode: Record<string, string> = {};
+    const codeBlocks = md.matchAll(/####\s+([A-Za-z0-9+# ]+)[\s\S]*?```([a-z0-9]+)?\n([\s\S]*?)```/g);
 
     for (const m of codeBlocks) {
       const langName = m[1].trim();
-      const langSlug = (m[2] || langName).toLowerCase();
-      const code = m[3].trim();
+      const langSlug = (m[2] || langName).toLowerCase().replace(/\+/g, "p").replace(/#/g, "sharp");
+      const fullCode = m[3].trim();
+
       solutions.push({
         language: langName,
         langSlug,
-        code,
-        timeComplexity: "O(N)",
-        spaceComplexity: "O(1)"
+        code: fullCode,
+        timeComplexity: parsedTime,
+        spaceComplexity: parsedSpace
       });
+
+      // Extract starter signature from solution code for paywalled problems
+      if (langSlug.includes("python") || langName.toLowerCase().includes("python")) {
+        const sigMatch = fullCode.match(/(class\s+Solution[\s\S]*?def\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*(?:->\s*[^:]+)?:)/);
+        if (sigMatch) {
+          starterCode["python3"] = `${sigMatch[1]}\n        pass`;
+        }
+      } else if (langSlug.includes("typescript") || langName.toLowerCase().includes("typescript")) {
+        const sigMatch = fullCode.match(/(function\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*:\s*[^{]+)/);
+        if (sigMatch) {
+          starterCode["typescript"] = `${sigMatch[1]} {\n    \n};`;
+        }
+      } else if (langSlug.includes("cpp") || langSlug.includes("c++")) {
+        const sigMatch = fullCode.match(/(class\s+Solution\s*{\s*public:\s*[^{]+)/);
+        if (sigMatch) {
+          starterCode["cpp"] = `${sigMatch[1]} {\n        \n    }\n};`;
+        }
+      } else if (langSlug.includes("java")) {
+        const sigMatch = fullCode.match(/(class\s+Solution\s*{\s*public\s+[^{]+)/);
+        if (sigMatch) {
+          starterCode["java"] = `${sigMatch[1]} {\n        \n    }\n};`;
+        }
+      }
     }
 
-    return { descriptionHtml, solutions };
+    return { descriptionHtml, solutions, starterCode };
   }
 
-  private static parseExampleTestCases(slug: string, descriptionHtml: string, rawTestcases?: string[]): TestCase[] {
-    if (slug === "two-sum") {
-      return [
-        {
-          id: 1,
-          name: "Example 1",
-          input: { nums: [2, 7, 11, 15], target: 9 },
-          expected: [0, 1]
-        },
-        {
-          id: 2,
-          name: "Example 2",
-          input: { nums: [3, 2, 4], target: 6 },
-          expected: [1, 2]
-        }
-      ];
+  private static extractTestCasesFromHtml(html: string, rawExampleList?: string[]): TestCase[] {
+    const cases: TestCase[] = [];
+
+    // Extract from <pre> blocks in HTML (e.g. Input: ... Output: ...)
+    const preBlocks = html.matchAll(/<pre>([\s\S]*?)<\/pre>/gi);
+    let id = 1;
+
+    for (const block of preBlocks) {
+      const text = decodeHtmlEntities(block[1].replace(/<[^>]+>/g, "")).trim();
+      const inputMatch = text.match(/Input:\s*([\s\S]*?)(?=Output:|$)/i);
+      const outputMatch = text.match(/Output:\s*([\s\S]*?)(?=Explanation:|$)/i);
+      const explMatch = text.match(/Explanation:\s*([\s\S]*?)$/i);
+
+      if (inputMatch) {
+        cases.push({
+          id: id++,
+          name: `Example ${id - 1}`,
+          input: inputMatch[1].trim(),
+          expected: outputMatch ? outputMatch[1].trim() : undefined,
+          explanation: explMatch ? explMatch[1].trim() : undefined
+        });
+      }
     }
 
-    if (rawTestcases && rawTestcases.length > 0) {
-      return rawTestcases.map((t, idx) => ({
+    // Fallback to raw example test cases if no pre tags found
+    if (cases.length === 0 && rawExampleList && rawExampleList.length > 0) {
+      return rawExampleList.map((t, idx) => ({
         id: idx + 1,
         name: `Example ${idx + 1}`,
-        input: decodeHtmlEntities(t),
-        expected: null
+        input: decodeHtmlEntities(t)
       }));
     }
 
-    return [
-      {
-        id: 1,
-        name: "Example 1",
-        input: {},
-        expected: null
-      }
-    ];
+    return cases;
   }
 }

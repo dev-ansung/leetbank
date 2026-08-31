@@ -9,21 +9,22 @@ describe("ProblemFetcher Upstream & Paywall Bypass TDD Suite", () => {
     expect(problem.difficulty).toBe("Easy");
     expect(problem.descriptionHtml).toContain("array of integers");
 
-    // Verify multi-language starter code
+    // Verify official untouched starter code
     expect(problem.starterCode["python3"]).toBeDefined();
+    expect(problem.starterCode["python3"]).toContain("def twoSum");
     expect(problem.starterCode["typescript"]).toBeDefined();
     expect(problem.starterCode["golang"]).toBeDefined();
     expect(problem.starterCode["rust"]).toBeDefined();
     expect(problem.starterCode["cpp"]).toBeDefined();
     expect(problem.starterCode["java"]).toBeDefined();
 
-    // Verify decoded test cases
-    expect(problem.testCases.length).toBeGreaterThanOrEqual(1);
-    expect(problem.testCases[0].input).toEqual({ nums: [2, 7, 11, 15], target: 9 });
-    expect(problem.testCases[0].expected).toEqual([0, 1]);
+    // Verify parsed test cases from real HTML
+    expect(problem.testCases.length).toBeGreaterThanOrEqual(2);
+    expect(problem.testCases[0].input).toContain("nums = [2,7,11,15]");
+    expect(problem.testCases[0].expected).toContain("[0,1]");
   });
 
-  it("should bypass paywall for premium/locked problems via Doocs mirror", async () => {
+  it("should bypass paywall for premium/locked problems via Doocs mirror with real signatures", async () => {
     const alien = await ProblemFetcher.fetchProblem(269);
     expect(alien.id).toBe(269);
     expect(alien.slug).toBe("alien-dictionary");
@@ -32,10 +33,14 @@ describe("ProblemFetcher Upstream & Paywall Bypass TDD Suite", () => {
     expect(alien.isPaidOnly).toBe(true);
     expect(alien.descriptionHtml.length).toBeGreaterThan(50);
 
-    // Verify multi-language solutions extracted from mirror
+    // Verify real solutions and extracted starter signatures
     expect(alien.solutions.length).toBeGreaterThan(0);
     const pySolution = alien.solutions.find((s) => s.langSlug === "python" || s.langSlug === "python3");
     expect(pySolution).toBeDefined();
-    expect(pySolution?.code).toContain("def");
+    expect(pySolution?.code).toContain("def alienOrder");
+
+    // Verify starter code generated from solution signature
+    expect(alien.starterCode["python3"]).toBeDefined();
+    expect(alien.starterCode["python3"]).toContain("def alienOrder");
   });
 });
