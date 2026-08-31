@@ -1061,7 +1061,9 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                               <span>Example {idx + 1}</span>
                               <button
                                 onClick={() => {
-                                  const text = `Input: ${tc.input}\nOutput: ${tc.expected}`;
+                                  const inStr = typeof tc.input === "object" ? JSON.stringify(tc.input) : String(tc.input ?? "");
+                                  const outStr = typeof tc.expected === "object" ? JSON.stringify(tc.expected) : String(tc.expected ?? "");
+                                  const text = `Input: ${inStr}\nOutput: ${outStr}`;
                                   navigator.clipboard.writeText(text);
                                 }}
                                 className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition cursor-pointer"
@@ -1070,8 +1072,8 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
                               </button>
                             </div>
                             <div className="font-mono text-[11px] flex flex-col gap-1 text-zinc-700 dark:text-zinc-300">
-                              <div><span className="text-zinc-400">Input: </span>{tc.input}</div>
-                              <div><span className="text-zinc-400">Expected: </span>{tc.expected}</div>
+                              <div><span className="text-zinc-400">Input: </span>{typeof tc.input === "object" ? JSON.stringify(tc.input) : String(tc.input ?? "")}</div>
+                              <div><span className="text-zinc-400">Expected: </span>{typeof tc.expected === "object" ? JSON.stringify(tc.expected) : String(tc.expected ?? "")}</div>
                             </div>
                           </div>
                         ))}
