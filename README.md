@@ -10,6 +10,16 @@
 
 ---
 
+## 📸 Preview
+
+### Problemset Dashboard
+![LeetBank Problemset Dashboard](assets/dashboard_dark.png)
+
+### Problem Detail & Reference Solutions
+![LeetBank Problem Detail & LaTeX Big-O](assets/problem_modal.png)
+
+---
+
 ## ⚡ Features
 
 LeetBank provides a complete, fast environment for coding interview preparation:
@@ -18,9 +28,9 @@ LeetBank provides a complete, fast environment for coding interview preparation:
 * 🏢 **Top Tech Company Tracks**: Curated question sets across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**).
 * 📅 **4 Recency Windows**: Filter questions asked in the **Last 30 Days**, **3 Months**, **6 Months**, and **All-Time**.
 * 🥞 **Curated Roadmaps**: Built-in practice tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150**, **Hot 100**, and **Carl 200**.
-* 🧩 **Topic Filtering**: Filter questions by algorithm patterns and data structures (**Array**, **Hash Table**, **Dynamic Programming**, **Binary Tree**, **Graph**, etc.).
+* 🧩 **Expandable Topic Ribbon**: Quick filtering by data structures and algorithmic patterns (**Array**, **String**, **Hash Table**, **Dynamic Programming**, **Tree**, **Graph**, etc.).
 * 💻 **19 Programming Languages**: Official starter templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
-* 💡 **Solutions & Big-$O$ Complexity**: Reference implementations with time and space complexity analysis.
+* 📐 **LaTeX Big-$O$ Complexity**: Formatted mathematical notation for time and space complexity analysis via KaTeX.
 * 📋 **1-Click Test Case Copying**: Structured example inputs and expected outputs ready to paste into your local editor.
 * 🌓 **Dark & Light Mode**: Fast, responsive monochrome interface.
 
@@ -61,7 +71,7 @@ sequenceDiagram
 
 ## 🏛️ High-Level System Architecture (HLD)
 
-LeetBank runs entirely on Cloudflare's serverless edge infrastructure:
+LeetBank runs entirely on Cloudflare serverless edge infrastructure:
 
 ```mermaid
 flowchart TD
