@@ -96,7 +96,6 @@ function CopyBlock({ label, content }: { label: string; content: string }) {
 export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | string }) {
   // Navigation & Filter States
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Topics");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [isTopicsExpanded, setIsTopicsExpanded] = useState<boolean>(false);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
@@ -212,7 +211,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
   // Reset pagination on filter change
   useEffect(() => {
     setVisibleCount(50);
-  }, [searchQuery, selectedCategory, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, sortBy]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, sortBy]);
 
   // Top topics ranked by frequency
   const sortedTopics = useMemo(() => {
@@ -259,18 +258,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
 
     let list = catalogData as Problem[];
 
-    // 1. Category Filter (Algorithms, Database, Shell, Concurrency, JavaScript)
-    if (selectedCategory && selectedCategory !== "All Topics") {
-      if (selectedCategory === "Database") {
-        list = list.filter((p) => p.topics.some(t => t.toLowerCase().includes("database") || t.toLowerCase().includes("sql")));
-      } else if (selectedCategory === "Shell") {
-        list = list.filter((p) => p.topics.some(t => t.toLowerCase().includes("shell") || t.toLowerCase().includes("bash")));
-      } else if (selectedCategory === "Concurrency") {
-        list = list.filter((p) => p.topics.some(t => t.toLowerCase().includes("concurrency") || t.toLowerCase().includes("thread")));
-      } else if (selectedCategory === "JavaScript") {
-        list = list.filter((p) => p.topics.some(t => t.toLowerCase().includes("javascript") || t.toLowerCase().includes("pandas")));
-      }
-    }
+
 
     // 2. Tracks Filter
     if (selectedRoadmap && selectedRoadmap !== "All") {
@@ -367,7 +355,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
     });
 
     return { filteredProblems: sorted, companyMetaMap: compMap };
-  }, [searchQuery, selectedCategory, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, matchMode, sortBy, catalogMap]);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedAccess, selectedTopic, selectedCompany, selectedWindow, filterRules, matchMode, sortBy, catalogMap]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
@@ -433,22 +421,7 @@ export function LeetBankApp({ initialProblemId }: { initialProblemId?: number | 
           </button>
         </div>
 
-        {/* 2. Category Tab Pills (Monochrome) */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {["All Topics", "Algorithms", "Database", "Shell", "Concurrency", "JavaScript"].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => { setSelectedCategory(cat); setSelectedTopic(null); }}
-              className={`text-xs px-3.5 py-1.5 rounded-full font-medium transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === cat
-                  ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+
 
         {/* 3. Companies & Tracks Navigation Bar */}
         <div className="flex flex-col gap-2 p-3 bg-zinc-50/60 dark:bg-zinc-900/40 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl">
