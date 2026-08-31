@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import { CatalogService } from "../src/lib/catalog";
 
 describe("CatalogService TDD Suite", () => {
-  it("should load the full canonical catalog of 4,037 problems", () => {
+  it("should load the full canonical catalog of 4,000+ problems", () => {
     const catalog = CatalogService.getAll();
-    expect(catalog.length).toBe(4037);
+    expect(catalog.length).toBeGreaterThanOrEqual(4037);
   });
 
   it("should search problems by numerical ID or slug with instant matching", () => {

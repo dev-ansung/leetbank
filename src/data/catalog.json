@@ -109,7 +109,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 21.6,
+    "acRate": 21.7,
     "totalAcs": 2611558,
     "totalSubmitted": 12063192
   },
@@ -389,7 +389,7 @@
       "Two Pointers"
     ],
     "isPaidOnly": false,
-    "acRate": 62.4,
+    "acRate": 62.5,
     "totalAcs": 5600774,
     "totalSubmitted": 8968533
   },
@@ -733,7 +733,7 @@
       "Recursion"
     ],
     "isPaidOnly": false,
-    "acRate": 39.2,
+    "acRate": 39.3,
     "totalAcs": 2897490,
     "totalSubmitted": 7382757
   },
@@ -792,7 +792,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 57.7,
+    "acRate": 57.8,
     "totalAcs": 2571733,
     "totalSubmitted": 4453531
   },
@@ -1261,7 +1261,7 @@
       "Two Pointers"
     ],
     "isPaidOnly": false,
-    "acRate": 61.9,
+    "acRate": 62.0,
     "totalAcs": 966399,
     "totalSubmitted": 1560062
   },
@@ -2650,7 +2650,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 40.0,
+    "acRate": 40.1,
     "totalAcs": 740543,
     "totalSubmitted": 1849216
   },
@@ -2926,7 +2926,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 52.0,
+    "acRate": 52.1,
     "totalAcs": 1649575,
     "totalSubmitted": 3169328
   },
@@ -2940,7 +2940,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 53.5,
+    "acRate": 53.6,
     "totalAcs": 3818775,
     "totalSubmitted": 7131491
   },
@@ -2973,7 +2973,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 65.0,
+    "acRate": 65.1,
     "totalAcs": 4433675,
     "totalSubmitted": 6816133
   },
@@ -3353,7 +3353,7 @@
       "Recursion"
     ],
     "isPaidOnly": false,
-    "acRate": 47.1,
+    "acRate": 47.2,
     "totalAcs": 740027,
     "totalSubmitted": 1569594
   },
@@ -3787,7 +3787,7 @@
       "Quicksort"
     ],
     "isPaidOnly": true,
-    "acRate": 59.5,
+    "acRate": 59.6,
     "totalAcs": 531888,
     "totalSubmitted": 893197
   },
@@ -4923,7 +4923,7 @@
       "Quickselect"
     ],
     "isPaidOnly": false,
-    "acRate": 38.1,
+    "acRate": 38.2,
     "totalAcs": 216757,
     "totalSubmitted": 568224
   },
@@ -5293,7 +5293,7 @@
       "Quickselect"
     ],
     "isPaidOnly": false,
-    "acRate": 67.2,
+    "acRate": 67.3,
     "totalAcs": 3867550,
     "totalSubmitted": 5751232
   },
@@ -5989,7 +5989,7 @@
       "Sweep Line"
     ],
     "isPaidOnly": false,
-    "acRate": 39.0,
+    "acRate": 39.1,
     "totalAcs": 65931,
     "totalSubmitted": 168867
   },
@@ -6252,7 +6252,7 @@
       "String"
     ],
     "isPaidOnly": true,
-    "acRate": 37.1,
+    "acRate": 37.0,
     "totalAcs": 364928,
     "totalSubmitted": 984957
   },
@@ -6436,7 +6436,7 @@
       "Heap (Priority Queue)"
     ],
     "isPaidOnly": false,
-    "acRate": 16.3,
+    "acRate": 16.4,
     "totalAcs": 59564,
     "totalSubmitted": 364425
   },
@@ -6670,7 +6670,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 57.6,
+    "acRate": 57.7,
     "totalAcs": 1109916,
     "totalSubmitted": 1925307
   },
@@ -6757,7 +6757,7 @@
       "Binary Search"
     ],
     "isPaidOnly": false,
-    "acRate": 48.5,
+    "acRate": 48.6,
     "totalAcs": 659304,
     "totalSubmitted": 1358024
   },
@@ -6927,7 +6927,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 61.8,
+    "acRate": 61.9,
     "totalAcs": 832391,
     "totalSubmitted": 1345858
   },
@@ -7403,7 +7403,7 @@
       "Binary Search"
     ],
     "isPaidOnly": false,
-    "acRate": 47.2,
+    "acRate": 47.3,
     "totalAcs": 34172,
     "totalSubmitted": 72322
   },
@@ -7529,7 +7529,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 63.0,
+    "acRate": 63.1,
     "totalAcs": 218848,
     "totalSubmitted": 347108
   },
@@ -8672,7 +8672,7 @@
       "Depth-First Search"
     ],
     "isPaidOnly": false,
-    "acRate": 56.8,
+    "acRate": 56.7,
     "totalAcs": 153567,
     "totalSubmitted": 270275
   },
@@ -9386,7 +9386,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 56.6,
+    "acRate": 56.7,
     "totalAcs": 44692,
     "totalSubmitted": 78893
   },
@@ -9551,7 +9551,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 74.7,
+    "acRate": 74.8,
     "totalAcs": 498813,
     "totalSubmitted": 667324
   },
@@ -10458,7 +10458,7 @@
       "Graph Theory"
     ],
     "isPaidOnly": false,
-    "acRate": 68.1,
+    "acRate": 68.2,
     "totalAcs": 694100,
     "totalSubmitted": 1018502
   },
@@ -10593,7 +10593,7 @@
       "Counting"
     ],
     "isPaidOnly": false,
-    "acRate": 60.5,
+    "acRate": 60.6,
     "totalAcs": 824649,
     "totalSubmitted": 1361960
   },
@@ -10829,7 +10829,7 @@
       "Design"
     ],
     "isPaidOnly": false,
-    "acRate": 30.7,
+    "acRate": 30.8,
     "totalAcs": 519312,
     "totalSubmitted": 1688981
   },
@@ -11002,7 +11002,7 @@
       "Hash Function"
     ],
     "isPaidOnly": false,
-    "acRate": 51.5,
+    "acRate": 51.6,
     "totalAcs": 378021,
     "totalSubmitted": 733327
   },
@@ -12284,7 +12284,7 @@
       "Enumeration"
     ],
     "isPaidOnly": true,
-    "acRate": 68.8,
+    "acRate": 68.9,
     "totalAcs": 19649,
     "totalSubmitted": 28571
   },
@@ -13059,7 +13059,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 56.6,
+    "acRate": 56.7,
     "totalAcs": 46039,
     "totalSubmitted": 81271
   },
@@ -13265,7 +13265,7 @@
       "Binary Tree"
     ],
     "isPaidOnly": false,
-    "acRate": 68.0,
+    "acRate": 68.1,
     "totalAcs": 736088,
     "totalSubmitted": 1081699
   },
@@ -13925,7 +13925,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 76.6,
+    "acRate": 76.7,
     "totalAcs": 1074471,
     "totalSubmitted": 1401809
   },
@@ -14057,7 +14057,7 @@
       "Zero-Sum Game"
     ],
     "isPaidOnly": false,
-    "acRate": 36.0,
+    "acRate": 36.1,
     "totalAcs": 29935,
     "totalSubmitted": 83053
   },
@@ -14397,7 +14397,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 62.1,
+    "acRate": 62.2,
     "totalAcs": 205501,
     "totalSubmitted": 330661
   },
@@ -14568,7 +14568,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 70.7,
+    "acRate": 70.8,
     "totalAcs": 388391,
     "totalSubmitted": 548978
   },
@@ -14902,7 +14902,7 @@
       "Breadth-First Search"
     ],
     "isPaidOnly": false,
-    "acRate": 59.3,
+    "acRate": 59.4,
     "totalAcs": 160125,
     "totalSubmitted": 269803
   },
@@ -15296,7 +15296,7 @@
       "Counting"
     ],
     "isPaidOnly": false,
-    "acRate": 68.9,
+    "acRate": 69.0,
     "totalAcs": 449640,
     "totalSubmitted": 652153
   },
@@ -16163,7 +16163,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 63.4,
+    "acRate": 63.5,
     "totalAcs": 553828,
     "totalSubmitted": 872881
   },
@@ -16315,7 +16315,7 @@
       "Sorting"
     ],
     "isPaidOnly": true,
-    "acRate": 45.8,
+    "acRate": 45.9,
     "totalAcs": 11721,
     "totalSubmitted": 25564
   },
@@ -16517,7 +16517,7 @@
       "Greatest Common Divisor"
     ],
     "isPaidOnly": false,
-    "acRate": 54.3,
+    "acRate": 54.4,
     "totalAcs": 1012407,
     "totalSubmitted": 1862833
   },
@@ -16901,7 +16901,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 50.3,
+    "acRate": 50.4,
     "totalAcs": 29887,
     "totalSubmitted": 59360
   },
@@ -17064,7 +17064,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 90.1,
+    "acRate": 90.2,
     "totalAcs": 897841,
     "totalSubmitted": 995944
   },
@@ -17591,7 +17591,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 49.6,
+    "acRate": 49.7,
     "totalAcs": 27096,
     "totalSubmitted": 54575
   },
@@ -17889,7 +17889,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 58.4,
+    "acRate": 58.5,
     "totalAcs": 379418,
     "totalSubmitted": 649145
   },
@@ -18814,7 +18814,7 @@
       "Concurrency"
     ],
     "isPaidOnly": false,
-    "acRate": 54.2,
+    "acRate": 54.3,
     "totalAcs": 61889,
     "totalSubmitted": 114096
   },
@@ -20282,7 +20282,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 68.0,
+    "acRate": 68.1,
     "totalAcs": 54523,
     "totalSubmitted": 80123
   },
@@ -20369,7 +20369,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 44.6,
+    "acRate": 44.5,
     "totalAcs": 9392,
     "totalSubmitted": 21070
   },
@@ -20412,7 +20412,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 64.5,
+    "acRate": 64.6,
     "totalAcs": 38878,
     "totalSubmitted": 60232
   },
@@ -20430,7 +20430,7 @@
       "Floyd\u2013Warshall Algorithm"
     ],
     "isPaidOnly": false,
-    "acRate": 73.7,
+    "acRate": 73.8,
     "totalAcs": 360175,
     "totalSubmitted": 488381
   },
@@ -21218,7 +21218,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 72.2,
+    "acRate": 72.3,
     "totalAcs": 157719,
     "totalSubmitted": 218301
   },
@@ -21569,7 +21569,7 @@
       "String Matching"
     ],
     "isPaidOnly": false,
-    "acRate": 69.8,
+    "acRate": 69.9,
     "totalAcs": 303341,
     "totalSubmitted": 434281
   },
@@ -21815,7 +21815,7 @@
       "Monotonic Queue"
     ],
     "isPaidOnly": false,
-    "acRate": 56.5,
+    "acRate": 56.4,
     "totalAcs": 96150,
     "totalSubmitted": 170324
   },
@@ -22183,7 +22183,7 @@
       "Complete Knapsack"
     ],
     "isPaidOnly": false,
-    "acRate": 50.0,
+    "acRate": 50.1,
     "totalAcs": 24561,
     "totalSubmitted": 49073
   },
@@ -22793,7 +22793,7 @@
       "Bor\u016fvka's Algorithm"
     ],
     "isPaidOnly": false,
-    "acRate": 66.8,
+    "acRate": 66.7,
     "totalAcs": 79265,
     "totalSubmitted": 118747
   },
@@ -22838,7 +22838,7 @@
       "Prime Factorization"
     ],
     "isPaidOnly": false,
-    "acRate": 70.7,
+    "acRate": 70.8,
     "totalAcs": 367822,
     "totalSubmitted": 519917
   },
@@ -23160,7 +23160,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 57.4,
+    "acRate": 57.3,
     "totalAcs": 164044,
     "totalSubmitted": 286040
   },
@@ -23447,7 +23447,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 69.3,
+    "acRate": 69.2,
     "totalAcs": 40082,
     "totalSubmitted": 57878
   },
@@ -23654,7 +23654,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 49.3,
+    "acRate": 49.4,
     "totalAcs": 37502,
     "totalSubmitted": 76000
   },
@@ -24179,7 +24179,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 68.4,
+    "acRate": 68.5,
     "totalAcs": 1270064,
     "totalSubmitted": 1855492
   },
@@ -25149,7 +25149,7 @@
       "Lowest Common Ancestor"
     ],
     "isPaidOnly": true,
-    "acRate": 69.8,
+    "acRate": 69.7,
     "totalAcs": 122620,
     "totalSubmitted": 175764
   },
@@ -25260,7 +25260,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 65.2,
+    "acRate": 65.1,
     "totalAcs": 9047,
     "totalSubmitted": 13873
   },
@@ -25549,7 +25549,7 @@
       "Data Stream"
     ],
     "isPaidOnly": false,
-    "acRate": 58.5,
+    "acRate": 58.6,
     "totalAcs": 49554,
     "totalSubmitted": 84640
   },
@@ -25890,7 +25890,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": true,
-    "acRate": 64.0,
+    "acRate": 62.7,
     "totalAcs": 3204,
     "totalSubmitted": 5005
   },
@@ -26084,7 +26084,7 @@
       "Heap (Priority Queue)"
     ],
     "isPaidOnly": false,
-    "acRate": 44.1,
+    "acRate": 44.2,
     "totalAcs": 36044,
     "totalSubmitted": 81643
   },
@@ -26218,7 +26218,7 @@
       "Sqrt Decomposition"
     ],
     "isPaidOnly": true,
-    "acRate": 49.7,
+    "acRate": 49.8,
     "totalAcs": 1771,
     "totalSubmitted": 3560
   },
@@ -26318,7 +26318,7 @@
       "Two Pointers"
     ],
     "isPaidOnly": false,
-    "acRate": 69.7,
+    "acRate": 69.8,
     "totalAcs": 486489,
     "totalSubmitted": 697520
   },
@@ -26792,7 +26792,7 @@
       "Array"
     ],
     "isPaidOnly": false,
-    "acRate": 57.6,
+    "acRate": 57.7,
     "totalAcs": 1072464,
     "totalSubmitted": 1860308
   },
@@ -27536,7 +27536,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 54.3,
+    "acRate": 54.4,
     "totalAcs": 40707,
     "totalSubmitted": 74898
   },
@@ -28467,7 +28467,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 31.6,
+    "acRate": 31.5,
     "totalAcs": 13127,
     "totalSubmitted": 41591
   },
@@ -28583,7 +28583,7 @@
       "Binary Search"
     ],
     "isPaidOnly": false,
-    "acRate": 48.1,
+    "acRate": 48.2,
     "totalAcs": 137409,
     "totalSubmitted": 285389
   },
@@ -28728,7 +28728,7 @@
       "Successive Shortest Path Algorithm"
     ],
     "isPaidOnly": false,
-    "acRate": 52.1,
+    "acRate": 52.0,
     "totalAcs": 22614,
     "totalSubmitted": 43446
   },
@@ -29005,7 +29005,7 @@
       "Binary Search"
     ],
     "isPaidOnly": false,
-    "acRate": 47.7,
+    "acRate": 47.8,
     "totalAcs": 45592,
     "totalSubmitted": 95485
   },
@@ -29080,7 +29080,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 68.0,
+    "acRate": 68.1,
     "totalAcs": 638398,
     "totalSubmitted": 938159
   },
@@ -29286,7 +29286,7 @@
       "Fermat's Little Theorem"
     ],
     "isPaidOnly": false,
-    "acRate": 52.1,
+    "acRate": 52.0,
     "totalAcs": 12123,
     "totalSubmitted": 23254
   },
@@ -29554,7 +29554,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 62.6,
+    "acRate": 62.7,
     "totalAcs": 671979,
     "totalSubmitted": 1072604
   },
@@ -29756,7 +29756,7 @@
       "Flow Network"
     ],
     "isPaidOnly": false,
-    "acRate": 64.9,
+    "acRate": 65.0,
     "totalAcs": 35899,
     "totalSubmitted": 55276
   },
@@ -29923,7 +29923,7 @@
       "Enumeration"
     ],
     "isPaidOnly": false,
-    "acRate": 50.1,
+    "acRate": 50.2,
     "totalAcs": 19170,
     "totalSubmitted": 38227
   },
@@ -30399,7 +30399,7 @@
       "Greedy"
     ],
     "isPaidOnly": true,
-    "acRate": 49.2,
+    "acRate": 49.3,
     "totalAcs": 2898,
     "totalSubmitted": 5886
   },
@@ -30722,7 +30722,7 @@
       "Sliding Window"
     ],
     "isPaidOnly": false,
-    "acRate": 51.8,
+    "acRate": 51.7,
     "totalAcs": 90355,
     "totalSubmitted": 174589
   },
@@ -31047,7 +31047,7 @@
       "Monotonic Stack"
     ],
     "isPaidOnly": false,
-    "acRate": 40.1,
+    "acRate": 40.2,
     "totalAcs": 12225,
     "totalSubmitted": 30455
   },
@@ -31197,7 +31197,7 @@
       "Graph Theory"
     ],
     "isPaidOnly": false,
-    "acRate": 56.1,
+    "acRate": 56.2,
     "totalAcs": 25221,
     "totalSubmitted": 44921
   },
@@ -31483,7 +31483,7 @@
       "Linked List"
     ],
     "isPaidOnly": false,
-    "acRate": 69.8,
+    "acRate": 72.7,
     "totalAcs": 217730,
     "totalSubmitted": 311972
   },
@@ -31893,7 +31893,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 48.4,
+    "acRate": 48.5,
     "totalAcs": 31835,
     "totalSubmitted": 65707
   },
@@ -32145,7 +32145,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 61.3,
+    "acRate": 61.4,
     "totalAcs": 21111,
     "totalSubmitted": 34412
   },
@@ -32556,7 +32556,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 68.5,
+    "acRate": 68.6,
     "totalAcs": 104941,
     "totalSubmitted": 153089
   },
@@ -32737,7 +32737,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 56.4,
+    "acRate": 56.3,
     "totalAcs": 143420,
     "totalSubmitted": 254513
   },
@@ -33219,7 +33219,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 54.6,
+    "acRate": 54.5,
     "totalAcs": 8142,
     "totalSubmitted": 14923
   },
@@ -33614,7 +33614,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 50.5,
+    "acRate": 50.4,
     "totalAcs": 5633,
     "totalSubmitted": 11164
   },
@@ -34233,7 +34233,7 @@
       "Design"
     ],
     "isPaidOnly": false,
-    "acRate": 46.1,
+    "acRate": 46.2,
     "totalAcs": 39486,
     "totalSubmitted": 85574
   },
@@ -34263,7 +34263,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 68.0,
+    "acRate": 68.1,
     "totalAcs": 57499,
     "totalSubmitted": 84496
   },
@@ -35118,7 +35118,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 81.8,
+    "acRate": 81.7,
     "totalAcs": 9626,
     "totalSubmitted": 11774
   },
@@ -35287,7 +35287,7 @@
       "Enumeration"
     ],
     "isPaidOnly": false,
-    "acRate": 72.8,
+    "acRate": 72.9,
     "totalAcs": 79185,
     "totalSubmitted": 108696
   },
@@ -35421,7 +35421,7 @@
       "Memoization"
     ],
     "isPaidOnly": false,
-    "acRate": 58.3,
+    "acRate": 58.4,
     "totalAcs": 14753,
     "totalSubmitted": 25285
   },
@@ -36449,7 +36449,7 @@
       "Binary Tree"
     ],
     "isPaidOnly": false,
-    "acRate": 65.9,
+    "acRate": 66.0,
     "totalAcs": 222284,
     "totalSubmitted": 337057
   },
@@ -38353,7 +38353,7 @@
       "Graph Theory"
     ],
     "isPaidOnly": false,
-    "acRate": 37.0,
+    "acRate": 37.1,
     "totalAcs": 25696,
     "totalSubmitted": 69361
   },
@@ -39618,7 +39618,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 40.4,
+    "acRate": 40.5,
     "totalAcs": 15896,
     "totalSubmitted": 39304
   },
@@ -39726,7 +39726,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 62.0,
+    "acRate": 62.1,
     "totalAcs": 62465,
     "totalSubmitted": 100669
   },
@@ -39995,7 +39995,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": true,
-    "acRate": 49.1,
+    "acRate": 46.9,
     "totalAcs": 1119,
     "totalSubmitted": 2281
   },
@@ -40072,11 +40072,9 @@
     "slug": "check-if-object-instance-of-class",
     "title": "Check if Object Instance of Class",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 30.2,
+    "acRate": 30.3,
     "totalAcs": 43650,
     "totalSubmitted": 144311
   },
@@ -40085,9 +40083,7 @@
     "slug": "array-prototype-last",
     "title": "Array Prototype Last",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 74.7,
     "totalAcs": 257347,
@@ -40098,9 +40094,7 @@
     "slug": "counter",
     "title": "Counter",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 82.4,
     "totalAcs": 742467,
@@ -40111,9 +40105,7 @@
     "slug": "sleep",
     "title": "Sleep",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 87.3,
     "totalAcs": 266115,
@@ -40124,9 +40116,7 @@
     "slug": "cache-with-time-limit",
     "title": "Cache With Time Limit",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 76.3,
     "totalAcs": 89847,
@@ -40137,9 +40127,7 @@
     "slug": "memoize",
     "title": "Memoize",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 65.3,
     "totalAcs": 193664,
@@ -40150,9 +40138,7 @@
     "slug": "snail-traversal",
     "title": "Snail Traversal",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 68.6,
     "totalAcs": 21546,
@@ -40163,9 +40149,7 @@
     "slug": "flatten-deeply-nested-array",
     "title": "Flatten Deeply Nested Array",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 66.2,
     "totalAcs": 86980,
@@ -40176,9 +40160,7 @@
     "slug": "array-reduce-transformation",
     "title": "Array Reduce Transformation",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 85.5,
     "totalAcs": 307101,
@@ -40189,9 +40171,7 @@
     "slug": "debounce",
     "title": "Debounce",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 91.7,
     "totalAcs": 99428,
@@ -40202,9 +40182,7 @@
     "slug": "json-deep-equal",
     "title": "JSON Deep Equal",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 39.8,
     "totalAcs": 15305,
@@ -40215,9 +40193,7 @@
     "slug": "function-composition",
     "title": "Function Composition",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 86.8,
     "totalAcs": 257015,
@@ -40228,9 +40204,7 @@
     "slug": "memoize-ii",
     "title": "Memoize II",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 39.7,
     "totalAcs": 13122,
@@ -40241,9 +40215,7 @@
     "slug": "group-by",
     "title": "Group By",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 81.6,
     "totalAcs": 83013,
@@ -40254,9 +40226,7 @@
     "slug": "curry",
     "title": "Curry",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 89.1,
     "totalAcs": 19094,
@@ -40267,9 +40237,7 @@
     "slug": "convert-object-to-json-string",
     "title": "Convert Object to JSON String",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 78.0,
     "totalAcs": 14235,
@@ -40280,9 +40248,7 @@
     "slug": "filter-elements-from-array",
     "title": "Filter Elements from Array",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 85.5,
     "totalAcs": 324826,
@@ -40293,9 +40259,7 @@
     "slug": "apply-transform-over-each-element-in-array",
     "title": "Apply Transform Over Each Element in Array",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 86.2,
     "totalAcs": 354932,
@@ -40306,9 +40270,7 @@
     "slug": "promise-pool",
     "title": "Promise Pool",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 79.3,
     "totalAcs": 15322,
@@ -40319,9 +40281,7 @@
     "slug": "promise-time-limit",
     "title": "Promise Time Limit",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 83.3,
     "totalAcs": 103206,
@@ -40475,7 +40435,7 @@
       "Math"
     ],
     "isPaidOnly": true,
-    "acRate": 58.1,
+    "acRate": 58.0,
     "totalAcs": 503,
     "totalSubmitted": 866
   },
@@ -40484,9 +40444,7 @@
     "slug": "generate-fibonacci-sequence",
     "title": "Generate Fibonacci Sequence",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 83.5,
     "totalAcs": 54182,
@@ -40497,9 +40455,7 @@
     "slug": "nested-array-generator",
     "title": "Nested Array Generator",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 78.1,
     "totalAcs": 20579,
@@ -40510,11 +40466,9 @@
     "slug": "design-cancellable-function",
     "title": "Design Cancellable Function",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 58.0,
+    "acRate": 58.1,
     "totalAcs": 5531,
     "totalSubmitted": 9530
   },
@@ -40734,9 +40688,7 @@
     "slug": "counter-ii",
     "title": "Counter II",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 81.2,
     "totalAcs": 399707,
@@ -40747,9 +40699,7 @@
     "slug": "allow-one-function-call",
     "title": "Allow One Function Call",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 86.6,
     "totalAcs": 204316,
@@ -40760,9 +40710,7 @@
     "slug": "create-hello-world-function",
     "title": "Create Hello World Function",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 81.9,
     "totalAcs": 872152,
@@ -40871,9 +40819,7 @@
     "slug": "array-of-objects-to-matrix",
     "title": "Array of Objects to Matrix",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 68.1,
     "totalAcs": 6282,
@@ -40884,9 +40830,7 @@
     "slug": "throttle",
     "title": "Throttle",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 83.4,
     "totalAcs": 11886,
@@ -40897,9 +40841,7 @@
     "slug": "chunk-array",
     "title": "Chunk Array",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 84.5,
     "totalAcs": 122393,
@@ -41088,9 +41030,7 @@
     "slug": "infinite-method-object",
     "title": "Infinite Method Object",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 90.7,
     "totalAcs": 2232,
@@ -41101,9 +41041,7 @@
     "slug": "immutability-helper",
     "title": "Immutability Helper",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 38.3,
     "totalAcs": 417,
@@ -41114,9 +41052,7 @@
     "slug": "make-object-immutable",
     "title": "Make Object Immutable",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 60.2,
     "totalAcs": 776,
@@ -41127,9 +41063,7 @@
     "slug": "call-function-with-custom-context",
     "title": "Call Function with Custom Context",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 77.3,
     "totalAcs": 15623,
@@ -41140,9 +41074,7 @@
     "slug": "event-emitter",
     "title": "Event Emitter",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 75.2,
     "totalAcs": 49820,
@@ -41153,9 +41085,7 @@
     "slug": "array-wrapper",
     "title": "Array Wrapper",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 89.0,
     "totalAcs": 77897,
@@ -41225,11 +41155,9 @@
     "slug": "differences-between-two-objects",
     "title": "Differences Between Two Objects",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
-    "acRate": 73.9,
+    "acRate": 73.8,
     "totalAcs": 7924,
     "totalSubmitted": 10716
   },
@@ -41265,9 +41193,7 @@
     "slug": "return-length-of-arguments-passed",
     "title": "Return Length of Arguments Passed",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 94.4,
     "totalAcs": 315933,
@@ -41278,9 +41204,7 @@
     "slug": "to-be-or-not-to-be",
     "title": "To Be Or Not To Be",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 63.4,
     "totalAcs": 371456,
@@ -41291,9 +41215,7 @@
     "slug": "compact-object",
     "title": "Compact Object",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 68.3,
     "totalAcs": 50551,
@@ -41452,9 +41374,7 @@
     "slug": "timeout-cancellation",
     "title": "Timeout Cancellation",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 89.5,
     "totalAcs": 107805,
@@ -41535,9 +41455,7 @@
     "slug": "execute-asynchronous-functions-in-parallel",
     "title": "Execute Asynchronous Functions in Parallel",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 78.7,
     "totalAcs": 58515,
@@ -41548,9 +41466,7 @@
     "slug": "join-two-arrays-by-id",
     "title": "Join Two Arrays by ID",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 57.8,
     "totalAcs": 64589,
@@ -41561,9 +41477,7 @@
     "slug": "add-two-promises",
     "title": "Add Two Promises",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 91.7,
     "totalAcs": 197519,
@@ -41574,9 +41488,7 @@
     "slug": "sort-by",
     "title": "Sort By",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 83.0,
     "totalAcs": 86447,
@@ -41587,9 +41499,7 @@
     "slug": "interval-cancellation",
     "title": "Interval Cancellation",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 85.1,
     "totalAcs": 89505,
@@ -41600,9 +41510,7 @@
     "slug": "calculator-with-method-chaining",
     "title": "Calculator with Method Chaining",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 76.9,
     "totalAcs": 59550,
@@ -41613,9 +41521,7 @@
     "slug": "is-object-empty",
     "title": "Is Object Empty",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 82.0,
     "totalAcs": 126458,
@@ -41645,7 +41551,7 @@
       "Math"
     ],
     "isPaidOnly": false,
-    "acRate": 53.3,
+    "acRate": 53.2,
     "totalAcs": 65798,
     "totalSubmitted": 123334
   },
@@ -41691,7 +41597,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 45.5,
+    "acRate": 45.6,
     "totalAcs": 8668,
     "totalSubmitted": 19030
   },
@@ -42002,9 +41908,7 @@
     "slug": "count-houses-in-a-circular-street-ii",
     "title": "Count Houses in a Circular Street II",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 61.7,
     "totalAcs": 992,
@@ -42015,9 +41919,7 @@
     "slug": "bind-function-to-context",
     "title": "Bind Function to Context",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 82.9,
     "totalAcs": 1172,
@@ -42028,9 +41930,7 @@
     "slug": "deep-merge-of-two-objects",
     "title": "Deep Merge of Two Objects",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 62.7,
     "totalAcs": 971,
@@ -42041,9 +41941,7 @@
     "slug": "query-batching",
     "title": "Query Batching",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 69.5,
     "totalAcs": 617,
@@ -42054,9 +41952,7 @@
     "slug": "generate-circular-array-values",
     "title": "Generate Circular Array Values",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 69.5,
     "totalAcs": 756,
@@ -42067,9 +41963,7 @@
     "slug": "next-day",
     "title": "Next Day",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 85.0,
     "totalAcs": 1693,
@@ -42080,9 +41974,7 @@
     "slug": "convert-json-string-to-object",
     "title": "Convert JSON String to Object",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 61.8,
     "totalAcs": 991,
@@ -42304,9 +42196,7 @@
     "slug": "array-upper-bound",
     "title": "Array Upper Bound",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 82.5,
     "totalAcs": 2419,
@@ -42317,9 +42207,7 @@
     "slug": "undefined-to-null",
     "title": "Undefined to Null",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 70.2,
     "totalAcs": 1064,
@@ -42330,9 +42218,7 @@
     "slug": "convert-callback-based-function-to-promise-based-function",
     "title": "Convert Callback Based Function to Promise Based Function",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 89.4,
     "totalAcs": 1361,
@@ -42343,9 +42229,7 @@
     "slug": "date-range-generator",
     "title": "Date Range Generator",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 75.0,
     "totalAcs": 767,
@@ -42578,9 +42462,7 @@
     "slug": "status-of-flight-tickets",
     "title": "Status of Flight Tickets",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 79.9,
     "totalAcs": 3903,
@@ -42591,9 +42473,7 @@
     "slug": "create-object-from-two-arrays",
     "title": "Create Object from Two Arrays",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 63.4,
     "totalAcs": 1905,
@@ -42604,9 +42484,7 @@
     "slug": "parallel-execution-of-promises-for-individual-results-retrieval",
     "title": "Parallel Execution of Promises for Individual Results Retrieval",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 86.3,
     "totalAcs": 1151,
@@ -42617,9 +42495,7 @@
     "slug": "repeat-string",
     "title": "Repeat String",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 92.9,
     "totalAcs": 4020,
@@ -42630,11 +42506,9 @@
     "slug": "partial-function-with-placeholders",
     "title": "Partial Function with Placeholders",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
-    "acRate": 87.8,
+    "acRate": 83.6,
     "totalAcs": 1826,
     "totalSubmitted": 2080
   },
@@ -42715,9 +42589,7 @@
     "slug": "factorial-generator",
     "title": "Factorial Generator",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 84.3,
     "totalAcs": 1701,
@@ -42728,9 +42600,7 @@
     "slug": "array-prototype-foreach",
     "title": "Array Prototype ForEach",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 88.1,
     "totalAcs": 1663,
@@ -42741,9 +42611,7 @@
     "slug": "custom-interval",
     "title": "Custom Interval",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 83.5,
     "totalAcs": 822,
@@ -42787,7 +42655,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 28.8,
+    "acRate": 28.9,
     "totalAcs": 19383,
     "totalSubmitted": 67187
   },
@@ -42926,7 +42794,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 38.0,
+    "acRate": 38.1,
     "totalAcs": 43622,
     "totalSubmitted": 114645
   },
@@ -42970,9 +42838,7 @@
     "slug": "election-results",
     "title": "Election Results",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 66.6,
     "totalAcs": 4572,
@@ -42983,9 +42849,7 @@
     "slug": "delay-the-resolution-of-each-promise",
     "title": "Delay the Resolution of Each Promise",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 74.7,
     "totalAcs": 1145,
@@ -42996,9 +42860,7 @@
     "slug": "inversion-of-object",
     "title": "Inversion of Object",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 60.1,
     "totalAcs": 1587,
@@ -43009,9 +42871,7 @@
     "slug": "deep-object-filter",
     "title": "Deep Object Filter",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 57.9,
     "totalAcs": 791,
@@ -43360,7 +43220,7 @@
       "Depth-First Search"
     ],
     "isPaidOnly": false,
-    "acRate": 46.2,
+    "acRate": 46.3,
     "totalAcs": 10858,
     "totalSubmitted": 23488
   },
@@ -43745,7 +43605,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 42.6,
+    "acRate": 42.2,
     "totalAcs": 20168,
     "totalSubmitted": 47351
   },
@@ -43831,9 +43691,7 @@
     "slug": "create-a-dataframe-from-list",
     "title": "Create a DataFrame from List",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 80.9,
     "totalAcs": 268254,
@@ -43844,9 +43702,7 @@
     "slug": "get-the-size-of-a-dataframe",
     "title": "Get the Size of a DataFrame",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 84.8,
     "totalAcs": 210021,
@@ -43857,9 +43713,7 @@
     "slug": "display-the-first-three-rows",
     "title": "Display the First Three Rows",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 93.0,
     "totalAcs": 225623,
@@ -43870,9 +43724,7 @@
     "slug": "select-data",
     "title": "Select Data",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 78.4,
     "totalAcs": 179227,
@@ -43883,9 +43735,7 @@
     "slug": "create-a-new-column",
     "title": "Create a New Column",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 90.2,
     "totalAcs": 167409,
@@ -43896,9 +43746,7 @@
     "slug": "drop-duplicate-rows",
     "title": "Drop Duplicate Rows",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 85.1,
     "totalAcs": 150864,
@@ -43909,9 +43757,7 @@
     "slug": "drop-missing-data",
     "title": "Drop Missing Data",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 64.8,
     "totalAcs": 141153,
@@ -43922,9 +43768,7 @@
     "slug": "modify-columns",
     "title": "Modify Columns",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 92.2,
     "totalAcs": 156094,
@@ -43935,9 +43779,7 @@
     "slug": "rename-columns",
     "title": "Rename Columns",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 85.3,
     "totalAcs": 133382,
@@ -43948,9 +43790,7 @@
     "slug": "change-data-type",
     "title": "Change Data Type",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 87.3,
     "totalAcs": 131867,
@@ -43961,9 +43801,7 @@
     "slug": "fill-missing-data",
     "title": "Fill Missing Data",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 72.6,
     "totalAcs": 125763,
@@ -43974,9 +43812,7 @@
     "slug": "reshape-data-concatenate",
     "title": "Reshape Data: Concatenate",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 90.4,
     "totalAcs": 132646,
@@ -43987,9 +43823,7 @@
     "slug": "reshape-data-pivot",
     "title": "Reshape Data: Pivot",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 83.0,
     "totalAcs": 111230,
@@ -44000,9 +43834,7 @@
     "slug": "reshape-data-melt",
     "title": "Reshape Data: Melt",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 86.0,
     "totalAcs": 105092,
@@ -44013,9 +43845,7 @@
     "slug": "method-chaining",
     "title": "Method Chaining",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 76.2,
     "totalAcs": 108155,
@@ -44352,7 +44182,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 76.2,
+    "acRate": 76.3,
     "totalAcs": 166063,
     "totalSubmitted": 217790
   },
@@ -44398,7 +44228,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 73.2,
+    "acRate": 73.1,
     "totalAcs": 37100,
     "totalSubmitted": 50716
   },
@@ -44642,7 +44472,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 47.8,
+    "acRate": 47.9,
     "totalAcs": 34447,
     "totalSubmitted": 71991
   },
@@ -44899,7 +44729,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 27.6,
+    "acRate": 27.7,
     "totalAcs": 8779,
     "totalSubmitted": 31753
   },
@@ -44944,7 +44774,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 57.9,
+    "acRate": 58.0,
     "totalAcs": 28628,
     "totalSubmitted": 49405
   },
@@ -45006,7 +44836,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 84.7,
+    "acRate": 84.8,
     "totalAcs": 115829,
     "totalSubmitted": 136677
   },
@@ -45113,7 +44943,7 @@
       "Combinatorics"
     ],
     "isPaidOnly": false,
-    "acRate": 49.3,
+    "acRate": 49.4,
     "totalAcs": 17278,
     "totalSubmitted": 35018
   },
@@ -45192,7 +45022,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 38.8,
+    "acRate": 38.9,
     "totalAcs": 11172,
     "totalSubmitted": 28765
   },
@@ -45432,7 +45262,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 25.4,
+    "acRate": 25.5,
     "totalAcs": 4608,
     "totalSubmitted": 18114
   },
@@ -46012,7 +45842,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 29.6,
+    "acRate": 29.7,
     "totalAcs": 4674,
     "totalSubmitted": 15769
   },
@@ -46171,7 +46001,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": true,
-    "acRate": 87.3,
+    "acRate": 87.4,
     "totalAcs": 8914,
     "totalSubmitted": 10205
   },
@@ -46474,7 +46304,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 75.5,
+    "acRate": 75.6,
     "totalAcs": 5931,
     "totalSubmitted": 7851
   },
@@ -47044,7 +46874,7 @@
       "Sliding Window"
     ],
     "isPaidOnly": false,
-    "acRate": 77.7,
+    "acRate": 77.8,
     "totalAcs": 200647,
     "totalSubmitted": 258076
   },
@@ -47221,7 +47051,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 32.9,
+    "acRate": 33.0,
     "totalAcs": 11180,
     "totalSubmitted": 33931
   },
@@ -47386,7 +47216,7 @@
       "Monotonic Stack"
     ],
     "isPaidOnly": false,
-    "acRate": 34.2,
+    "acRate": 33.9,
     "totalAcs": 15819,
     "totalSubmitted": 46292
   },
@@ -47416,7 +47246,7 @@
       "Primality Test"
     ],
     "isPaidOnly": false,
-    "acRate": 59.6,
+    "acRate": 59.4,
     "totalAcs": 54803,
     "totalSubmitted": 91951
   },
@@ -47508,7 +47338,7 @@
       "String"
     ],
     "isPaidOnly": false,
-    "acRate": 60.5,
+    "acRate": 60.4,
     "totalAcs": 171442,
     "totalSubmitted": 283548
   },
@@ -47540,7 +47370,7 @@
       "Shortest Path"
     ],
     "isPaidOnly": false,
-    "acRate": 46.7,
+    "acRate": 46.8,
     "totalAcs": 21149,
     "totalSubmitted": 45241
   },
@@ -47613,7 +47443,7 @@
       "Counting"
     ],
     "isPaidOnly": false,
-    "acRate": 48.6,
+    "acRate": 48.7,
     "totalAcs": 24890,
     "totalSubmitted": 51164
   },
@@ -47816,7 +47646,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 45.8,
+    "acRate": 45.6,
     "totalAcs": 48608,
     "totalSubmitted": 106183
   },
@@ -48071,7 +47901,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 73.3,
+    "acRate": 73.4,
     "totalAcs": 64196,
     "totalSubmitted": 87525
   },
@@ -48103,7 +47933,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 41.2,
+    "acRate": 41.1,
     "totalAcs": 67724,
     "totalSubmitted": 164540
   },
@@ -48582,7 +48412,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 31.7,
+    "acRate": 31.8,
     "totalAcs": 11961,
     "totalSubmitted": 37674
   },
@@ -48813,7 +48643,7 @@
       "Segment Tree"
     ],
     "isPaidOnly": false,
-    "acRate": 36.0,
+    "acRate": 35.7,
     "totalAcs": 14652,
     "totalSubmitted": 40719
   },
@@ -48913,7 +48743,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 54.8,
+    "acRate": 54.6,
     "totalAcs": 57281,
     "totalSubmitted": 104451
   },
@@ -48945,7 +48775,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 58.2,
+    "acRate": 58.3,
     "totalAcs": 32033,
     "totalSubmitted": 54996
   },
@@ -49152,7 +48982,7 @@
       "Math"
     ],
     "isPaidOnly": false,
-    "acRate": 81.7,
+    "acRate": 81.5,
     "totalAcs": 125740,
     "totalSubmitted": 153914
   },
@@ -49466,9 +49296,7 @@
     "slug": "construct-string-with-minimum-cost-easy",
     "title": "Construct String with Minimum Cost (Easy)",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 58.7,
     "totalAcs": 866,
@@ -49770,7 +49598,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 40.3,
+    "acRate": 39.8,
     "totalAcs": 15131,
     "totalSubmitted": 37572
   },
@@ -49983,7 +49811,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 22.0,
+    "acRate": 22.1,
     "totalAcs": 6432,
     "totalSubmitted": 29174
   },
@@ -50221,7 +50049,7 @@
       "Greedy"
     ],
     "isPaidOnly": false,
-    "acRate": 57.8,
+    "acRate": 57.7,
     "totalAcs": 82342,
     "totalSubmitted": 142582
   },
@@ -50297,7 +50125,7 @@
       "Recursion"
     ],
     "isPaidOnly": false,
-    "acRate": 48.5,
+    "acRate": 48.4,
     "totalAcs": 89114,
     "totalSubmitted": 183910
   },
@@ -50452,7 +50280,7 @@
       "Combinatorics"
     ],
     "isPaidOnly": false,
-    "acRate": 34.6,
+    "acRate": 34.7,
     "totalAcs": 5649,
     "totalSubmitted": 16311
   },
@@ -50619,7 +50447,7 @@
       "Database"
     ],
     "isPaidOnly": true,
-    "acRate": 66.6,
+    "acRate": 66.5,
     "totalAcs": 2364,
     "totalSubmitted": 3549
   },
@@ -51016,7 +50844,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 68.2,
+    "acRate": 68.1,
     "totalAcs": 137661,
     "totalSubmitted": 201997
   },
@@ -51167,7 +50995,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 45.5,
+    "acRate": 45.3,
     "totalAcs": 51504,
     "totalSubmitted": 113219
   },
@@ -51317,7 +51145,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 39.7,
+    "acRate": 39.6,
     "totalAcs": 11143,
     "totalSubmitted": 28078
   },
@@ -51349,7 +51177,7 @@
       "Bitmask"
     ],
     "isPaidOnly": false,
-    "acRate": 32.5,
+    "acRate": 32.6,
     "totalAcs": 14940,
     "totalSubmitted": 45909
   },
@@ -51589,7 +51417,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": true,
-    "acRate": 66.4,
+    "acRate": 66.3,
     "totalAcs": 1256,
     "totalSubmitted": 1892
   },
@@ -51662,7 +51490,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 71.0,
+    "acRate": 71.1,
     "totalAcs": 184167,
     "totalSubmitted": 259208
   },
@@ -51922,7 +51750,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 27.2,
+    "acRate": 27.3,
     "totalAcs": 12382,
     "totalSubmitted": 45500
   },
@@ -51982,7 +51810,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 64.8,
+    "acRate": 64.9,
     "totalAcs": 41303,
     "totalSubmitted": 63691
   },
@@ -52108,7 +51936,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 23.0,
+    "acRate": 23.1,
     "totalAcs": 6492,
     "totalSubmitted": 28192
   },
@@ -52197,7 +52025,7 @@
       "Hash Table"
     ],
     "isPaidOnly": true,
-    "acRate": 57.4,
+    "acRate": 57.5,
     "totalAcs": 600,
     "totalSubmitted": 1045
   },
@@ -52264,7 +52092,7 @@
       "Enumeration"
     ],
     "isPaidOnly": false,
-    "acRate": 23.3,
+    "acRate": 23.1,
     "totalAcs": 3205,
     "totalSubmitted": 13759
   },
@@ -52350,7 +52178,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 20.6,
+    "acRate": 20.7,
     "totalAcs": 4082,
     "totalSubmitted": 19768
   },
@@ -52500,7 +52328,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 47.6,
+    "acRate": 47.5,
     "totalAcs": 14701,
     "totalSubmitted": 30894
   },
@@ -52801,7 +52629,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 49.4,
+    "acRate": 49.3,
     "totalAcs": 163828,
     "totalSubmitted": 331819
   },
@@ -52957,7 +52785,7 @@
       "Topological Sort"
     ],
     "isPaidOnly": true,
-    "acRate": 77.9,
+    "acRate": 78.0,
     "totalAcs": 17212,
     "totalSubmitted": 22082
   },
@@ -52970,7 +52798,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 62.3,
+    "acRate": 62.4,
     "totalAcs": 12165,
     "totalSubmitted": 19518
   },
@@ -53018,7 +52846,7 @@
       "Trie"
     ],
     "isPaidOnly": false,
-    "acRate": 24.0,
+    "acRate": 24.1,
     "totalAcs": 6941,
     "totalSubmitted": 28879
   },
@@ -53183,7 +53011,7 @@
       "Greedy"
     ],
     "isPaidOnly": true,
-    "acRate": 52.6,
+    "acRate": 52.5,
     "totalAcs": 1524,
     "totalSubmitted": 2899
   },
@@ -53786,7 +53614,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 63.8,
+    "acRate": 63.7,
     "totalAcs": 65994,
     "totalSubmitted": 103519
   },
@@ -54096,7 +53924,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 64.4,
+    "acRate": 64.3,
     "totalAcs": 13408,
     "totalSubmitted": 20810
   },
@@ -54345,7 +54173,7 @@
       "Database"
     ],
     "isPaidOnly": false,
-    "acRate": 54.8,
+    "acRate": 54.9,
     "totalAcs": 29080,
     "totalSubmitted": 53043
   },
@@ -55063,9 +54891,7 @@
     "slug": "find-students-with-study-spiral-pattern",
     "title": "Find Students with Study Spiral Pattern",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 24.2,
     "totalAcs": 4971,
@@ -55204,11 +55030,9 @@
     "slug": "find-stores-with-inventory-imbalance",
     "title": "Find Stores with Inventory Imbalance",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 50.0,
+    "acRate": 50.1,
     "totalAcs": 11593,
     "totalSubmitted": 23166
   },
@@ -55455,9 +55279,7 @@
     "slug": "find-books-with-polarized-opinions",
     "title": "Find Books with Polarized Opinions",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 44.4,
     "totalAcs": 13315,
@@ -55592,7 +55414,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 45.1,
+    "acRate": 45.0,
     "totalAcs": 67200,
     "totalSubmitted": 148971
   },
@@ -55680,9 +55502,7 @@
     "slug": "find-loyal-customers",
     "title": "Find Loyal Customers",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 61.9,
     "totalAcs": 15779,
@@ -55774,7 +55594,7 @@
       "Counting"
     ],
     "isPaidOnly": false,
-    "acRate": 68.8,
+    "acRate": 68.9,
     "totalAcs": 48160,
     "totalSubmitted": 69952
   },
@@ -55925,9 +55745,7 @@
     "slug": "find-zombie-sessions",
     "title": "Find Zombie Sessions",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 49.8,
     "totalAcs": 9148,
@@ -56393,9 +56211,7 @@
     "slug": "find-golden-hour-customers",
     "title": "Find Golden Hour Customers",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 34.4,
     "totalAcs": 10277,
@@ -56411,7 +56227,7 @@
       "String"
     ],
     "isPaidOnly": true,
-    "acRate": 72.4,
+    "acRate": 72.3,
     "totalAcs": 704,
     "totalSubmitted": 972
   },
@@ -56438,7 +56254,7 @@
       "Array"
     ],
     "isPaidOnly": false,
-    "acRate": 69.2,
+    "acRate": 68.6,
     "totalAcs": 35629,
     "totalSubmitted": 51500
   },
@@ -56561,9 +56377,7 @@
     "slug": "find-churn-risk-customers",
     "title": "Find Churn Risk Customers",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 46.7,
     "totalAcs": 9634,
@@ -56780,7 +56594,7 @@
       "Sorting"
     ],
     "isPaidOnly": true,
-    "acRate": 72.4,
+    "acRate": 72.2,
     "totalAcs": 898,
     "totalSubmitted": 1240
   },
@@ -56936,7 +56750,7 @@
       "Hash Table"
     ],
     "isPaidOnly": false,
-    "acRate": 73.3,
+    "acRate": 73.2,
     "totalAcs": 148988,
     "totalSubmitted": 203214
   },
@@ -57037,7 +56851,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 23.2,
+    "acRate": 23.3,
     "totalAcs": 16580,
     "totalSubmitted": 71319
   },
@@ -57269,7 +57083,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 21.1,
+    "acRate": 21.2,
     "totalAcs": 3434,
     "totalSubmitted": 16249
   },
@@ -57294,11 +57108,9 @@
     "slug": "most-common-course-pairs",
     "title": "Most Common Course Pairs",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 51.6,
+    "acRate": 51.7,
     "totalAcs": 5980,
     "totalSubmitted": 11588
   },
@@ -57420,7 +57232,7 @@
       "Depth-First Search"
     ],
     "isPaidOnly": false,
-    "acRate": 65.4,
+    "acRate": 65.3,
     "totalAcs": 6405,
     "totalSubmitted": 9799
   },
@@ -57502,9 +57314,7 @@
     "slug": "minimum-distance-excluding-one-maximum-weighted-edge",
     "title": "Minimum Distance Excluding One Maximum Weighted Edge",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 46.8,
     "totalAcs": 366,
@@ -57595,7 +57405,7 @@
       "Enumeration"
     ],
     "isPaidOnly": false,
-    "acRate": 54.8,
+    "acRate": 54.9,
     "totalAcs": 37862,
     "totalSubmitted": 69032
   },
@@ -57611,7 +57421,7 @@
       "Counting"
     ],
     "isPaidOnly": false,
-    "acRate": 31.1,
+    "acRate": 31.2,
     "totalAcs": 12098,
     "totalSubmitted": 38843
   },
@@ -57710,7 +57520,7 @@
       "Simulation"
     ],
     "isPaidOnly": true,
-    "acRate": 67.5,
+    "acRate": 67.6,
     "totalAcs": 588,
     "totalSubmitted": 871
   },
@@ -57719,9 +57529,7 @@
     "slug": "find-users-with-high-token-usage",
     "title": "Find Users with High Token Usage",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 57.1,
     "totalAcs": 17238,
@@ -57843,7 +57651,7 @@
       "Bit Manipulation"
     ],
     "isPaidOnly": false,
-    "acRate": 34.0,
+    "acRate": 33.2,
     "totalAcs": 4618,
     "totalSubmitted": 13586
   },
@@ -57852,9 +57660,7 @@
     "slug": "number-of-ways-to-paint-sheets",
     "title": "Number of Ways to Paint Sheets",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 67.4,
     "totalAcs": 478,
@@ -57942,11 +57748,9 @@
     "slug": "find-emotionally-consistent-users",
     "title": "Find Emotionally Consistent Users",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 52.3,
+    "acRate": 52.4,
     "totalAcs": 8869,
     "totalSubmitted": 16949
   },
@@ -58053,7 +57857,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 41.9,
+    "acRate": 42.0,
     "totalAcs": 17437,
     "totalSubmitted": 41576
   },
@@ -58154,7 +57958,7 @@
       "Design"
     ],
     "isPaidOnly": true,
-    "acRate": 79.0,
+    "acRate": 79.1,
     "totalAcs": 1937,
     "totalSubmitted": 2451
   },
@@ -58304,11 +58108,9 @@
     "slug": "find-users-with-persistent-behavior-patterns",
     "title": "Find Users with Persistent Behavior Patterns",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 47.4,
+    "acRate": 47.3,
     "totalAcs": 6270,
     "totalSubmitted": 13233
   },
@@ -58366,7 +58168,7 @@
       "Dynamic Programming"
     ],
     "isPaidOnly": false,
-    "acRate": 41.5,
+    "acRate": 41.0,
     "totalAcs": 15488,
     "totalSubmitted": 37330
   },
@@ -58703,7 +58505,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 27.6,
+    "acRate": 27.7,
     "totalAcs": 14884,
     "totalSubmitted": 53860
   },
@@ -58734,7 +58536,7 @@
       "String"
     ],
     "isPaidOnly": true,
-    "acRate": 85.4,
+    "acRate": 85.5,
     "totalAcs": 792,
     "totalSubmitted": 927
   },
@@ -58879,7 +58681,7 @@
       "Math"
     ],
     "isPaidOnly": false,
-    "acRate": 69.3,
+    "acRate": 69.4,
     "totalAcs": 61736,
     "totalSubmitted": 89029
   },
@@ -58935,7 +58737,7 @@
       "Math"
     ],
     "isPaidOnly": true,
-    "acRate": 67.4,
+    "acRate": 67.3,
     "totalAcs": 448,
     "totalSubmitted": 665
   },
@@ -58994,7 +58796,7 @@
       "Monotonic Stack"
     ],
     "isPaidOnly": false,
-    "acRate": 25.6,
+    "acRate": 25.7,
     "totalAcs": 7605,
     "totalSubmitted": 29663
   },
@@ -59010,7 +58812,7 @@
       "Binary Tree"
     ],
     "isPaidOnly": true,
-    "acRate": 50.9,
+    "acRate": 50.8,
     "totalAcs": 443,
     "totalSubmitted": 871
   },
@@ -59216,11 +59018,9 @@
     "slug": "maximum-team-size-with-overlapping-intervals",
     "title": "Maximum Team Size with Overlapping Intervals",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
-    "acRate": 43.2,
+    "acRate": 43.3,
     "totalAcs": 897,
     "totalSubmitted": 2074
   },
@@ -59235,7 +59035,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 83.9,
+    "acRate": 84.0,
     "totalAcs": 52373,
     "totalSubmitted": 62393
   },
@@ -59423,9 +59223,7 @@
     "slug": "count-smaller-elements-with-opposite-parity",
     "title": "Count Smaller Elements With Opposite Parity",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 73.9,
     "totalAcs": 370,
@@ -59440,7 +59238,7 @@
       "Math"
     ],
     "isPaidOnly": false,
-    "acRate": 70.7,
+    "acRate": 70.8,
     "totalAcs": 34257,
     "totalSubmitted": 48420
   },
@@ -59543,7 +59341,7 @@
       "Segment Tree"
     ],
     "isPaidOnly": false,
-    "acRate": 32.6,
+    "acRate": 32.7,
     "totalAcs": 4694,
     "totalSubmitted": 14385
   },
@@ -59861,7 +59659,7 @@
       "Two Pointers"
     ],
     "isPaidOnly": false,
-    "acRate": 60.5,
+    "acRate": 60.4,
     "totalAcs": 41029,
     "totalSubmitted": 67861
   },
@@ -60212,7 +60010,7 @@
       "Simulation"
     ],
     "isPaidOnly": false,
-    "acRate": 83.2,
+    "acRate": 82.8,
     "totalAcs": 58350,
     "totalSubmitted": 70114
   },
@@ -60262,7 +60060,7 @@
       "Ordered Set"
     ],
     "isPaidOnly": false,
-    "acRate": 14.1,
+    "acRate": 14.2,
     "totalAcs": 3496,
     "totalSubmitted": 24726
   },
@@ -60271,9 +60069,7 @@
     "slug": "create-grid-with-exactly-one-path",
     "title": "Create Grid With Exactly One Path",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 75.7,
     "totalAcs": 40738,
@@ -60551,7 +60347,7 @@
       "Prefix Sum"
     ],
     "isPaidOnly": false,
-    "acRate": 46.5,
+    "acRate": 46.6,
     "totalAcs": 8028,
     "totalSubmitted": 17246
   },
@@ -60977,7 +60773,7 @@
       "Memoization"
     ],
     "isPaidOnly": false,
-    "acRate": 29.3,
+    "acRate": 29.4,
     "totalAcs": 2638,
     "totalSubmitted": 9010
   },
@@ -61091,7 +60887,7 @@
       "Matrix"
     ],
     "isPaidOnly": false,
-    "acRate": 40.7,
+    "acRate": 40.8,
     "totalAcs": 13687,
     "totalSubmitted": 33601
   },
@@ -61136,7 +60932,7 @@
       "String"
     ],
     "isPaidOnly": true,
-    "acRate": 76.8,
+    "acRate": 77.6,
     "totalAcs": 225,
     "totalSubmitted": 293
   },
@@ -61194,7 +60990,7 @@
       "Sorting"
     ],
     "isPaidOnly": false,
-    "acRate": 26.7,
+    "acRate": 26.8,
     "totalAcs": 5207,
     "totalSubmitted": 19469
   },
@@ -61254,7 +61050,7 @@
       "Bitmask"
     ],
     "isPaidOnly": false,
-    "acRate": 45.1,
+    "acRate": 45.2,
     "totalAcs": 6148,
     "totalSubmitted": 13618
   },
@@ -61277,9 +61073,7 @@
     "slug": "elevator-requests-iv",
     "title": "Elevator Requests IV",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": true,
     "acRate": 62.8,
     "totalAcs": 172,
@@ -61290,9 +61084,7 @@
     "slug": "check-ascii-palindromic",
     "title": "Check ASCII Palindromic",
     "difficulty": "Easy",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 60.0,
     "totalAcs": 49939,
@@ -61303,9 +61095,7 @@
     "slug": "find-all-numbers-disappeared-in-an-array-ii",
     "title": "Find All Numbers Disappeared in an Array II",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
     "acRate": 53.0,
     "totalAcs": 38380,
@@ -61316,11 +61106,9 @@
     "slug": "longest-subarray-with-at-most-k-distinct-prime-factors",
     "title": "Longest Subarray With at Most K Distinct Prime Factors",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 56.5,
+    "acRate": 56.6,
     "totalAcs": 20451,
     "totalSubmitted": 36168
   },
@@ -61329,11 +61117,9 @@
     "slug": "valid-k-unique-subarrays-i",
     "title": "Valid K-Unique Subarrays I",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 34.1,
+    "acRate": 34.2,
     "totalAcs": 7601,
     "totalSubmitted": 22290
   },
@@ -61342,11 +61128,9 @@
     "slug": "minimum-bishop-moves-to-reach-target",
     "title": "Minimum Bishop Moves to Reach Target",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 65.6,
+    "acRate": 65.5,
     "totalAcs": 29510,
     "totalSubmitted": 45005
   },
@@ -61355,11 +61139,9 @@
     "slug": "maximum-valid-split-positions-i",
     "title": "Maximum Valid Split Positions I",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 50.5,
+    "acRate": 50.9,
     "totalAcs": 13377,
     "totalSubmitted": 26487
   },
@@ -61368,11 +61150,9 @@
     "slug": "lexicographically-largest-string-after-pair-transformations",
     "title": "Lexicographically Largest String After Pair Transformations",
     "difficulty": "Medium",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 40.9,
+    "acRate": 41.3,
     "totalAcs": 13580,
     "totalSubmitted": 33174
   },
@@ -61381,12 +61161,54 @@
     "slug": "maximum-valid-split-positions-ii",
     "title": "Maximum Valid Split Positions II",
     "difficulty": "Hard",
-    "topics": [
-      "Algorithms"
-    ],
+    "topics": [],
     "isPaidOnly": false,
-    "acRate": 28.0,
+    "acRate": 28.7,
     "totalAcs": 2247,
     "totalSubmitted": 8022
+  },
+  {
+    "id": 4038,
+    "slug": "count-integers-appearing-in-a-single-block",
+    "title": "Count Integers Appearing in a Single Block",
+    "difficulty": "Easy",
+    "topics": [],
+    "isPaidOnly": false,
+    "acRate": 45.4,
+    "totalAcs": 0,
+    "totalSubmitted": 0
+  },
+  {
+    "id": 4039,
+    "slug": "sum-of-decoded-numbers",
+    "title": "Sum of Decoded Numbers",
+    "difficulty": "Medium",
+    "topics": [],
+    "isPaidOnly": false,
+    "acRate": 44.7,
+    "totalAcs": 0,
+    "totalSubmitted": 0
+  },
+  {
+    "id": 4040,
+    "slug": "minimum-operations-to-form-subset-sum-i",
+    "title": "Minimum Operations to Form Subset Sum I",
+    "difficulty": "Medium",
+    "topics": [],
+    "isPaidOnly": false,
+    "acRate": 52.2,
+    "totalAcs": 0,
+    "totalSubmitted": 0
+  },
+  {
+    "id": 4041,
+    "slug": "minimum-operations-to-form-subset-sum-ii",
+    "title": "Minimum Operations to Form Subset Sum II",
+    "difficulty": "Hard",
+    "topics": [],
+    "isPaidOnly": false,
+    "acRate": 48.3,
+    "totalAcs": 0,
+    "totalSubmitted": 0
   }
 ]
