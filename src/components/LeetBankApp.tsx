@@ -125,6 +125,11 @@ export function LeetBankApp() {
   const [isDark, setIsDark] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [searchQuery, selectedDifficulty, selectedRoadmap, selectedCompany, selectedWindow]);
+
   // Initialize theme state on mount
   useEffect(() => {
     const isCurrentlyDark = document.documentElement.classList.contains("dark");
@@ -149,6 +154,7 @@ export function LeetBankApp() {
   const [activeProblem, setActiveProblem] = useState<Problem | null>(null);
   const [activeTab, setActiveTab] = useState<"statement" | "solution" | "code">("statement");
   const [selectedCodeLang, setSelectedCodeLang] = useState<string>("python3");
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
 
 
@@ -432,8 +438,16 @@ public:
             </div>
           </div>
 
-          <div className="divide-y divide-zinc-200 dark:divide-zinc-800/80 max-h-[600px] overflow-y-auto">
-            {filteredProblems.slice(0, 100).map((p) => {
+          <div 
+            onScroll={(e) => {
+              const target = e.currentTarget;
+              if (target.scrollHeight - target.scrollTop <= target.clientHeight + 200) {
+                setVisibleCount((prev) => Math.min(filteredProblems.length, prev + 50));
+              }
+            }}
+            className="divide-y divide-zinc-200 dark:divide-zinc-800/80 max-h-[700px] overflow-y-auto"
+          >
+            {filteredProblems.slice(0, visibleCount).map((p) => {
               const diffStyle = 
                 p.difficulty === "Easy" ? "text-emerald-600 dark:text-emerald-400" :
                 p.difficulty === "Medium" ? "text-amber-600 dark:text-amber-400" :
@@ -475,6 +489,17 @@ public:
                 </div>
               );
             })}
+
+            {visibleCount < filteredProblems.length && (
+              <div className="p-4 text-center border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+                <button
+                  onClick={() => setVisibleCount((prev) => Math.min(filteredProblems.length, prev + 100))}
+                  className="text-xs px-4 py-2 rounded-md bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-700 font-medium transition cursor-pointer"
+                >
+                  Load More ({filteredProblems.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
