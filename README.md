@@ -1,6 +1,6 @@
 # 🏦 LeetBank
 
-> Fast, free LeetCode question bank and interview preparation platform deployed on **Cloudflare Edge** with **Cloudflare D1 SQL Database**.
+> Fast, free LeetCode question bank with 4,000+ problems, company-curated tracks, 19 starter code languages, and reference solutions on Cloudflare Edge.
 
 [![CI](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml/badge.svg)](https://github.com/dev-ansung/leetbank/actions/workflows/deploy.yml)
 [![Deployment](https://img.shields.io/badge/deployment-Cloudflare%20Pages-f38020?logo=cloudflare)](https://leetbank.pages.dev)
@@ -14,23 +14,19 @@
 
 | Problemset Dashboard | Problem Detail & Solutions |
 | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/problem_modal_light.png" alt="LeetBank Problem Detail & LaTeX Big-O" width="100%" /> |
+| <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/dashboard_light.png" alt="LeetBank Problemset Dashboard" width="100%" /> | <img src="https://raw.githubusercontent.com/dev-ansung/leetbank/main/assets/problem_modal_light.png" alt="LeetBank Problem Detail" width="100%" /> |
 
 ---
 
-## ⚡ Features
+## ⚡ Key Features
 
-LeetBank provides a complete, fast environment for coding interview preparation:
-
-* 🔓 **4,037 Questions**: Full problem statements, test cases, and diagrams for free and premium LeetCode questions.
-* 🏢 **Top Tech Company Tracks**: Curated question sets across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**).
-* 📅 **4 Recency Windows**: Filter questions asked in the **Last 30 Days**, **3 Months**, **6 Months**, and **All-Time**.
-* 🥞 **Curated Roadmaps**: Built-in practice tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150**, **Hot 100**, and **Carl 200**.
-* 🧩 **Expandable Topic Ribbon**: Quick filtering by data structures and algorithmic patterns (**Array**, **String**, **Hash Table**, **Dynamic Programming**, **Tree**, **Graph**, etc.).
-* 💻 **19 Programming Languages**: Official starter templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
-* 📐 **LaTeX Big-$O$ Complexity**: Formatted mathematical notation for time and space complexity analysis via KaTeX.
-* 📋 **1-Click Test Case Copying**: Structured example inputs and expected outputs ready to paste into your local editor.
-* 🌓 **Dark & Light Mode**: Fast, responsive monochrome interface.
+* 🔓 **4,037 Problems**: Full problem statements, test cases, and diagrams for free and premium questions.
+* 🏢 **Company-Curated Sets**: Question sets across 9 companies (**Meta**, **Google**, **Amazon**, **Microsoft**, **Bloomberg**, **Apple**, **Uber**, **ByteDance**, **Netflix**) with 4 recency windows (**30 Days**, **3 Months**, **6 Months**, **All-Time**).
+* 🥞 **Curated Practice Roadmaps**: Built-in tracks for **Blind 75**, **Grind 75**, **NeetCode 150**, **Top 150 Interview**, **LeetCode Hot 100**, and **Carl 200**.
+* 🎛️ **Fast Filtering & Sorting**: Filter by topic, difficulty, access, and company. Sort by Question ID, Total Accepted, Total Submissions, and Acceptance Rate.
+* 💻 **19 Starter Code Languages**: Official templates for `Python3`, `TypeScript`, `Go`, `Rust`, `C++`, `Java`, `Swift`, `Kotlin`, and more.
+* 💡 **Reference Solutions**: Multi-language implementations with time and space complexity breakdown.
+* 📋 **1-Click Test Cases**: Copy formatted example inputs and expected outputs directly to your local editor.
 
 ---
 
@@ -63,13 +59,11 @@ sequenceDiagram
 2. **Review Curated Questions**:
    * The catalog displays questions associated with the company and window.
 3. **Practice & Review**:
-   * Click any question to inspect the complete statement, structured test cases, 19 starter code languages, and verified reference solutions with Big-$O$ complexity.
+   * Click any question to inspect the statement, test cases, starter code in your language of choice, and reference solutions.
 
 ---
 
-## 🏛️ High-Level System Architecture (HLD)
-
-LeetBank runs entirely on Cloudflare serverless edge infrastructure:
+## 🏛️ System Architecture
 
 ```mermaid
 flowchart TD
@@ -99,9 +93,7 @@ flowchart TD
 
 ---
 
-## 🔌 Edge REST API Reference
-
-All API routes return standard JSON with edge caching headers.
+## 🔌 API Reference
 
 ### 1. `GET /api/problems`
 Search and paginate through the problem catalog.
