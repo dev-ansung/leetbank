@@ -6,11 +6,11 @@
     "nodejs_compat"
   ],
   "pages_build_output_dir": "dist",
-  "account_id": "6a61ba2ae8edd10e314785eb1f7734a9",
-  "kv_namespaces": [
+  "d1_databases": [
     {
-      "binding": "LEETBANK_CACHE",
-      "id": "leetbank-cache"
+      "binding": "DB",
+      "database_name": "leetbank-db",
+      "database_id": "90958bfc-2485-4b30-9ae5-f13cab9bf277"
     }
   ]
 }
